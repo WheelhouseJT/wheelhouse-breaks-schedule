@@ -175,7 +175,7 @@
   <div class="tabs" id="platformTabs"></div>
 
   <div class="toolbar">
-    <div class="week-nav">
+    <div class="week-nav" id="weekNavWrap">
       <button id="prevWeek" aria-label="Previous week">&#8592;</button>
       <div class="week-label" id="weekLabel">Loading&hellip;</div>
       <button id="nextWeek" aria-label="Next week">&#8594;</button>
@@ -184,13 +184,41 @@
     <div id="adminToolbar" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
   </div>
 
-  <div class="day-picker" id="dayPicker"></div>
+  <div id="scheduleView">
+    <div class="day-picker" id="dayPicker"></div>
+    <div class="grid-wrap"><div class="grid" id="grid"></div></div>
+    <div class="add-room-row desktop-only" id="addRoomRowDesktop" style="display:none;"><button id="addRoomBtnDesktop">+ Add room / station</button></div>
+    <div class="mobile-list" id="mobileList"></div>
+    <div class="add-room-row" id="addRoomRowMobile" style="display:none;"><button id="addRoomBtnMobile">+ Add room / station</button></div>
+  </div>
 
-  <div class="grid-wrap"><div class="grid" id="grid"></div></div>
-  <div class="add-room-row desktop-only" id="addRoomRowDesktop" style="display:none;"><button id="addRoomBtnDesktop">+ Add room / station</button></div>
+  <div id="productsView" style="display:none;">
+    <div class="toolbar">
+      <div class="week-nav">
+        <button id="productsPrevWeek" aria-label="Previous week">&#8592;</button>
+        <div class="week-label" id="productsWeekLabel">Loading&hellip;</div>
+        <button id="productsNextWeek" aria-label="Next week">&#8594;</button>
+      </div>
+      <button class="btn btn-ghost" id="productsThisWeekBtn">This week</button>
+      <div class="field" style="margin:0;"><label for="productsPlatform">Platform</label>
+        <select id="productsPlatform">
+          <option value="all">Both platforms</option>
+          <option value="whatnot">Whatnot only</option>
+          <option value="fanatics">Fanatics Live only</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" id="archiveWeekBtn" style="display:none;">Archive this week</button>
+    </div>
+    <div class="grid-wrap" style="padding:14px;">
+      <div id="productsSummary" style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:10px;"></div>
+      <div id="productsTableArea"></div>
+    </div>
+  </div>
 
-  <div class="mobile-list" id="mobileList"></div>
-  <div class="add-room-row" id="addRoomRowMobile" style="display:none;"><button id="addRoomBtnMobile">+ Add room / station</button></div>
+  <div id="historyView" style="display:none;">
+    <div class="modal-sub" style="margin-bottom:14px;">Weeks you've archived from the Product List tab. Archiving only happens when someone clicks "Archive this week" &mdash; nothing here changes on its own.</div>
+    <div id="historyListArea"></div>
+  </div>
 
   <div class="footer-note">
     <span id="statusNote">Loading&hellip;</span>
@@ -346,6 +374,9 @@
   let rooms = [], sessions = [], breakerNames = [], productNames = [], colors = { ...DEFAULT_COLORS };
   let weekStart = startOfWeek(new Date());
   let activePlatform = 'whatnot';
+  let activeView = 'schedule'; // 'schedule' or 'products'
+  let productsWeekStart = startOfWeek(new Date()), productsPlatformFilter = 'all';
+  let archivedWeeks = [];
   let activeDayIndex = todayIndexInWeek();
   let editingSessionId = null;
   let isAdmin = false;
@@ -370,6 +401,8 @@
     appId: "1:501077189590:web:af801d0ce34a614facba77"
   };
   const FIRESTORE_COLLECTION = 'wheelhouse-break-schedule';
+  const SESSIONS_COLLECTION = 'wheelhouse-break-schedule-sessions';
+  const ARCHIVES_COLLECTION = 'wheelhouse-break-schedule-archives';
   let firestoreDb = null;
   try {
     if (typeof firebase !== 'undefined' && FIREBASE_CONFIG.apiKey) {
@@ -420,30 +453,106 @@
     if (!usingFirestore) return;
     const col = firestoreDb.collection(FIRESTORE_COLLECTION);
     col.doc('rooms').onSnapshot(doc => { if (doc.exists) { try { rooms = JSON.parse(doc.data().value); renderAll(); } catch(e) {} } });
-    col.doc('sessions').onSnapshot(doc => { if (doc.exists) { try { sessions = JSON.parse(doc.data().value); migrateSessions(); renderAll(); } catch(e) {} } });
+    firestoreDb.collection(SESSIONS_COLLECTION).onSnapshot(snap => {
+      try { sessions = snap.docs.map(d => d.data()); migrateSessions(); renderAll(); } catch(e) {}
+    });
     col.doc('breakers').onSnapshot(doc => { if (doc.exists) { try { breakerNames = JSON.parse(doc.data().value); } catch(e) {} } });
     col.doc('products').onSnapshot(doc => { if (doc.exists) { try { productNames = JSON.parse(doc.data().value); } catch(e) {} } });
     col.doc('colors').onSnapshot(doc => { if (doc.exists) { try { colors = { ...DEFAULT_COLORS, ...JSON.parse(doc.data().value) }; applyColors(); renderAll(); } catch(e) {} } });
+    firestoreDb.collection(ARCHIVES_COLLECTION).onSnapshot(snap => {
+      try { archivedWeeks = snap.docs.map(d => d.data()); if (activeView === 'history') renderAll(); } catch(e) {}
+    });
   }
 
   // ---- Persistence ----
   async function loadData() {
     try { const r = await storage.get('rooms'); rooms = r ? JSON.parse(r.value) : DEFAULT_ROOMS.slice(); } catch(e) { rooms = DEFAULT_ROOMS.slice(); }
     try {
-      const r = await storage.get('sessions');
-      sessions = r ? JSON.parse(r.value) : [];
+      if (usingFirestore) {
+        const snap = await firestoreDb.collection(SESSIONS_COLLECTION).get();
+        sessions = snap.docs.map(d => d.data());
+      } else {
+        const r = await storage.get('sessions');
+        sessions = r ? JSON.parse(r.value) : [];
+      }
       migrateSessions();
     } catch(e) { sessions = []; }
     try { const r = await storage.get('breakers'); breakerNames = r ? JSON.parse(r.value) : DEFAULT_BREAKERS.slice(); } catch(e) { breakerNames = DEFAULT_BREAKERS.slice(); }
     try { const r = await storage.get('products'); productNames = r ? JSON.parse(r.value) : []; } catch(e) { productNames = []; }
     try { const r = await storage.get('colors'); colors = r ? { ...DEFAULT_COLORS, ...JSON.parse(r.value) } : { ...DEFAULT_COLORS }; } catch(e) { colors = { ...DEFAULT_COLORS }; }
+    try {
+      if (usingFirestore) {
+        const snap = await firestoreDb.collection(ARCHIVES_COLLECTION).get();
+        archivedWeeks = snap.docs.map(d => d.data());
+      } else {
+        const r = await storage.get('archives');
+        archivedWeeks = r ? JSON.parse(r.value) : [];
+      }
+    } catch(e) { archivedWeeks = []; }
     try { isAdmin = sessionStorage.getItem('wheelhouse-admin') === '1'; } catch(e) { isAdmin = false; }
   }
   async function saveRooms() { try { await storage.set('rooms', JSON.stringify(rooms)); } catch(e) { flashStatus('Couldn\u2019t save room changes.'); } }
   async function saveSessions() { try { await storage.set('sessions', JSON.stringify(sessions)); flashStatus('Saved.'); } catch(e) { flashStatus('Couldn\u2019t save. Try again.'); } }
+
+  // Each session saves/deletes as its own Firestore document, so one person's
+  // save can never overwrite another's addition made moments earlier -- unlike
+  // storing the whole list in a single document.
+  async function saveSessionUpsert(session) {
+    if (usingFirestore) {
+      try { await firestoreDb.collection(SESSIONS_COLLECTION).doc(session.id).set(session); flashStatus('Saved.'); }
+      catch(e) { flashStatus('Couldn\u2019t save. Try again.'); }
+    } else { await saveSessions(); }
+  }
+  async function saveSessionDelete(id) {
+    if (usingFirestore) {
+      try { await firestoreDb.collection(SESSIONS_COLLECTION).doc(id).delete(); flashStatus('Saved.'); }
+      catch(e) { flashStatus('Couldn\u2019t delete. Try again.'); }
+    } else { await saveSessions(); }
+  }
+  async function saveSessionsBulkDelete(ids) {
+    if (usingFirestore) {
+      try {
+        const batch = firestoreDb.batch();
+        ids.forEach(id => batch.delete(firestoreDb.collection(SESSIONS_COLLECTION).doc(id)));
+        await batch.commit();
+        flashStatus('Saved.');
+      } catch(e) { flashStatus('Couldn\u2019t save. Try again.'); }
+    } else { await saveSessions(); }
+  }
+  async function clearAllSessionsRemote() {
+    if (usingFirestore) {
+      try {
+        const snap = await firestoreDb.collection(SESSIONS_COLLECTION).get();
+        const batch = firestoreDb.batch();
+        snap.docs.forEach(d => batch.delete(d.ref));
+        await batch.commit();
+      } catch(e) {}
+    } else { await saveSessions(); }
+  }
   async function saveBreakers() { try { await storage.set('breakers', JSON.stringify(breakerNames)); } catch(e) {} }
   async function saveProductNames() { try { await storage.set('products', JSON.stringify(productNames)); } catch(e) {} }
   async function saveColors() { try { await storage.set('colors', JSON.stringify(colors)); } catch(e) { flashStatus('Couldn\u2019t save colors.'); } }
+
+  // Archives: one document per archived week so multiple archives never clobber
+  // each other, same reasoning as sessions.
+  async function saveArchiveEntry(entry) {
+    if (usingFirestore) {
+      try { await firestoreDb.collection(ARCHIVES_COLLECTION).doc(entry.id).set(entry); flashStatus('Archived.'); }
+      catch(e) { flashStatus('Couldn\u2019t archive. Try again.'); }
+    } else {
+      try { await storage.set('archives', JSON.stringify(archivedWeeks)); flashStatus('Archived.'); }
+      catch(e) { flashStatus('Couldn\u2019t archive. Try again.'); }
+    }
+  }
+  async function deleteArchiveEntry(id) {
+    if (usingFirestore) {
+      try { await firestoreDb.collection(ARCHIVES_COLLECTION).doc(id).delete(); flashStatus('Removed.'); }
+      catch(e) { flashStatus('Couldn\u2019t remove. Try again.'); }
+    } else {
+      try { await storage.set('archives', JSON.stringify(archivedWeeks)); flashStatus('Removed.'); }
+      catch(e) { flashStatus('Couldn\u2019t remove. Try again.'); }
+    }
+  }
 
   let statusTimer;
   function flashStatus(msg) {
@@ -503,8 +612,13 @@
   // ---- Tabs ----
   function renderTabs() {
     const el = document.getElementById('platformTabs');
-    el.innerHTML = PLATFORMS.map(p => `<button class="tab-btn ${activePlatform === p.id ? 'active tab-' + p.id : ''}" data-platform="${p.id}"><span class="swatch" style="background:var(--${p.id})"></span>${p.label}</button>`).join('');
-    el.querySelectorAll('.tab-btn').forEach(btn => { btn.addEventListener('click', () => { activePlatform = btn.dataset.platform; renderAll(); }); });
+    const platformTabsHtml = PLATFORMS.map(p => `<button class="tab-btn ${activeView === 'schedule' && activePlatform === p.id ? 'active tab-' + p.id : ''}" data-platform="${p.id}"><span class="swatch" style="background:var(--${p.id})"></span>${p.label}</button>`).join('');
+    const productsTabHtml = `<button class="tab-btn ${activeView === 'products' ? 'active' : ''}" data-view="products" style="${activeView === 'products' ? 'border-color:var(--accent); background:rgba(227,178,60,0.14); color:var(--text);' : ''}">Product List</button>`;
+    const historyTabHtml = `<button class="tab-btn ${activeView === 'history' ? 'active' : ''}" data-view="history" style="${activeView === 'history' ? 'border-color:var(--accent); background:rgba(227,178,60,0.14); color:var(--text);' : ''}">History</button>`;
+    el.innerHTML = platformTabsHtml + productsTabHtml + historyTabHtml;
+    el.querySelectorAll('[data-platform]').forEach(btn => { btn.addEventListener('click', () => { activeView = 'schedule'; activePlatform = btn.dataset.platform; renderAll(); }); });
+    el.querySelector('[data-view="products"]').addEventListener('click', () => { activeView = 'products'; renderAll(); });
+    el.querySelector('[data-view="history"]').addEventListener('click', () => { activeView = 'history'; renderAll(); });
   }
 
   // ---- Admin toolbar ----
@@ -591,7 +705,12 @@
         if (!room) return;
         const hasSessions = sessions.some(s => s.roomId === id);
         const msg = hasSessions ? `Remove "${room.name}"? Its scheduled sessions will be deleted too.` : `Remove "${room.name}"?`;
-        if (confirm(msg)) { rooms = rooms.filter(r => r.id !== id); sessions = sessions.filter(s => s.roomId !== id); saveRooms(); saveSessions(); renderAll(); }
+        if (confirm(msg)) {
+          rooms = rooms.filter(r => r.id !== id);
+          const removedIds = sessions.filter(s => s.roomId === id).map(s => s.id);
+          sessions = sessions.filter(s => s.roomId !== id);
+          saveRooms(); saveSessionsBulkDelete(removedIds); renderAll();
+        }
       });
     });
     document.getElementById('addRoomRowDesktop').style.display = isAdmin ? 'block' : 'none';
@@ -648,7 +767,12 @@
         const id = e.target.dataset.removeRoom;
         const room = rooms.find(r => r.id === id);
         if (!room) return;
-        if (confirm(`Remove "${room.name}"? Its scheduled sessions will be deleted too.`)) { rooms = rooms.filter(r => r.id !== id); sessions = sessions.filter(s => s.roomId !== id); saveRooms(); saveSessions(); renderAll(); }
+        if (confirm(`Remove "${room.name}"? Its scheduled sessions will be deleted too.`)) {
+          rooms = rooms.filter(r => r.id !== id);
+          const removedIds = sessions.filter(s => s.roomId === id).map(s => s.id);
+          sessions = sessions.filter(s => s.roomId !== id);
+          saveRooms(); saveSessionsBulkDelete(removedIds); renderAll();
+        }
       });
     });
     document.getElementById('addRoomRowMobile').style.display = isAdmin ? 'block' : 'none';
@@ -743,18 +867,22 @@
     const conflict = sessions.find(s => s.roomId === roomId && s.date === date && s.shift === shiftId && s.platform === activePlatform && s.id !== editingSessionId);
     if (conflict) { alert('That room already has a ' + PLATFORMS.find(p=>p.id===activePlatform).label + ' session booked for this shift. Edit the existing one instead.'); return; }
 
+    let savedSession;
     if (editingSessionId) {
       const s = sessions.find(x => x.id === editingSessionId);
       if (s) { s.roomId = roomId; s.date = date; s.shift = shiftId; s.worker1 = worker1Val; s.worker2 = worker2Val; s.notes = notesVal; s.flagged = f.flagged.checked; s.products = products; }
+      savedSession = s;
     } else {
-      sessions.push({ id: uid(), roomId, date, shift: shiftId, worker1: worker1Val, worker2: worker2Val, notes: notesVal, flagged: f.flagged.checked, products, platform: activePlatform });
+      savedSession = { id: uid(), roomId, date, shift: shiftId, worker1: worker1Val, worker2: worker2Val, notes: notesVal, flagged: f.flagged.checked, products, platform: activePlatform };
+      sessions.push(savedSession);
     }
-    await saveSessions(); renderAll(); closeModal();
+    await saveSessionUpsert(savedSession); renderAll(); closeModal();
   });
   deleteBtn.addEventListener('click', async () => {
     if (!editingSessionId) return;
-    sessions = sessions.filter(s => s.id !== editingSessionId);
-    await saveSessions(); renderAll(); closeModal();
+    const idToDelete = editingSessionId;
+    sessions = sessions.filter(s => s.id !== idToDelete);
+    await saveSessionDelete(idToDelete); renderAll(); closeModal();
   });
 
   // ---- Staff modal ----
@@ -835,6 +963,9 @@
     });
     return Object.values(totals).sort((a, b) => a.label.localeCompare(b.label));
   }
+  function getIncludedSessions(startISO, endISO, platformFilter) {
+    return sessions.filter(s => s.date >= startISO && s.date <= endISO && (platformFilter === 'all' || s.platform === platformFilter));
+  }
   function currentReportParams() {
     return {
       start: document.getElementById('reportStart').value,
@@ -846,11 +977,32 @@
     const { start, end, platform } = currentReportParams();
     if (!start || !end) return;
     const rows = computeTotals(start, end, platform);
+    const included = getIncludedSessions(start, end, platform);
     const area = document.getElementById('reportPreviewArea');
-    if (rows.length === 0) { area.innerHTML = '<div class="report-empty">No products logged in that range.</div>'; return; }
-    area.innerHTML = `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes</th><th>Total boxes needed</th></tr></thead><tbody>${
-      rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxes}</td><td>${r.boxesNeeded}</td></tr>`).join('')
-    }</tbody></table>`;
+
+    const totalsHtml = rows.length === 0
+      ? '<div class="report-empty">No products logged in that range.</div>'
+      : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes</th><th>Total boxes needed</th></tr></thead><tbody>${
+          rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxes}</td><td>${r.boxesNeeded}</td></tr>`).join('')
+        }</tbody></table>`;
+
+    const detailRows = included.map(s => {
+      const room = rooms.find(r => r.id === s.roomId);
+      const shift = SHIFTS.find(sh => sh.id === s.shift);
+      const platformLabel = (PLATFORMS.find(p => p.id === s.platform) || {}).label || s.platform;
+      const prodStr = (s.products || []).map(p => `${p.name} (${p.breaks}br/${p.boxes}bx)`).join(', ') || '\u2014';
+      return `<tr><td>${escapeHtml(s.date)}</td><td>${escapeHtml(room ? room.name : '(deleted room)')}</td><td>${shift ? shift.label : escapeHtml(s.shift)}</td><td>${escapeHtml(platformLabel)}</td><td>${escapeHtml(prodStr)}</td></tr>`;
+    }).join('');
+    const detailHtml = `
+      <div style="margin-top:16px; font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:6px;">
+        ${included.length} session${included.length === 1 ? '' : 's'} counted in this range \u2014 check this list if a number looks off
+      </div>
+      ${included.length === 0
+        ? '<div class="report-empty">No sessions match this date range / platform.</div>'
+        : `<table class="report-table"><thead><tr><th>Date</th><th>Room</th><th>Shift</th><th>Platform</th><th>Products</th></tr></thead><tbody>${detailRows}</tbody></table>`}
+    `;
+
+    area.innerHTML = totalsHtml + detailHtml;
   });
   document.getElementById('reportDownloadBtn').addEventListener('click', () => {
     const { start, end, platform } = currentReportParams();
@@ -888,14 +1040,112 @@
     if (!isAdmin) return;
     if (!confirm('Clear all rooms, sessions, staff, products, and color settings? This can\u2019t be undone.')) return;
     rooms = DEFAULT_ROOMS.slice(); sessions = []; breakerNames = DEFAULT_BREAKERS.slice(); productNames = []; colors = { ...DEFAULT_COLORS };
-    await saveRooms(); await saveSessions(); await saveBreakers(); await saveProductNames(); await saveColors();
+    await saveRooms(); await clearAllSessionsRemote(); await saveBreakers(); await saveProductNames(); await saveColors();
     applyColors(); renderAll(); flashStatus('Cleared.');
   });
 
+  // ---- Product List view (live, in-app spreadsheet, week by week) ----
+  function renderProductsView() {
+    const start = fmtISO(productsWeekStart), end = fmtISO(addDays(productsWeekStart, 6));
+    const platformFilter = productsPlatformFilter;
+    const opts = { month: 'short', day: 'numeric' };
+    document.getElementById('productsWeekLabel').textContent = productsWeekStart.toLocaleDateString('en-US', opts) + ' \u2013 ' + addDays(productsWeekStart, 6).toLocaleDateString('en-US', opts);
+    document.getElementById('productsPlatform').value = platformFilter;
+    document.getElementById('archiveWeekBtn').style.display = isAdmin ? 'inline-flex' : 'none';
+
+    const rows = computeTotals(start, end, platformFilter);
+    const included = getIncludedSessions(start, end, platformFilter);
+    document.getElementById('productsSummary').textContent = `${included.length} session${included.length === 1 ? '' : 's'} this week \u2014 updates live as the schedule changes`;
+    const area = document.getElementById('productsTableArea');
+    area.innerHTML = rows.length === 0
+      ? '<div class="report-empty">No products logged this week.</div>'
+      : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes</th><th>Total boxes needed</th></tr></thead><tbody>${
+          rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxes}</td><td>${r.boxesNeeded}</td></tr>`).join('')
+        }</tbody></table>`;
+  }
+  document.getElementById('productsPrevWeek').addEventListener('click', () => { productsWeekStart = addDays(productsWeekStart, -7); renderProductsView(); });
+  document.getElementById('productsNextWeek').addEventListener('click', () => { productsWeekStart = addDays(productsWeekStart, 7); renderProductsView(); });
+  document.getElementById('productsThisWeekBtn').addEventListener('click', () => { productsWeekStart = startOfWeek(new Date()); renderProductsView(); });
+  document.getElementById('productsPlatform').addEventListener('change', (e) => { productsPlatformFilter = e.target.value; renderProductsView(); });
+
+  // Archiving only ever happens on an explicit click -- nothing here runs
+  // automatically when a week ends, by design.
+  document.getElementById('archiveWeekBtn').addEventListener('click', async () => {
+    if (!isAdmin) return;
+    const start = fmtISO(productsWeekStart), end = fmtISO(addDays(productsWeekStart, 6));
+    const rows = computeTotals(start, end, productsPlatformFilter);
+    if (rows.length === 0 && !confirm('No products logged this week. Archive it anyway?')) return;
+    const entry = {
+      id: uid(),
+      weekStart: start,
+      weekEnd: end,
+      platform: productsPlatformFilter,
+      rows,
+      archivedAt: new Date().toISOString()
+    };
+    archivedWeeks.push(entry);
+    await saveArchiveEntry(entry);
+    renderAll();
+  });
+
+  // ---- History view (archived weeks) ----
+  function renderHistoryView() {
+    const area = document.getElementById('historyListArea');
+    if (archivedWeeks.length === 0) { area.innerHTML = '<div class="report-empty">No weeks archived yet. Use "Archive this week" from the Product List tab when a week is done.</div>'; return; }
+    const sorted = [...archivedWeeks].sort((a, b) => b.weekStart.localeCompare(a.weekStart));
+    area.innerHTML = sorted.map(entry => {
+      const platformLabel = entry.platform === 'all' ? 'Both platforms' : (PLATFORMS.find(p => p.id === entry.platform) || {}).label || entry.platform;
+      const archivedDate = entry.archivedAt ? new Date(entry.archivedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+      const rowsHtml = (entry.rows || []).length === 0
+        ? '<div class="report-empty">No products logged that week.</div>'
+        : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes</th><th>Total boxes needed</th></tr></thead><tbody>${
+            entry.rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxes}</td><td>${r.boxesNeeded}</td></tr>`).join('')
+          }</tbody></table>`;
+      return `
+        <div class="m-room-card" style="margin-bottom:12px;">
+          <div class="m-room-head">
+            <div>
+              <div style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:16px;">${escapeHtml(entry.weekStart)} \u2013 ${escapeHtml(entry.weekEnd)}</div>
+              <div style="font-size:11.5px; color:var(--text-muted);">${escapeHtml(platformLabel)} \u00b7 archived ${escapeHtml(archivedDate)}</div>
+            </div>
+            ${isAdmin ? `<button data-delete-archive="${entry.id}" style="background:none;border:none;color:var(--text-muted);font-size:16px;">&times;</button>` : ''}
+          </div>
+          ${rowsHtml}
+        </div>
+      `;
+    }).join('');
+    area.querySelectorAll('[data-delete-archive]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Remove this archived week? This can\u2019t be undone.')) return;
+        const id = btn.dataset.deleteArchive;
+        archivedWeeks = archivedWeeks.filter(a => a.id !== id);
+        await deleteArchiveEntry(id);
+        renderAll();
+      });
+    });
+  }
+
   // ---- Render orchestration ----
   function renderAll() {
-    renderAuthArea(); renderTabs(); renderAdminToolbar(); renderWeekLabel();
-    renderGrid(); renderDayPicker(); renderMobileList();
+    renderAuthArea(); renderTabs(); renderAdminToolbar();
+
+    const isSchedule = activeView === 'schedule';
+    const isProducts = activeView === 'products';
+    const isHistory = activeView === 'history';
+
+    document.getElementById('weekNavWrap').style.display = isSchedule ? 'flex' : 'none';
+    document.getElementById('todayBtn').style.display = isSchedule ? 'inline-flex' : 'none';
+    document.getElementById('scheduleView').style.display = isSchedule ? 'block' : 'none';
+    document.getElementById('productsView').style.display = isProducts ? 'block' : 'none';
+    document.getElementById('historyView').style.display = isHistory ? 'block' : 'none';
+
+    if (isSchedule) {
+      renderWeekLabel(); renderGrid(); renderDayPicker(); renderMobileList();
+    } else if (isProducts) {
+      renderProductsView();
+    } else if (isHistory) {
+      renderHistoryView();
+    }
   }
 
   async function init() {

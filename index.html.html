@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Wheelhouse Break Schedule</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1B1E24;
+    --surface: #23262E;
+    --surface-2: #2A2E38;
+    --border: #383D49;
+    --text: #EDEBE6;
+    --text-muted: #9A9FAC;
+    --whatnot: #D6553D;
+    --whatnot-bg: rgba(214, 85, 61, 0.16);
+    --fanatics: #4A7FC9;
+    --fanatics-bg: rgba(74, 127, 201, 0.16);
+    --accent: #E3B23C;
+    --danger: #C24949;
+    --flag: #E3B23C;
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, .display { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.01em; }
+  button { font-family: 'Inter', sans-serif; cursor: pointer; }
+  .app { max-width: 1400px; margin: 0 auto; padding: 16px 12px 60px; }
+
+  .topbar { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  .topbar h1 { font-size: 27px; margin: 0; line-height: 1; }
+  .topbar .sub { color: var(--text-muted); font-size: 12.5px; margin-top: 4px; }
+
+  .auth-area { display: flex; align-items: center; gap: 8px; }
+  .admin-pill { font-size: 11.5px; font-weight: 700; color: #1B1E24; background: var(--accent); padding: 4px 9px; border-radius: 20px; letter-spacing: 0.02em; }
+
+  .tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+  .tab-btn { flex: 1; max-width: 220px; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .tab-btn .swatch { width: 9px; height: 9px; border-radius: 50%; }
+  .tab-btn.active { color: var(--text); border-width: 2px; }
+  .tab-btn.active.tab-whatnot { border-color: var(--whatnot); background: var(--whatnot-bg); }
+  .tab-btn.active.tab-fanatics { border-color: var(--fanatics); background: var(--fanatics-bg); }
+
+  .toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .week-nav { display: flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 5px 8px; }
+  .week-nav button { background: none; border: none; color: var(--text); font-size: 19px; padding: 4px 8px; border-radius: 4px; }
+  .week-nav button:hover { background: var(--surface-2); }
+  .week-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 15px; min-width: 130px; text-align: center; }
+
+  .btn { border: 1px solid var(--border); background: var(--surface); color: var(--text); padding: 9px 14px; border-radius: var(--radius); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; min-height: 38px; }
+  .btn:hover { background: var(--surface-2); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #1B1E24; }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-ghost { background: transparent; border-color: transparent; color: var(--text-muted); }
+  .btn-ghost:hover { color: var(--text); background: var(--surface); }
+  .btn-sm { padding: 6px 10px; font-size: 12px; min-height: 30px; }
+
+  .grid-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+  .grid { display: grid; grid-template-columns: 128px repeat(7, minmax(160px, 1fr)); min-width: 1240px; }
+  .cell { border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); padding: 6px; display: flex; flex-direction: column; gap: 4px; }
+  .grid > .cell:nth-child(8n) { border-right: none; }
+
+  .col-head { position: sticky; top: 0; background: var(--surface-2); z-index: 2; padding: 9px 8px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); font-family: 'Barlow Condensed', sans-serif; }
+  .col-head .dow { font-size: 14px; font-weight: 700; }
+  .col-head .date { font-size: 10.5px; color: var(--text-muted); }
+  .col-head.today { background: #33302A; }
+  .col-head.today .dow { color: var(--accent); }
+
+  .row-head { position: sticky; left: 0; background: var(--surface-2); z-index: 1; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 9px 9px; display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 13.5px; font-weight: 600; }
+  .row-head .name-edit { background: transparent; border: none; color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; width: 100%; outline: none; }
+  .row-head .remove-room { background: none; border: none; color: var(--text-muted); font-size: 15px; padding: 0 2px; }
+  .row-head .remove-room:hover { color: var(--danger); }
+
+  .corner { position: sticky; left: 0; top: 0; z-index: 3; background: var(--surface-2); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+  .shift-slot { border: 1px solid var(--border); border-radius: 6px; min-height: 40px; display: flex; }
+  .shift-empty { width: 100%; background: none; border: none; color: var(--text-muted); font-size: 11px; text-align: left; padding: 6px 8px; display: flex; flex-direction: column; gap: 1px; min-height: 40px; }
+  .shift-empty:hover { background: var(--surface-2); color: var(--text); }
+  .shift-empty .slot-label { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+  .shift-empty .plus { font-size: 15px; line-height: 1; }
+
+  .session { position: relative; border-left: 3px solid var(--tab-accent, var(--whatnot)); background: var(--tab-accent-bg, var(--whatnot-bg)); border-radius: 6px; padding: 6px 8px; font-size: 11.5px; cursor: pointer; line-height: 1.3; width: 100%; }
+  .session:hover { filter: brightness(1.15); }
+  .session.flagged { box-shadow: 0 0 0 2px var(--flag) inset; }
+  .session .flag-badge { position: absolute; top: 4px; right: 5px; font-size: 12px; line-height: 1; }
+  .session .shift-time { font-weight: 700; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+  .session .breakers { font-weight: 600; margin-top: 1px; }
+  .session .product-line { color: var(--text-muted); white-space: normal; word-break: break-word; }
+  .session .notes-preview { color: var(--text-muted); font-style: italic; white-space: normal; word-break: break-word; }
+
+  .add-room-row { padding: 10px 0; }
+  .add-room-row button { width: 100%; background: transparent; border: 1px dashed var(--border); color: var(--text-muted); border-radius: var(--radius); padding: 9px; font-size: 12.5px; }
+  .add-room-row button:hover { color: var(--text); border-color: var(--text-muted); }
+
+  .day-picker { display: none; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 10px; }
+  .day-chip { flex: 0 0 auto; padding: 8px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13.5px; }
+  .day-chip.active { color: var(--text); border-color: var(--tab-accent, var(--accent)); background: var(--tab-accent-bg, var(--surface-2)); }
+  .day-chip .n { display: block; font-size: 10px; color: var(--text-muted); font-family: 'Inter', sans-serif; font-weight: 500; }
+
+  .mobile-list { display: none; flex-direction: column; gap: 10px; }
+  .m-room-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+  .m-room-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .m-room-head .name-edit { background: transparent; border: none; color: var(--text); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; }
+  .m-shift-row { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; }
+  .m-shift-row:last-child { margin-bottom: 0; }
+
+  @media (max-width: 760px) {
+    .grid-wrap { display: none; }
+    .add-room-row.desktop-only { display: none; }
+    .day-picker { display: flex; }
+    .mobile-list { display: flex; }
+  }
+
+  .overlay { position: fixed; inset: 0; background: rgba(10, 11, 14, 0.65); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; width: 100%; max-width: 460px; padding: 20px; max-height: 90vh; overflow-y: auto; }
+  .modal h2 { font-size: 21px; margin: 0 0 4px; }
+  .modal .modal-sub { color: var(--text-muted); font-size: 12.5px; margin-bottom: 14px; }
+  .field { margin-bottom: 13px; }
+  .field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; font-weight: 600; }
+  .field input[type=text], .field input[type=password], .field input[type=date], .field input[type=number], .field select, .field textarea {
+    width: 100%; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 6px; font-size: 16px; font-family: 'Inter', sans-serif;
+  }
+  .field input[type=color] { width: 100%; height: 40px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 4px; }
+  .field textarea { resize: vertical; min-height: 54px; font-size: 14px; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+  .platform-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--tab-accent); background: var(--tab-accent-bg); color: var(--text); }
+  .modal-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; gap: 8px; }
+  .row-inline { display: flex; gap: 10px; }
+  .row-inline .field { flex: 1; }
+  .error-text { color: var(--danger); font-size: 12.5px; margin-top: -6px; margin-bottom: 10px; display: none; }
+  .footer-note { margin-top: 14px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .staff-row { display: flex; align-items: center; justify-content: space-between; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; }
+
+  .flag-check { display: flex; align-items: center; gap: 8px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 10px; margin-bottom: 13px; cursor: pointer; }
+  .flag-check input { width: 17px; height: 17px; accent-color: var(--flag); }
+  .flag-check span { font-size: 13px; font-weight: 600; }
+
+  .product-row { display: grid; grid-template-columns: 1fr 78px 78px; gap: 6px; margin-bottom: 6px; align-items: center; }
+  .product-row input[type=text] { font-size: 14px; }
+  .product-row input[type=number] { font-size: 14px; padding: 10px 6px; text-align: center; }
+  .product-row-labels { display: grid; grid-template-columns: 1fr 78px 78px; gap: 6px; font-size: 10.5px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.03em; }
+
+  .report-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+  .report-table th, .report-table td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--border); }
+  .report-table th { color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .report-empty { color: var(--text-muted); font-size: 13px; padding: 14px 0; text-align: center; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div>
+      <h1>Break Room Schedule</h1>
+      <div class="sub">Wheelhouse &middot; who&rsquo;s breaking, what wax, which platform</div>
+    </div>
+    <div class="auth-area" id="authArea"></div>
+  </div>
+
+  <div class="tabs" id="platformTabs"></div>
+
+  <div class="toolbar">
+    <div class="week-nav">
+      <button id="prevWeek" aria-label="Previous week">&#8592;</button>
+      <div class="week-label" id="weekLabel">Loading&hellip;</div>
+      <button id="nextWeek" aria-label="Next week">&#8594;</button>
+    </div>
+    <button class="btn btn-ghost" id="todayBtn">This week</button>
+    <div id="adminToolbar" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+  </div>
+
+  <div class="day-picker" id="dayPicker"></div>
+
+  <div class="grid-wrap"><div class="grid" id="grid"></div></div>
+  <div class="add-room-row desktop-only" id="addRoomRowDesktop" style="display:none;"><button id="addRoomBtnDesktop">+ Add room / station</button></div>
+
+  <div class="mobile-list" id="mobileList"></div>
+  <div class="add-room-row" id="addRoomRowMobile" style="display:none;"><button id="addRoomBtnMobile">+ Add room / station</button></div>
+
+  <div class="footer-note">
+    <span id="statusNote">Loading&hellip;</span>
+    <button class="btn btn-ghost btn-sm" id="resetBtn" style="display:none;">Clear all data</button>
+  </div>
+</div>
+
+<!-- Session modal -->
+<div class="overlay" id="overlay" style="display:none;">
+  <div class="modal">
+    <h2 id="modalTitle">Add session</h2>
+    <div class="modal-sub" id="modalSub"></div>
+    <div style="margin-bottom:14px;"><span class="platform-badge" id="modalPlatformBadge"></span></div>
+
+    <label class="flag-check">
+      <input type="checkbox" id="f-flagged">
+      <span>&#9888; Flag this &mdash; needs attention (e.g. boxes changed)</span>
+    </label>
+
+    <div class="row-inline">
+      <div class="field"><label for="f-room">Room / station</label><select id="f-room"></select></div>
+      <div class="field"><label for="f-shift">Shift</label><select id="f-shift"></select></div>
+    </div>
+
+    <div class="row-inline">
+      <div class="field"><label for="f-worker1">Worker 1</label><input type="text" id="f-worker1" list="breakerList" placeholder="e.g. Colin"></div>
+      <div class="field"><label for="f-worker2">Worker 2 (optional)</label><input type="text" id="f-worker2" list="breakerList" placeholder="e.g. Chance"></div>
+    </div>
+    <datalist id="breakerList"></datalist>
+    <datalist id="productList"></datalist>
+
+    <div class="field">
+      <label for="f-productCount">Number of products this slot</label>
+      <select id="f-productCount">
+        <option value="1">1 product</option>
+        <option value="2">2 products</option>
+        <option value="3">3 products</option>
+        <option value="4">4 products</option>
+        <option value="5">5 products</option>
+      </select>
+    </div>
+
+    <div class="product-row-labels"><span>Product</span><span>Breaks</span><span>Boxes</span></div>
+    <div id="productRows"></div>
+
+    <div class="field" style="margin-top:6px;"><label for="f-notes">Notes</label><textarea id="f-notes" placeholder="Anything else worth flagging"></textarea></div>
+
+    <div class="modal-actions">
+      <button class="btn" id="deleteBtn" style="border-color:var(--danger); color:var(--danger); display:none;">Delete</button>
+      <div style="display:flex; gap:8px; margin-left:auto;">
+        <button class="btn btn-ghost" id="cancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="saveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Login modal -->
+<div class="overlay" id="loginOverlay" style="display:none;">
+  <div class="modal" style="max-width:340px;">
+    <h2>Admin login</h2>
+    <div class="modal-sub">Enter the admin password to make changes.</div>
+    <div class="field"><label for="loginPassword">Password</label><input type="password" id="loginPassword" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"></div>
+    <div class="error-text" id="loginError">That password isn&rsquo;t right &mdash; try again.</div>
+    <div class="modal-actions">
+      <div style="display:flex; gap:8px; margin-left:auto;">
+        <button class="btn btn-ghost" id="loginCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="loginSubmitBtn">Log in</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Manage staff modal -->
+<div class="overlay" id="staffOverlay" style="display:none;">
+  <div class="modal">
+    <h2>Manage staff</h2>
+    <div class="modal-sub">Add or remove people who show up in the worker fields.</div>
+    <div id="staffList" style="max-height:280px; overflow-y:auto; margin-bottom:14px;"></div>
+    <div class="row-inline" style="align-items:flex-end;">
+      <div class="field" style="margin-bottom:0;"><label for="newStaffInput">Add employee</label><input type="text" id="newStaffInput" placeholder="Full name"></div>
+      <button class="btn btn-primary" id="addStaffBtn" style="margin-bottom:0; height:42px;">Add</button>
+    </div>
+    <div class="modal-actions"><div style="margin-left:auto;"><button class="btn btn-ghost" id="closeStaffBtn">Done</button></div></div>
+  </div>
+</div>
+
+<!-- Settings / colors modal -->
+<div class="overlay" id="settingsOverlay" style="display:none;">
+  <div class="modal">
+    <h2>Settings</h2>
+    <div class="modal-sub">Set the color used for each platform&rsquo;s time blocks.</div>
+    <div class="field"><label for="colorWhatnot">Whatnot block color</label><input type="color" id="colorWhatnot"></div>
+    <div class="field"><label for="colorFanatics">Fanatics Live block color</label><input type="color" id="colorFanatics"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="resetColorsBtn">Reset to default</button>
+      <div style="display:flex; gap:8px; margin-left:auto;">
+        <button class="btn btn-ghost" id="settingsCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="settingsSaveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Export report modal -->
+<div class="overlay" id="reportOverlay" style="display:none;">
+  <div class="modal" style="max-width:520px;">
+    <h2>Export wax report</h2>
+    <div class="modal-sub">Totals every product broken in the date range into one row each &mdash; different products (e.g. Hobby vs. Jumbo) stay separate.</div>
+    <div class="row-inline">
+      <div class="field"><label for="reportStart">From</label><input type="date" id="reportStart"></div>
+      <div class="field"><label for="reportEnd">To</label><input type="date" id="reportEnd"></div>
+    </div>
+    <div class="field">
+      <label for="reportPlatform">Platform</label>
+      <select id="reportPlatform">
+        <option value="all">Both platforms</option>
+        <option value="whatnot">Whatnot only</option>
+        <option value="fanatics">Fanatics Live only</option>
+      </select>
+    </div>
+    <button class="btn" id="reportPreviewBtn">Preview totals</button>
+    <div id="reportPreviewArea"></div>
+    <div class="modal-actions">
+      <div style="display:flex; gap:8px; margin-left:auto;">
+        <button class="btn btn-ghost" id="reportCancelBtn">Close</button>
+        <button class="btn btn-primary" id="reportDownloadBtn">Download CSV</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+(function() {
+  const DAY_NAMES = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const DEFAULT_ROOMS = [
+    { id: 'r1', name: 'Room 1' }, { id: 'r2', name: 'Room 2' },
+    { id: 'r3', name: 'Room 3' }, { id: 'r4', name: 'Room 4' }
+  ];
+  const DEFAULT_BREAKERS = ['Colin','Chance','Kyle','Chris','Pat','Mike','Mark','Jeremy','Glenn','Johnny'];
+  const SHIFTS = [
+    { id: 'morning', label: '8am\u20132pm' },
+    { id: 'afternoon', label: '2pm\u20138pm' },
+    { id: 'night', label: '8pm\u20132am' }
+  ];
+  const PLATFORMS = [ { id: 'whatnot', label: 'Whatnot' }, { id: 'fanatics', label: 'Fanatics Live' } ];
+  const ADMIN_PASSWORD = 'breaks67';
+  const DEFAULT_COLORS = { whatnot: '#D6553D', fanatics: '#4A7FC9' };
+  const MAX_PRODUCTS = 5;
+
+  let rooms = [], sessions = [], breakerNames = [], productNames = [], colors = { ...DEFAULT_COLORS };
+  let weekStart = startOfWeek(new Date());
+  let activePlatform = 'whatnot';
+  let activeDayIndex = todayIndexInWeek();
+  let editingSessionId = null;
+  let isAdmin = false;
+
+  function startOfWeek(d) { const date = new Date(d); const day = date.getDay(); const diff = (day === 0 ? -6 : 1 - day); date.setDate(date.getDate() + diff); date.setHours(0,0,0,0); return date; }
+  function addDays(d, n) { const nd = new Date(d); nd.setDate(nd.getDate() + n); return nd; }
+  function fmtISO(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  function isSameDate(a, b) { return fmtISO(a) === fmtISO(b); }
+  function todayIndexInWeek() { const day = new Date().getDay(); return day === 0 ? 6 : day - 1; }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str || ''; return d.innerHTML; }
+  function escapeAttr(str) { return (str || '').replace(/"/g, '&quot;'); }
+  function hexToRgba(hex, alpha) { const h = hex.replace('#',''); const r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16); return `rgba(${r}, ${g}, ${b}, ${alpha})`; }
+
+  // ---- Firebase (shared, multi-device storage) ----
+  const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyCF9N9Pgnf8P7a6QCcY-ArcwVeXhz0x76Q",
+    authDomain: "wheelhouse-breaks-scheduling.firebaseapp.com",
+    projectId: "wheelhouse-breaks-scheduling",
+    storageBucket: "wheelhouse-breaks-scheduling.firebasestorage.app",
+    messagingSenderId: "501077189590",
+    appId: "1:501077189590:web:af801d0ce34a614facba77"
+  };
+  const FIRESTORE_COLLECTION = 'wheelhouse-break-schedule';
+  let firestoreDb = null;
+  try {
+    if (typeof firebase !== 'undefined' && FIREBASE_CONFIG.apiKey) {
+      firebase.initializeApp(FIREBASE_CONFIG);
+      firestoreDb = firebase.firestore();
+    }
+  } catch (e) { firestoreDb = null; }
+  const usingFirestore = !!firestoreDb;
+
+  // Storage adapter, in priority order: Firestore (shared across every device)
+  // > Claude's window.storage (this Claude account only) > localStorage (this
+  // browser only). This lets the same file work whether it's hosted standalone,
+  // opened inside Claude, or opened with no backend configured at all.
+  const usingClaudeStorage = (typeof window.storage !== 'undefined' && window.storage !== null);
+  const storage = {
+    async get(key) {
+      if (usingFirestore) {
+        try {
+          const snap = await firestoreDb.collection(FIRESTORE_COLLECTION).doc(key).get();
+          return snap.exists ? { key, value: snap.data().value } : null;
+        } catch (e) { return null; }
+      }
+      if (usingClaudeStorage) { try { return await window.storage.get(key); } catch (e) { return null; } }
+      const raw = localStorage.getItem('wheelhouse-break-schedule:' + key);
+      return raw === null ? null : { key, value: raw };
+    },
+    async set(key, value) {
+      if (usingFirestore) {
+        await firestoreDb.collection(FIRESTORE_COLLECTION).doc(key).set({ value });
+        return { key, value };
+      }
+      if (usingClaudeStorage) { return await window.storage.set(key, value); }
+      localStorage.setItem('wheelhouse-break-schedule:' + key, value);
+      return { key, value };
+    }
+  };
+
+  function migrateSessions() {
+    sessions.forEach(s => {
+      if (!Array.isArray(s.products)) { s.products = s.wax ? [{ name: s.wax, breaks: 1, boxes: 1 }] : []; }
+      if (typeof s.flagged !== 'boolean') s.flagged = false;
+    });
+  }
+
+  // Live sync: once the initial load has painted the page, subscribe to
+  // Firestore so every open tab/device picks up changes automatically.
+  function attachRealtimeSync() {
+    if (!usingFirestore) return;
+    const col = firestoreDb.collection(FIRESTORE_COLLECTION);
+    col.doc('rooms').onSnapshot(doc => { if (doc.exists) { try { rooms = JSON.parse(doc.data().value); renderAll(); } catch(e) {} } });
+    col.doc('sessions').onSnapshot(doc => { if (doc.exists) { try { sessions = JSON.parse(doc.data().value); migrateSessions(); renderAll(); } catch(e) {} } });
+    col.doc('breakers').onSnapshot(doc => { if (doc.exists) { try { breakerNames = JSON.parse(doc.data().value); } catch(e) {} } });
+    col.doc('products').onSnapshot(doc => { if (doc.exists) { try { productNames = JSON.parse(doc.data().value); } catch(e) {} } });
+    col.doc('colors').onSnapshot(doc => { if (doc.exists) { try { colors = { ...DEFAULT_COLORS, ...JSON.parse(doc.data().value) }; applyColors(); renderAll(); } catch(e) {} } });
+  }
+
+  // ---- Persistence ----
+  async function loadData() {
+    try { const r = await storage.get('rooms'); rooms = r ? JSON.parse(r.value) : DEFAULT_ROOMS.slice(); } catch(e) { rooms = DEFAULT_ROOMS.slice(); }
+    try {
+      const r = await storage.get('sessions');
+      sessions = r ? JSON.parse(r.value) : [];
+      migrateSessions();
+    } catch(e) { sessions = []; }
+    try { const r = await storage.get('breakers'); breakerNames = r ? JSON.parse(r.value) : DEFAULT_BREAKERS.slice(); } catch(e) { breakerNames = DEFAULT_BREAKERS.slice(); }
+    try { const r = await storage.get('products'); productNames = r ? JSON.parse(r.value) : []; } catch(e) { productNames = []; }
+    try { const r = await storage.get('colors'); colors = r ? { ...DEFAULT_COLORS, ...JSON.parse(r.value) } : { ...DEFAULT_COLORS }; } catch(e) { colors = { ...DEFAULT_COLORS }; }
+    try { isAdmin = sessionStorage.getItem('wheelhouse-admin') === '1'; } catch(e) { isAdmin = false; }
+  }
+  async function saveRooms() { try { await storage.set('rooms', JSON.stringify(rooms)); } catch(e) { flashStatus('Couldn\u2019t save room changes.'); } }
+  async function saveSessions() { try { await storage.set('sessions', JSON.stringify(sessions)); flashStatus('Saved.'); } catch(e) { flashStatus('Couldn\u2019t save. Try again.'); } }
+  async function saveBreakers() { try { await storage.set('breakers', JSON.stringify(breakerNames)); } catch(e) {} }
+  async function saveProductNames() { try { await storage.set('products', JSON.stringify(productNames)); } catch(e) {} }
+  async function saveColors() { try { await storage.set('colors', JSON.stringify(colors)); } catch(e) { flashStatus('Couldn\u2019t save colors.'); } }
+
+  let statusTimer;
+  function flashStatus(msg) {
+    document.getElementById('statusNote').textContent = msg;
+    clearTimeout(statusTimer);
+    statusTimer = setTimeout(() => {
+      document.getElementById('statusNote').textContent = usingFirestore
+        ? 'Synced live across your team'
+        : (usingClaudeStorage ? 'Synced to your Claude account' : 'Saved to this browser on this device');
+    }, 2200);
+  }
+
+  function applyColors() {
+    document.documentElement.style.setProperty('--whatnot', colors.whatnot);
+    document.documentElement.style.setProperty('--whatnot-bg', hexToRgba(colors.whatnot, 0.16));
+    document.documentElement.style.setProperty('--fanatics', colors.fanatics);
+    document.documentElement.style.setProperty('--fanatics-bg', hexToRgba(colors.fanatics, 0.16));
+  }
+
+  // ---- Auth ----
+  function renderAuthArea() {
+    const el = document.getElementById('authArea');
+    if (isAdmin) {
+      el.innerHTML = `<span class="admin-pill">Admin</span><button class="btn btn-sm" id="logoutBtn">Log out</button>`;
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        isAdmin = false;
+        try { sessionStorage.removeItem('wheelhouse-admin'); } catch(e) {}
+        renderAll();
+      });
+    } else {
+      el.innerHTML = `<button class="btn btn-sm" id="loginBtn">Admin login</button>`;
+      document.getElementById('loginBtn').addEventListener('click', openLoginModal);
+    }
+  }
+  function openLoginModal() {
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('loginOverlay').style.display = 'flex';
+    setTimeout(() => document.getElementById('loginPassword').focus(), 30);
+  }
+  document.getElementById('loginCancelBtn').addEventListener('click', () => { document.getElementById('loginOverlay').style.display = 'none'; });
+  document.getElementById('loginOverlay').addEventListener('click', (e) => { if (e.target.id === 'loginOverlay') document.getElementById('loginOverlay').style.display = 'none'; });
+  function submitLogin() {
+    const val = document.getElementById('loginPassword').value;
+    if (val === ADMIN_PASSWORD) {
+      isAdmin = true;
+      try { sessionStorage.setItem('wheelhouse-admin', '1'); } catch(e) {}
+      document.getElementById('loginOverlay').style.display = 'none';
+      renderAll();
+    } else {
+      document.getElementById('loginError').style.display = 'block';
+    }
+  }
+  document.getElementById('loginSubmitBtn').addEventListener('click', submitLogin);
+  document.getElementById('loginPassword').addEventListener('keydown', (e) => { if (e.key === 'Enter') submitLogin(); });
+
+  // ---- Tabs ----
+  function renderTabs() {
+    const el = document.getElementById('platformTabs');
+    el.innerHTML = PLATFORMS.map(p => `<button class="tab-btn ${activePlatform === p.id ? 'active tab-' + p.id : ''}" data-platform="${p.id}"><span class="swatch" style="background:var(--${p.id})"></span>${p.label}</button>`).join('');
+    el.querySelectorAll('.tab-btn').forEach(btn => { btn.addEventListener('click', () => { activePlatform = btn.dataset.platform; renderAll(); }); });
+  }
+
+  // ---- Admin toolbar ----
+  function renderAdminToolbar() {
+    const el = document.getElementById('adminToolbar');
+    document.getElementById('resetBtn').style.display = isAdmin ? 'inline-flex' : 'none';
+    if (!isAdmin) { el.innerHTML = ''; return; }
+    el.innerHTML = `<button class="btn" id="manageStaffBtn">Manage staff</button><button class="btn" id="settingsBtn">Settings</button><button class="btn" id="reportBtn">Export report</button>`;
+    document.getElementById('manageStaffBtn').addEventListener('click', openStaffModal);
+    document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
+    document.getElementById('reportBtn').addEventListener('click', openReportModal);
+  }
+
+  function renderWeekLabel() {
+    const end = addDays(weekStart, 6);
+    const opts = { month: 'short', day: 'numeric' };
+    document.getElementById('weekLabel').textContent = weekStart.toLocaleDateString('en-US', opts) + ' \u2013 ' + end.toLocaleDateString('en-US', opts);
+  }
+
+  function findSession(roomId, iso, shiftId) {
+    return sessions.find(s => s.roomId === roomId && s.date === iso && s.shift === shiftId && s.platform === activePlatform);
+  }
+
+  function sessionBlockHtml(shiftLabel, s) {
+    const workers = [s.worker1, s.worker2].filter(Boolean).join(' & ') || 'Unassigned';
+    const productLine = (s.products || []).filter(p => p.name).map(p => {
+      const br = Number(p.breaks) || 0, bx = Number(p.boxes) || 0;
+      return `${escapeHtml(p.name)} \u2014 ${br} break${br === 1 ? '' : 's'}, ${bx} box${bx === 1 ? '' : 'es'}`;
+    }).join('<br>');
+    const flagBadge = s.flagged ? '<span class="flag-badge">&#9888;</span>' : '';
+    return `${flagBadge}<div class="shift-time">${shiftLabel}</div><div class="breakers">${escapeHtml(workers)}</div>${productLine ? `<div class="product-line">${productLine}</div>` : ''}${s.notes ? `<div class="notes-preview">${escapeHtml(s.notes)}</div>` : ''}`;
+  }
+
+  // ---- Desktop grid ----
+  function renderGrid() {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    grid.style.gridTemplateRows = `40px repeat(${rooms.length}, auto)`;
+    const corner = document.createElement('div'); corner.className = 'corner'; grid.appendChild(corner);
+    const today = new Date();
+    for (let i = 0; i < 7; i++) {
+      const d = addDays(weekStart, i);
+      const head = document.createElement('div');
+      head.className = 'col-head' + (isSameDate(d, today) ? ' today' : '');
+      head.innerHTML = `<div class="dow">${DAY_NAMES[i]}</div><div class="date">${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>`;
+      grid.appendChild(head);
+    }
+    rooms.forEach(room => {
+      const rowHead = document.createElement('div');
+      rowHead.className = 'row-head';
+      rowHead.innerHTML = `<input class="name-edit" value="${escapeAttr(room.name)}" data-room="${room.id}" ${isAdmin ? '' : 'disabled'}>${isAdmin ? `<button class="remove-room" data-remove-room="${room.id}" title="Remove room">&times;</button>` : ''}`;
+      grid.appendChild(rowHead);
+      for (let i = 0; i < 7; i++) {
+        const iso = fmtISO(addDays(weekStart, i));
+        const cell = document.createElement('div'); cell.className = 'cell';
+        SHIFTS.forEach(shift => {
+          const slot = document.createElement('div'); slot.className = 'shift-slot';
+          const existing = findSession(room.id, iso, shift.id);
+          if (existing) {
+            const el = document.createElement('div');
+            el.className = 'session' + (existing.flagged ? ' flagged' : '');
+            el.innerHTML = sessionBlockHtml(shift.label, existing);
+            el.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id, session: existing }); else openLoginModal(); });
+            slot.appendChild(el);
+          } else {
+            const btn = document.createElement('button');
+            btn.className = 'shift-empty';
+            btn.innerHTML = `<span class="slot-label">${shift.label}</span><span class="plus">+</span>`;
+            btn.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id }); else openLoginModal(); });
+            slot.appendChild(btn);
+          }
+          cell.appendChild(slot);
+        });
+        grid.appendChild(cell);
+      }
+    });
+    grid.querySelectorAll('.name-edit').forEach(input => {
+      input.addEventListener('change', (e) => { const room = rooms.find(r => r.id === e.target.dataset.room); if (room) { room.name = e.target.value.trim() || room.name; saveRooms(); } });
+    });
+    grid.querySelectorAll('[data-remove-room]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = e.target.dataset.removeRoom;
+        const room = rooms.find(r => r.id === id);
+        if (!room) return;
+        const hasSessions = sessions.some(s => s.roomId === id);
+        const msg = hasSessions ? `Remove "${room.name}"? Its scheduled sessions will be deleted too.` : `Remove "${room.name}"?`;
+        if (confirm(msg)) { rooms = rooms.filter(r => r.id !== id); sessions = sessions.filter(s => s.roomId !== id); saveRooms(); saveSessions(); renderAll(); }
+      });
+    });
+    document.getElementById('addRoomRowDesktop').style.display = isAdmin ? 'block' : 'none';
+  }
+
+  // ---- Mobile day list ----
+  function renderDayPicker() {
+    const el = document.getElementById('dayPicker');
+    el.innerHTML = '';
+    for (let i = 0; i < 7; i++) {
+      const d = addDays(weekStart, i);
+      const chip = document.createElement('button');
+      chip.className = 'day-chip' + (i === activeDayIndex ? ' active tab-' + activePlatform : '');
+      chip.innerHTML = `${DAY_NAMES[i]}<span class="n">${d.getDate()}</span>`;
+      chip.addEventListener('click', () => { activeDayIndex = i; renderMobileList(); renderDayPicker(); });
+      el.appendChild(chip);
+    }
+  }
+  function renderMobileList() {
+    const el = document.getElementById('mobileList');
+    el.innerHTML = '';
+    const iso = fmtISO(addDays(weekStart, activeDayIndex));
+    rooms.forEach(room => {
+      const card = document.createElement('div'); card.className = 'm-room-card';
+      const head = document.createElement('div'); head.className = 'm-room-head';
+      head.innerHTML = `<input class="name-edit" value="${escapeAttr(room.name)}" data-room="${room.id}" ${isAdmin ? '' : 'disabled'}>${isAdmin ? `<button class="remove-room" data-remove-room="${room.id}" style="background:none;border:none;color:var(--text-muted);font-size:16px;">&times;</button>` : ''}`;
+      card.appendChild(head);
+      SHIFTS.forEach(shift => {
+        const row = document.createElement('div'); row.className = 'm-shift-row';
+        const existing = findSession(room.id, iso, shift.id);
+        if (existing) {
+          const el2 = document.createElement('div');
+          el2.className = 'session' + (existing.flagged ? ' flagged' : '');
+          el2.style.borderRadius = '8px'; el2.style.padding = '10px';
+          el2.innerHTML = sessionBlockHtml(shift.label, existing);
+          el2.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id, session: existing }); else openLoginModal(); });
+          row.appendChild(el2);
+        } else {
+          const btn = document.createElement('button');
+          btn.className = 'shift-empty'; btn.style.borderRadius = '8px';
+          btn.innerHTML = `<span class="slot-label">${shift.label}</span><span class="plus">+ Add</span>`;
+          btn.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id }); else openLoginModal(); });
+          row.appendChild(btn);
+        }
+        card.appendChild(row);
+      });
+      el.appendChild(card);
+    });
+    el.querySelectorAll('.name-edit').forEach(input => {
+      input.addEventListener('change', (e) => { const room = rooms.find(r => r.id === e.target.dataset.room); if (room) { room.name = e.target.value.trim() || room.name; saveRooms(); } });
+    });
+    el.querySelectorAll('[data-remove-room]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = e.target.dataset.removeRoom;
+        const room = rooms.find(r => r.id === id);
+        if (!room) return;
+        if (confirm(`Remove "${room.name}"? Its scheduled sessions will be deleted too.`)) { rooms = rooms.filter(r => r.id !== id); sessions = sessions.filter(s => s.roomId !== id); saveRooms(); saveSessions(); renderAll(); }
+      });
+    });
+    document.getElementById('addRoomRowMobile').style.display = isAdmin ? 'block' : 'none';
+  }
+
+  // ---- Session modal ----
+  const f = {
+    room: document.getElementById('f-room'), shift: document.getElementById('f-shift'),
+    worker1: document.getElementById('f-worker1'), worker2: document.getElementById('f-worker2'),
+    notes: document.getElementById('f-notes'), flagged: document.getElementById('f-flagged'),
+    productCount: document.getElementById('f-productCount')
+  };
+  const overlay = document.getElementById('overlay');
+  const deleteBtn = document.getElementById('deleteBtn');
+  const productRowsEl = document.getElementById('productRows');
+
+  function populateRoomSelect() { f.room.innerHTML = rooms.map(r => `<option value="${r.id}">${escapeAttr(r.name)}</option>`).join(''); }
+  function populateShiftSelect() { f.shift.innerHTML = SHIFTS.map(s => `<option value="${s.id}">${s.label}</option>`).join(''); }
+  function populateBreakerList() { document.getElementById('breakerList').innerHTML = breakerNames.map(n => `<option value="${escapeAttr(n)}"></option>`).join(''); }
+  function populateProductList() { document.getElementById('productList').innerHTML = productNames.map(n => `<option value="${escapeAttr(n)}"></option>`).join(''); }
+
+  function gatherProductRows() {
+    return Array.from(productRowsEl.querySelectorAll('.product-row')).map(row => ({
+      name: row.querySelector('.p-name').value.trim(),
+      breaks: Number(row.querySelector('.p-breaks').value) || 0,
+      boxes: Number(row.querySelector('.p-boxes').value) || 0
+    }));
+  }
+  function renderProductRows(count, existing) {
+    productRowsEl.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+      const p = existing[i] || { name: '', breaks: 1, boxes: 1 };
+      const row = document.createElement('div');
+      row.className = 'product-row';
+      row.innerHTML = `
+        <input type="text" class="p-name" list="productList" placeholder="Product name" value="${escapeAttr(p.name)}">
+        <input type="number" class="p-breaks" min="0" value="${p.breaks}">
+        <input type="number" class="p-boxes" min="0" value="${p.boxes}">
+      `;
+      productRowsEl.appendChild(row);
+    }
+  }
+  f.productCount.addEventListener('change', () => {
+    const current = gatherProductRows();
+    renderProductRows(Number(f.productCount.value), current);
+  });
+
+  function openModal({ roomId, date, shiftId, session }) {
+    populateRoomSelect(); populateShiftSelect(); populateBreakerList(); populateProductList();
+    editingSessionId = session ? session.id : null;
+    f.room.value = roomId; f.shift.value = shiftId;
+    const d = new Date(date + 'T00:00:00');
+    document.getElementById('modalSub').textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    document.getElementById('modalTitle').textContent = session ? 'Edit session' : 'Add session';
+    const platformLabel = PLATFORMS.find(p => p.id === activePlatform).label;
+    const badge = document.getElementById('modalPlatformBadge');
+    badge.textContent = platformLabel;
+    badge.style.setProperty('--tab-accent', `var(--${activePlatform})`);
+    badge.style.setProperty('--tab-accent-bg', `var(--${activePlatform}-bg)`);
+
+    if (session) {
+      f.worker1.value = session.worker1 || ''; f.worker2.value = session.worker2 || '';
+      f.notes.value = session.notes || ''; f.flagged.checked = !!session.flagged;
+      const prods = (session.products && session.products.length) ? session.products : [{ name:'', breaks:1, boxes:1 }];
+      f.productCount.value = String(Math.min(Math.max(prods.length,1), MAX_PRODUCTS));
+      renderProductRows(Number(f.productCount.value), prods);
+      deleteBtn.style.display = 'inline-flex';
+    } else {
+      f.worker1.value = ''; f.worker2.value = ''; f.notes.value = ''; f.flagged.checked = false;
+      f.productCount.value = '1';
+      renderProductRows(1, [{ name:'', breaks:1, boxes:1 }]);
+      deleteBtn.style.display = 'none';
+    }
+    overlay.dataset.date = date; overlay.dataset.shift = shiftId;
+    overlay.style.display = 'flex';
+    setTimeout(() => f.worker1.focus(), 30);
+  }
+  function closeModal() { overlay.style.display = 'none'; editingSessionId = null; }
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+
+  document.getElementById('saveBtn').addEventListener('click', async () => {
+    const worker1Val = f.worker1.value.trim(), worker2Val = f.worker2.value.trim();
+    const notesVal = f.notes.value.trim();
+    if (!worker1Val) { f.worker1.focus(); return; }
+    const products = gatherProductRows().filter(p => p.name);
+    [worker1Val, worker2Val].forEach(name => { if (name && !breakerNames.includes(name)) breakerNames.push(name); });
+    products.forEach(p => { if (p.name && !productNames.includes(p.name)) productNames.push(p.name); });
+    await saveBreakers(); await saveProductNames();
+
+    const date = overlay.dataset.date, shiftId = f.shift.value, roomId = f.room.value;
+    const conflict = sessions.find(s => s.roomId === roomId && s.date === date && s.shift === shiftId && s.platform === activePlatform && s.id !== editingSessionId);
+    if (conflict) { alert('That room already has a ' + PLATFORMS.find(p=>p.id===activePlatform).label + ' session booked for this shift. Edit the existing one instead.'); return; }
+
+    if (editingSessionId) {
+      const s = sessions.find(x => x.id === editingSessionId);
+      if (s) { s.roomId = roomId; s.date = date; s.shift = shiftId; s.worker1 = worker1Val; s.worker2 = worker2Val; s.notes = notesVal; s.flagged = f.flagged.checked; s.products = products; }
+    } else {
+      sessions.push({ id: uid(), roomId, date, shift: shiftId, worker1: worker1Val, worker2: worker2Val, notes: notesVal, flagged: f.flagged.checked, products, platform: activePlatform });
+    }
+    await saveSessions(); renderAll(); closeModal();
+  });
+  deleteBtn.addEventListener('click', async () => {
+    if (!editingSessionId) return;
+    sessions = sessions.filter(s => s.id !== editingSessionId);
+    await saveSessions(); renderAll(); closeModal();
+  });
+
+  // ---- Staff modal ----
+  const staffOverlay = document.getElementById('staffOverlay');
+  function openStaffModal() { renderStaffList(); staffOverlay.style.display = 'flex'; }
+  function renderStaffList() {
+    const el = document.getElementById('staffList');
+    if (breakerNames.length === 0) { el.innerHTML = '<div style="color:var(--text-muted); font-size:13px;">No employees yet. Add one below.</div>'; return; }
+    el.innerHTML = breakerNames.map(name => `<div class="staff-row"><span style="font-size:13.5px;">${escapeHtml(name)}</span><button data-remove-staff="${escapeAttr(name)}" style="background:none; border:none; color:var(--text-muted); font-size:15px;">&times;</button></div>`).join('');
+    el.querySelectorAll('[data-remove-staff]').forEach(btn => { btn.addEventListener('click', async () => { breakerNames = breakerNames.filter(n => n !== btn.dataset.removeStaff); await saveBreakers(); renderStaffList(); }); });
+  }
+  document.getElementById('closeStaffBtn').addEventListener('click', () => { staffOverlay.style.display = 'none'; });
+  staffOverlay.addEventListener('click', (e) => { if (e.target === staffOverlay) staffOverlay.style.display = 'none'; });
+  document.getElementById('addStaffBtn').addEventListener('click', addStaffFromInput);
+  document.getElementById('newStaffInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') addStaffFromInput(); });
+  async function addStaffFromInput() {
+    const input = document.getElementById('newStaffInput');
+    const name = input.value.trim();
+    if (!name || breakerNames.includes(name)) { input.value = ''; return; }
+    breakerNames.push(name); await saveBreakers(); input.value = ''; renderStaffList();
+  }
+
+  // ---- Settings modal ----
+  const settingsOverlay = document.getElementById('settingsOverlay');
+  function openSettingsModal() {
+    document.getElementById('colorWhatnot').value = colors.whatnot;
+    document.getElementById('colorFanatics').value = colors.fanatics;
+    settingsOverlay.style.display = 'flex';
+  }
+  document.getElementById('settingsCancelBtn').addEventListener('click', () => { settingsOverlay.style.display = 'none'; });
+  settingsOverlay.addEventListener('click', (e) => { if (e.target === settingsOverlay) settingsOverlay.style.display = 'none'; });
+  document.getElementById('resetColorsBtn').addEventListener('click', () => {
+    document.getElementById('colorWhatnot').value = DEFAULT_COLORS.whatnot;
+    document.getElementById('colorFanatics').value = DEFAULT_COLORS.fanatics;
+  });
+  document.getElementById('settingsSaveBtn').addEventListener('click', async () => {
+    colors = { whatnot: document.getElementById('colorWhatnot').value, fanatics: document.getElementById('colorFanatics').value };
+    await saveColors(); applyColors(); renderAll();
+    settingsOverlay.style.display = 'none';
+  });
+
+  // ---- Export report modal ----
+  const reportOverlay = document.getElementById('reportOverlay');
+  function defaultReportRange() {
+    const end = new Date();
+    const start = addDays(end, -6);
+    return { start: fmtISO(start), end: fmtISO(end) };
+  }
+  function openReportModal() {
+    const range = defaultReportRange();
+    document.getElementById('reportStart').value = range.start;
+    document.getElementById('reportEnd').value = range.end;
+    document.getElementById('reportPlatform').value = 'all';
+    document.getElementById('reportPreviewArea').innerHTML = '';
+    reportOverlay.style.display = 'flex';
+  }
+  document.getElementById('reportCancelBtn').addEventListener('click', () => { reportOverlay.style.display = 'none'; });
+  reportOverlay.addEventListener('click', (e) => { if (e.target === reportOverlay) reportOverlay.style.display = 'none'; });
+
+  function computeTotals(startISO, endISO, platformFilter) {
+    const totals = {}; // normalized key -> {label, breaks, boxes, slots}
+    sessions.forEach(s => {
+      if (s.date < startISO || s.date > endISO) return;
+      if (platformFilter !== 'all' && s.platform !== platformFilter) return;
+      (s.products || []).forEach(p => {
+        const label = (p.name || '').trim();
+        if (!label) return;
+        const key = label.toLowerCase().replace(/\s+/g, ' ');
+        if (!totals[key]) totals[key] = { label, breaks: 0, boxes: 0, slots: 0 };
+        totals[key].breaks += Number(p.breaks) || 0;
+        totals[key].boxes += Number(p.boxes) || 0;
+        totals[key].slots += 1;
+      });
+    });
+    return Object.values(totals).sort((a, b) => a.label.localeCompare(b.label));
+  }
+  function currentReportParams() {
+    return {
+      start: document.getElementById('reportStart').value,
+      end: document.getElementById('reportEnd').value,
+      platform: document.getElementById('reportPlatform').value
+    };
+  }
+  document.getElementById('reportPreviewBtn').addEventListener('click', () => {
+    const { start, end, platform } = currentReportParams();
+    if (!start || !end) return;
+    const rows = computeTotals(start, end, platform);
+    const area = document.getElementById('reportPreviewArea');
+    if (rows.length === 0) { area.innerHTML = '<div class="report-empty">No products logged in that range.</div>'; return; }
+    area.innerHTML = `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes</th></tr></thead><tbody>${
+      rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxes}</td></tr>`).join('')
+    }</tbody></table>`;
+  });
+  document.getElementById('reportDownloadBtn').addEventListener('click', () => {
+    const { start, end, platform } = currentReportParams();
+    if (!start || !end) { alert('Pick a start and end date first.'); return; }
+    const rows = computeTotals(start, end, platform);
+    let csv = 'Product,Total Breaks,Total Boxes\n';
+    rows.forEach(r => { csv += `"${r.label.replace(/"/g,'""')}",${r.breaks},${r.boxes}\n`; });
+    if (rows.length === 0) csv += 'No products logged in this range,,\n';
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `wheelhouse-wax-report_${start}_to_${end}${platform !== 'all' ? '_' + platform : ''}.csv`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  // ---- Room add ----
+  async function addRoom() {
+    const name = prompt('Name this room or station:', 'Room ' + (rooms.length + 1));
+    if (!name) return;
+    rooms.push({ id: uid(), name: name.trim() });
+    await saveRooms(); renderAll();
+  }
+  document.getElementById('addRoomBtnDesktop').addEventListener('click', addRoom);
+  document.getElementById('addRoomBtnMobile').addEventListener('click', addRoom);
+
+  // ---- Week nav ----
+  document.getElementById('prevWeek').addEventListener('click', () => { weekStart = addDays(weekStart, -7); renderAll(); });
+  document.getElementById('nextWeek').addEventListener('click', () => { weekStart = addDays(weekStart, 7); renderAll(); });
+  document.getElementById('todayBtn').addEventListener('click', () => { weekStart = startOfWeek(new Date()); activeDayIndex = todayIndexInWeek(); renderAll(); });
+
+  // ---- Reset ----
+  document.getElementById('resetBtn').addEventListener('click', async () => {
+    if (!isAdmin) return;
+    if (!confirm('Clear all rooms, sessions, staff, products, and color settings? This can\u2019t be undone.')) return;
+    rooms = DEFAULT_ROOMS.slice(); sessions = []; breakerNames = DEFAULT_BREAKERS.slice(); productNames = []; colors = { ...DEFAULT_COLORS };
+    await saveRooms(); await saveSessions(); await saveBreakers(); await saveProductNames(); await saveColors();
+    applyColors(); renderAll(); flashStatus('Cleared.');
+  });
+
+  // ---- Render orchestration ----
+  function renderAll() {
+    renderAuthArea(); renderTabs(); renderAdminToolbar(); renderWeekLabel();
+    renderGrid(); renderDayPicker(); renderMobileList();
+  }
+
+  async function init() {
+    document.getElementById('weekLabel').textContent = 'Loading\u2026';
+    await loadData();
+    applyColors();
+    renderAll();
+    attachRealtimeSync();
+    flashStatus(usingFirestore ? 'Synced live across your team' : (usingClaudeStorage ? 'Synced to your Claude account' : 'Saved to this browser on this device'));
+  }
+  init();
+})();
+</script>
+</body>
+</html>

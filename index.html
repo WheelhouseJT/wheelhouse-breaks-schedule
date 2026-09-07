@@ -21,6 +21,9 @@
     --accent: #E3B23C;
     --danger: #C24949;
     --flag: #E3B23C;
+    --shift-morning: #D8D9DC;
+    --shift-afternoon: #BEE0FA;
+    --shift-night: #F6D2A8;
     --radius: 8px;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -89,6 +92,17 @@
   .session .breakers { font-weight: 600; margin-top: 1px; }
   .session .product-line { color: var(--text-muted); white-space: normal; word-break: break-word; }
   .session .notes-preview { color: var(--text-muted); font-style: italic; white-space: normal; word-break: break-word; }
+
+  /* Filled slots are tinted by shift period (not platform) so the day's rhythm
+     is scannable at a glance; the left border still shows platform color. */
+  .session.session-morning { background: var(--shift-morning); color: #1B1E24; }
+  .session.session-afternoon { background: var(--shift-afternoon); color: #1B1E24; }
+  .session.session-night { background: var(--shift-night); color: #1B1E24; }
+  .session.session-morning .shift-time, .session.session-morning .product-line, .session.session-morning .notes-preview,
+  .session.session-afternoon .shift-time, .session.session-afternoon .product-line, .session.session-afternoon .notes-preview,
+  .session.session-night .shift-time, .session.session-night .product-line, .session.session-night .notes-preview {
+    color: rgba(27, 30, 36, 0.65);
+  }
 
   .add-room-row { padding: 10px 0; }
   .add-room-row button { width: 100%; background: transparent; border: 1px dashed var(--border); color: var(--text-muted); border-radius: var(--radius); padding: 9px; font-size: 12.5px; }
@@ -551,7 +565,7 @@
           const existing = findSession(room.id, iso, shift.id);
           if (existing) {
             const el = document.createElement('div');
-            el.className = 'session' + (existing.flagged ? ' flagged' : '');
+            el.className = 'session session-' + shift.id + (existing.flagged ? ' flagged' : '');
             el.innerHTML = sessionBlockHtml(shift.label, existing);
             el.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id, session: existing }); else openLoginModal(); });
             slot.appendChild(el);
@@ -610,7 +624,7 @@
         const existing = findSession(room.id, iso, shift.id);
         if (existing) {
           const el2 = document.createElement('div');
-          el2.className = 'session' + (existing.flagged ? ' flagged' : '');
+          el2.className = 'session session-' + shift.id + (existing.flagged ? ' flagged' : '');
           el2.style.borderRadius = '8px'; el2.style.padding = '10px';
           el2.innerHTML = sessionBlockHtml(shift.label, existing);
           el2.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id, session: existing }); else openLoginModal(); });
@@ -801,7 +815,7 @@
   reportOverlay.addEventListener('click', (e) => { if (e.target === reportOverlay) reportOverlay.style.display = 'none'; });
 
   function computeTotals(startISO, endISO, platformFilter) {
-    const totals = {}; // normalized key -> {label, breaks, boxes, slots}
+    const totals = {}; // normalized key -> {label, breaks, boxes, boxesNeeded, slots}
     sessions.forEach(s => {
       if (s.date < startISO || s.date > endISO) return;
       if (platformFilter !== 'all' && s.platform !== platformFilter) return;
@@ -809,9 +823,13 @@
         const label = (p.name || '').trim();
         if (!label) return;
         const key = label.toLowerCase().replace(/\s+/g, ' ');
-        if (!totals[key]) totals[key] = { label, breaks: 0, boxes: 0, slots: 0 };
-        totals[key].breaks += Number(p.breaks) || 0;
-        totals[key].boxes += Number(p.boxes) || 0;
+        const br = Number(p.breaks) || 0, bx = Number(p.boxes) || 0;
+        if (!totals[key]) totals[key] = { label, breaks: 0, boxes: 0, boxesNeeded: 0, slots: 0 };
+        totals[key].breaks += br;
+        totals[key].boxes += bx;
+        // Boxes needed is breaks x boxes PER SESSION, then summed across sessions for
+        // this product -- not the aggregated Total Breaks x Total Boxes.
+        totals[key].boxesNeeded += br * bx;
         totals[key].slots += 1;
       });
     });
@@ -830,17 +848,17 @@
     const rows = computeTotals(start, end, platform);
     const area = document.getElementById('reportPreviewArea');
     if (rows.length === 0) { area.innerHTML = '<div class="report-empty">No products logged in that range.</div>'; return; }
-    area.innerHTML = `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes</th></tr></thead><tbody>${
-      rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxes}</td></tr>`).join('')
+    area.innerHTML = `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes</th><th>Total boxes needed</th></tr></thead><tbody>${
+      rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxes}</td><td>${r.boxesNeeded}</td></tr>`).join('')
     }</tbody></table>`;
   });
   document.getElementById('reportDownloadBtn').addEventListener('click', () => {
     const { start, end, platform } = currentReportParams();
     if (!start || !end) { alert('Pick a start and end date first.'); return; }
     const rows = computeTotals(start, end, platform);
-    let csv = 'Product,Total Breaks,Total Boxes\n';
-    rows.forEach(r => { csv += `"${r.label.replace(/"/g,'""')}",${r.breaks},${r.boxes}\n`; });
-    if (rows.length === 0) csv += 'No products logged in this range,,\n';
+    let csv = 'Product,Total Breaks,Total Boxes,Total Boxes Needed\n';
+    rows.forEach(r => { csv += `"${r.label.replace(/"/g,'""')}",${r.breaks},${r.boxes},${r.boxesNeeded}\n`; });
+    if (rows.length === 0) csv += 'No products logged in this range,,,\n';
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

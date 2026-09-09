@@ -85,7 +85,7 @@
   .shift-empty .slot-label { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
   .shift-empty .plus { font-size: 15px; line-height: 1; }
 
-  .session { position: relative; border-left: none; background: var(--tab-accent-bg, var(--whatnot-bg)); border-radius: 6px; padding: 12px; min-height: 110px; font-size: 11.5px; cursor: pointer; line-height: 1.3; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .session { position: relative; border-left: none; background: var(--tab-accent-bg, var(--whatnot-bg)); border-radius: 6px; padding: 15px 12px 18px; min-height: 110px; font-size: 11.5px; cursor: pointer; line-height: 1.3; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
   .session:hover { filter: brightness(1.15); }
   .session[draggable="true"] { cursor: grab; }
   .session[draggable="true"]:active { cursor: grabbing; }
@@ -102,6 +102,12 @@
   .session .shift-time { font-weight: 700; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
   .session .breakers { font-weight: 600; margin-top: 1px; }
   .session .product-line { color: var(--text-muted); white-space: normal; word-break: break-word; }
+  .session .product-entry { width: 100%; padding: 6px 2px; border-top: 1px solid rgba(27,30,36,0.15); display: flex; flex-direction: column; align-items: center; gap: 1px; }
+  .session .product-entry:first-child { border-top: none; }
+  .session .product-name { font-weight: 600; line-height: 1.25; }
+  .session .product-stat { display: block; line-height: 1.25; }
+  .session-resize-handle { position: absolute; left: 30%; right: 30%; bottom: 2px; height: 12px; cursor: ns-resize; z-index: 4; }
+  .session-resize-handle::after { content: ''; position: absolute; left: 20%; right: 20%; bottom: 3px; height: 3px; border-top: 1px solid rgba(27,30,36,.4); border-bottom: 1px solid rgba(27,30,36,.4); }
   .session .notes-preview { color: var(--danger); font-style: italic; font-weight: 600; white-space: normal; word-break: break-word; margin-top: 4px; }
   .session .session-platform { display: inline-flex; align-self: center; margin-bottom: 5px; padding: 2px 7px; border-radius: 999px; background: rgba(27, 30, 36, 0.12); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
   .combined-empty { cursor: default; text-align: center; justify-content: center; }
@@ -667,8 +673,8 @@
     const workers = [s.worker1, s.worker2].filter(Boolean).join(' & ') || 'Unassigned';
     const productLine = (s.products || []).filter(p => p.name).map(p => {
       const br = Number(p.breaks) || 0, bx = Number(p.boxes) || 0;
-      return `${escapeHtml(p.name)} \u2014 ${br} break${br === 1 ? '' : 's'}, ${bx} box${bx === 1 ? '' : 'es'}`;
-    }).join('<br>');
+      return `<div class="product-entry"><div class="product-name">${escapeHtml(p.name)}</div><span class="product-stat">${br} break${br === 1 ? '' : 's'}</span><span class="product-stat">${bx} box${bx === 1 ? '' : 'es'}</span></div>`;
+    }).join('');
     const flagBadge = s.flagged ? '<span class="flag-badge">&#9888;</span>' : '';
     return `${flagBadge}<div class="shift-time">${shiftLabel}</div><div class="breakers">${escapeHtml(workers)}</div>${productLine ? `<div class="product-line">${productLine}</div>` : ''}${s.notes ? `<div class="notes-preview">${escapeHtml(s.notes)}</div>` : ''}`;
   }
@@ -700,6 +706,7 @@
   function configureSessionElement(el, session) {
     if (!isAdmin) return;
     el.draggable = true;
+    if (session.blockHeight) el.style.height = `${Math.max(110, Number(session.blockHeight) || 110)}px`;
     const actions = document.createElement('div');
     actions.className = 'session-actions';
     actions.innerHTML = `<button class="session-action copy" title="Copy this block">&#10697;</button><button class="session-action delete" title="Delete this block">&times;</button>`;
@@ -714,6 +721,26 @@
       confirmDeleteSession(session);
     });
     el.appendChild(actions);
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'session-resize-handle';
+    resizeHandle.title = 'Drag down to make this block taller';
+    resizeHandle.addEventListener('click', e => e.stopPropagation());
+    resizeHandle.addEventListener('pointerdown', e => {
+      e.preventDefault(); e.stopPropagation();
+      el.draggable = false;
+      const startY = e.clientY, startHeight = el.offsetHeight;
+      const onMove = moveEvent => { el.style.height = `${Math.max(110, startHeight + moveEvent.clientY - startY)}px`; };
+      const onUp = async () => {
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        el.draggable = true;
+        session.blockHeight = el.offsetHeight;
+        await saveSessionUpsert(session);
+      };
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+    });
+    el.appendChild(resizeHandle);
     el.addEventListener('dragstart', e => {
       draggedSessionId = session.id;
       e.dataTransfer.effectAllowed = 'move';
@@ -730,6 +757,7 @@
     copy.id = uid(); copy.roomId = roomId; copy.date = date; copy.shift = shiftId; copy.platform = platform;
     sessions.push(copy);
     await saveSessionUpsert(copy);
+    copiedSession = null;
     renderAll();
   }
 

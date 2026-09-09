@@ -243,6 +243,10 @@
     <div id="historyListArea"></div>
   </div>
 
+  <div class="add-room-row" id="emptyRoomsRecovery" style="display:none;">
+    <button id="emptyRoomsAddBtn">+ Add your first room / station</button>
+  </div>
+
   <div class="footer-note">
     <span id="statusNote">Loading&hellip;</span>
     <button class="btn btn-ghost btn-sm" id="resetBtn" style="display:none;">Clear all data</button>
@@ -864,7 +868,7 @@
         }
       });
     });
-    document.getElementById('addRoomRowDesktop').style.display = isAdmin ? 'block' : 'none';
+    document.getElementById('addRoomRowDesktop').style.display = isAdmin && rooms.length > 0 ? 'block' : 'none';
   }
 
   // ---- Mobile day list ----
@@ -948,7 +952,7 @@
         }
       });
     });
-    document.getElementById('addRoomRowMobile').style.display = isAdmin ? 'block' : 'none';
+    document.getElementById('addRoomRowMobile').style.display = isAdmin && rooms.length > 0 ? 'block' : 'none';
   }
 
   // ---- Session modal ----
@@ -1204,6 +1208,7 @@
   }
   document.getElementById('addRoomBtnDesktop').addEventListener('click', addRoom);
   document.getElementById('addRoomBtnMobile').addEventListener('click', addRoom);
+  document.getElementById('emptyRoomsAddBtn').addEventListener('click', () => { if (isAdmin) addRoom(); else openLoginModal(); });
 
   // ---- Week nav ----
   document.getElementById('prevWeek').addEventListener('click', () => { weekStart = addDays(weekStart, -7); renderAll(); });
@@ -1234,8 +1239,8 @@
     const area = document.getElementById('productsTableArea');
     area.innerHTML = rows.length === 0
       ? '<div class="report-empty">No products logged this week.</div>'
-      : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes needed</th><th>Notes</th></tr></thead><tbody>${
-          rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td><td style="color:var(--danger);">${escapeHtml((r.notes || []).join(' | '))}</td></tr>`).join('')
+      : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes needed</th></tr></thead><tbody>${
+          rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td></tr>`).join('')
         }</tbody></table>`;
   }
   document.getElementById('productsPrevWeek').addEventListener('click', () => { productsWeekStart = addDays(productsWeekStart, -7); renderProductsView(); });
@@ -1313,6 +1318,7 @@
     document.getElementById('scheduleView').style.display = isSchedule ? 'block' : 'none';
     document.getElementById('productsView').style.display = isProducts ? 'block' : 'none';
     document.getElementById('historyView').style.display = isHistory ? 'block' : 'none';
+    document.getElementById('emptyRoomsRecovery').style.display = rooms.length === 0 ? 'block' : 'none';
 
     if (isSchedule) {
       renderWeekLabel(); renderGrid(); renderDayPicker(); renderMobileList();

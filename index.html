@@ -75,32 +75,50 @@
   .row-head .remove-room:hover { color: var(--danger); }
 
   .corner { position: sticky; left: 0; top: 0; z-index: 3; background: var(--surface-2); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .platform-section-title { grid-column: 1 / -1; padding: 13px 16px; color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: 21px; font-weight: 700; letter-spacing: 0.04em; text-align: center; text-transform: uppercase; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .platform-section-title.fanatics { background: var(--fanatics); }
+  .platform-section-title.whatnot { background: var(--whatnot); }
 
-  .shift-slot { border: 1px solid var(--border); border-radius: 6px; min-height: 40px; display: flex; }
-  .shift-empty { width: 100%; background: none; border: none; color: var(--text-muted); font-size: 11px; text-align: left; padding: 6px 8px; display: flex; flex-direction: column; gap: 1px; min-height: 40px; }
+  .shift-slot { border: 1px solid var(--border); border-radius: 6px; min-height: 40px; display: flex; flex-direction: column; gap: 5px; }
+  .shift-empty { width: 100%; background: none; border: none; color: var(--text-muted); font-size: 11px; text-align: center; padding: 6px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-height: 40px; }
   .shift-empty:hover { background: var(--surface-2); color: var(--text); }
   .shift-empty .slot-label { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
   .shift-empty .plus { font-size: 15px; line-height: 1; }
 
-  .session { position: relative; border-left: none; background: var(--tab-accent-bg, var(--whatnot-bg)); border-radius: 6px; padding: 6px 8px; font-size: 11.5px; cursor: pointer; line-height: 1.3; width: 100%; }
+  .session { position: relative; border-left: none; background: var(--tab-accent-bg, var(--whatnot-bg)); border-radius: 6px; padding: 12px; min-height: 110px; font-size: 11.5px; cursor: pointer; line-height: 1.3; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .session:hover { filter: brightness(1.15); }
+  .session[draggable="true"] { cursor: grab; }
+  .session[draggable="true"]:active { cursor: grabbing; }
+  .session-actions { position: absolute; top: 5px; left: 5px; right: 5px; display: flex; justify-content: space-between; opacity: 0; transition: opacity .15s ease; pointer-events: none; }
+  .session:hover .session-actions { opacity: 1; }
+  .session-action { pointer-events: auto; width: 24px; height: 24px; padding: 0; border: 1px solid rgba(27,30,36,.25); border-radius: 5px; background: rgba(255,255,255,.88); color: #1B1E24; font-size: 14px; font-weight: 700; line-height: 1; }
+  .session-action.delete { color: var(--danger); }
+  .shift-slot.drag-over, .m-shift-row.drag-over { outline: 3px solid var(--accent); outline-offset: -3px; background: rgba(227,178,60,.12); }
+  .paste-slot { color: var(--accent); font-weight: 700; border-top: 1px dashed var(--border); }
+  .delete-confirm-label { display: flex; align-items: flex-start; gap: 9px; margin: 16px 0; padding: 11px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface-2); font-size: 13px; line-height: 1.35; }
+  .delete-confirm-label input { width: 18px; height: 18px; flex: 0 0 auto; accent-color: var(--danger); }
   .session.flagged { box-shadow: 0 0 0 2px var(--flag) inset; }
   .session .flag-badge { position: absolute; top: 4px; right: 5px; font-size: 12px; line-height: 1; }
   .session .shift-time { font-weight: 700; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
   .session .breakers { font-weight: 600; margin-top: 1px; }
   .session .product-line { color: var(--text-muted); white-space: normal; word-break: break-word; }
-  .session .notes-preview { color: var(--text-muted); font-style: italic; white-space: normal; word-break: break-word; }
+  .session .notes-preview { color: var(--danger); font-style: italic; font-weight: 600; white-space: normal; word-break: break-word; margin-top: 4px; }
+  .session .session-platform { display: inline-flex; align-self: center; margin-bottom: 5px; padding: 2px 7px; border-radius: 999px; background: rgba(27, 30, 36, 0.12); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+  .combined-empty { cursor: default; text-align: center; justify-content: center; }
 
   /* Filled slots are tinted by shift period (not platform) so the day's rhythm
      is scannable at a glance; the left border still shows platform color. */
   .session.session-morning { background: var(--shift-morning); color: #1B1E24; }
   .session.session-afternoon { background: var(--shift-afternoon); color: #1B1E24; }
   .session.session-night { background: var(--shift-night); color: #1B1E24; }
-  .session.session-morning .shift-time, .session.session-morning .product-line, .session.session-morning .notes-preview,
-  .session.session-afternoon .shift-time, .session.session-afternoon .product-line, .session.session-afternoon .notes-preview,
-  .session.session-night .shift-time, .session.session-night .product-line, .session.session-night .notes-preview {
+  .session.session-morning .shift-time, .session.session-morning .product-line,
+  .session.session-afternoon .shift-time, .session.session-afternoon .product-line,
+  .session.session-night .shift-time, .session.session-night .product-line {
     color: rgba(27, 30, 36, 0.65);
   }
+  .session.session-morning .notes-preview,
+  .session.session-afternoon .notes-preview,
+  .session.session-night .notes-preview { color: var(--danger); }
 
   .add-room-row { padding: 10px 0; }
   .add-room-row button { width: 100%; background: transparent; border: 1px dashed var(--border); color: var(--text-muted); border-radius: var(--radius); padding: 9px; font-size: 12.5px; }
@@ -149,8 +167,9 @@
   .flag-check input { width: 17px; height: 17px; accent-color: var(--flag); }
   .flag-check span { font-size: 13px; font-weight: 600; }
 
-  .product-row { display: grid; grid-template-columns: 1fr 78px 78px; gap: 6px; margin-bottom: 6px; align-items: center; }
-  .product-row input[type=text] { font-size: 14px; }
+  .product-row { display: grid; grid-template-columns: 1fr 78px 78px; gap: 6px; margin-bottom: 6px; align-items: start; }
+  .product-row .p-name { width: 100%; min-height: 42px; resize: vertical; overflow: auto; font-size: 14px; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 6px; font-family: 'Inter', sans-serif; }
+  .product-row .p-name:focus { outline: none; border-color: var(--accent); }
   .product-row input[type=number] { font-size: 14px; padding: 10px 6px; text-align: center; }
   .product-row-labels { display: grid; grid-template-columns: 1fr 78px 78px; gap: 6px; font-size: 10.5px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.03em; }
 
@@ -377,6 +396,9 @@
   let archivedWeeks = [];
   let activeDayIndex = todayIndexInWeek();
   let editingSessionId = null;
+  let editingPlatform = 'whatnot';
+  let copiedSession = null;
+  let draggedSessionId = null;
   let isAdmin = false;
 
   function startOfWeek(d) { const date = new Date(d); const day = date.getDay(); const diff = (day === 0 ? -6 : 1 - day); date.setDate(date.getDate() + diff); date.setHours(0,0,0,0); return date; }
@@ -611,9 +633,10 @@
   function renderTabs() {
     const el = document.getElementById('platformTabs');
     const platformTabsHtml = PLATFORMS.map(p => `<button class="tab-btn ${activeView === 'schedule' && activePlatform === p.id ? 'active tab-' + p.id : ''}" data-platform="${p.id}"><span class="swatch" style="background:var(--${p.id})"></span>${p.label}</button>`).join('');
+    const combinedTabHtml = `<button class="tab-btn ${activeView === 'schedule' && activePlatform === 'all' ? 'active' : ''}" data-platform="all" style="${activeView === 'schedule' && activePlatform === 'all' ? 'border-color:var(--accent); background:rgba(227,178,60,0.14); color:var(--text);' : ''}"><span class="swatch" style="background:linear-gradient(90deg,var(--whatnot) 50%,var(--fanatics) 50%)"></span>Combined View</button>`;
     const productsTabHtml = `<button class="tab-btn ${activeView === 'products' ? 'active' : ''}" data-view="products" style="${activeView === 'products' ? 'border-color:var(--accent); background:rgba(227,178,60,0.14); color:var(--text);' : ''}">Product List</button>`;
     const historyTabHtml = `<button class="tab-btn ${activeView === 'history' ? 'active' : ''}" data-view="history" style="${activeView === 'history' ? 'border-color:var(--accent); background:rgba(227,178,60,0.14); color:var(--text);' : ''}">History</button>`;
-    el.innerHTML = platformTabsHtml + productsTabHtml + historyTabHtml;
+    el.innerHTML = platformTabsHtml + combinedTabHtml + productsTabHtml + historyTabHtml;
     el.querySelectorAll('[data-platform]').forEach(btn => { btn.addEventListener('click', () => { activeView = 'schedule'; activePlatform = btn.dataset.platform; renderAll(); }); });
     el.querySelector('[data-view="products"]').addEventListener('click', () => { activeView = 'products'; renderAll(); });
     el.querySelector('[data-view="history"]').addEventListener('click', () => { activeView = 'history'; renderAll(); });
@@ -636,8 +659,8 @@
     document.getElementById('weekLabel').textContent = weekStart.toLocaleDateString('en-US', opts) + ' \u2013 ' + end.toLocaleDateString('en-US', opts);
   }
 
-  function findSession(roomId, iso, shiftId) {
-    return sessions.find(s => s.roomId === roomId && s.date === iso && s.shift === shiftId && s.platform === activePlatform);
+  function findSessions(roomId, iso, shiftId, platform = activePlatform) {
+    return sessions.filter(s => s.roomId === roomId && s.date === iso && s.shift === shiftId && (platform === 'all' || s.platform === platform));
   }
 
   function sessionBlockHtml(shiftLabel, s) {
@@ -650,48 +673,150 @@
     return `${flagBadge}<div class="shift-time">${shiftLabel}</div><div class="breakers">${escapeHtml(workers)}</div>${productLine ? `<div class="product-line">${productLine}</div>` : ''}${s.notes ? `<div class="notes-preview">${escapeHtml(s.notes)}</div>` : ''}`;
   }
 
+  function confirmDeleteSession(session) {
+    const confirmOverlay = document.createElement('div');
+    confirmOverlay.className = 'overlay';
+    confirmOverlay.innerHTML = `<div class="modal" style="max-width:390px;">
+      <h2>Delete this block?</h2>
+      <div class="modal-sub">This removes the complete schedule block.</div>
+      <label class="delete-confirm-label"><input type="checkbox"><span>I understand this entire block will be deleted.</span></label>
+      <div class="modal-actions"><button class="btn cancel-delete">Cancel</button><button class="btn confirm-delete" style="background:var(--danger);border-color:var(--danger);color:white;" disabled>Delete block</button></div>
+    </div>`;
+    document.body.appendChild(confirmOverlay);
+    const checkbox = confirmOverlay.querySelector('input[type="checkbox"]');
+    const deleteButton = confirmOverlay.querySelector('.confirm-delete');
+    checkbox.addEventListener('change', () => { deleteButton.disabled = !checkbox.checked; });
+    confirmOverlay.querySelector('.cancel-delete').addEventListener('click', () => confirmOverlay.remove());
+    confirmOverlay.addEventListener('click', e => { if (e.target === confirmOverlay) confirmOverlay.remove(); });
+    deleteButton.addEventListener('click', async () => {
+      if (!checkbox.checked) return;
+      sessions = sessions.filter(s => s.id !== session.id);
+      await saveSessionDelete(session.id);
+      confirmOverlay.remove();
+      renderAll();
+    });
+  }
+
+  function configureSessionElement(el, session) {
+    if (!isAdmin) return;
+    el.draggable = true;
+    const actions = document.createElement('div');
+    actions.className = 'session-actions';
+    actions.innerHTML = `<button class="session-action copy" title="Copy this block">&#10697;</button><button class="session-action delete" title="Delete this block">&times;</button>`;
+    actions.querySelector('.copy').addEventListener('click', e => {
+      e.stopPropagation();
+      copiedSession = JSON.parse(JSON.stringify(session));
+      flashStatus('Block copied — use Paste in any open spot.');
+      renderAll();
+    });
+    actions.querySelector('.delete').addEventListener('click', e => {
+      e.stopPropagation();
+      confirmDeleteSession(session);
+    });
+    el.appendChild(actions);
+    el.addEventListener('dragstart', e => {
+      draggedSessionId = session.id;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', session.id);
+    });
+    el.addEventListener('dragend', () => { draggedSessionId = null; document.querySelectorAll('.drag-over').forEach(x => x.classList.remove('drag-over')); });
+  }
+
+  async function pasteSessionAt(roomId, date, shiftId, platform) {
+    if (!copiedSession) return;
+    const conflict = sessions.some(s => s.roomId === roomId && s.date === date && s.shift === shiftId && s.platform === platform);
+    if (conflict) { alert('That spot already has a block. Choose an empty spot.'); return; }
+    const copy = JSON.parse(JSON.stringify(copiedSession));
+    copy.id = uid(); copy.roomId = roomId; copy.date = date; copy.shift = shiftId; copy.platform = platform;
+    sessions.push(copy);
+    await saveSessionUpsert(copy);
+    renderAll();
+  }
+
+  function makeSlotDroppable(slot, roomId, date, shiftId, platform) {
+    if (!isAdmin) return;
+    slot.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; slot.classList.add('drag-over'); });
+    slot.addEventListener('dragleave', e => { if (!slot.contains(e.relatedTarget)) slot.classList.remove('drag-over'); });
+    slot.addEventListener('drop', async e => {
+      e.preventDefault(); slot.classList.remove('drag-over');
+      const id = draggedSessionId || e.dataTransfer.getData('text/plain');
+      const moving = sessions.find(s => s.id === id);
+      if (!moving) return;
+      if (moving.roomId === roomId && moving.date === date && moving.shift === shiftId && moving.platform === platform) return;
+      const conflict = sessions.some(s => s.id !== moving.id && s.roomId === roomId && s.date === date && s.shift === shiftId && s.platform === platform);
+      if (conflict) { alert('That spot already has a block. Drop it into an empty spot.'); return; }
+      moving.roomId = roomId; moving.date = date; moving.shift = shiftId; moving.platform = platform;
+      await saveSessionUpsert(moving);
+      renderAll();
+    });
+  }
+
   // ---- Desktop grid ----
   function renderGrid() {
     const grid = document.getElementById('grid');
     grid.innerHTML = '';
-    grid.style.gridTemplateRows = `40px repeat(${rooms.length}, auto)`;
-    const corner = document.createElement('div'); corner.className = 'corner'; grid.appendChild(corner);
     const today = new Date();
-    for (let i = 0; i < 7; i++) {
-      const d = addDays(weekStart, i);
-      const head = document.createElement('div');
-      head.className = 'col-head' + (isSameDate(d, today) ? ' today' : '');
-      head.innerHTML = `<div class="dow">${DAY_NAMES[i]}</div><div class="date">${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>`;
-      grid.appendChild(head);
-    }
-    rooms.forEach(room => {
-      const rowHead = document.createElement('div');
-      rowHead.className = 'row-head';
-      rowHead.innerHTML = `<input class="name-edit" value="${escapeAttr(room.name)}" data-room="${room.id}" ${isAdmin ? '' : 'disabled'}>${isAdmin ? `<button class="remove-room" data-remove-room="${room.id}" title="Remove room">&times;</button>` : ''}`;
-      grid.appendChild(rowHead);
-      for (let i = 0; i < 7; i++) {
-        const iso = fmtISO(addDays(weekStart, i));
-        const cell = document.createElement('div'); cell.className = 'cell';
-        SHIFTS.forEach(shift => {
-          const slot = document.createElement('div'); slot.className = 'shift-slot';
-          const existing = findSession(room.id, iso, shift.id);
-          if (existing) {
-            const el = document.createElement('div');
-            el.className = 'session session-' + shift.id + (existing.flagged ? ' flagged' : '');
-            el.innerHTML = sessionBlockHtml(shift.label, existing);
-            el.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id, session: existing }); else openLoginModal(); });
-            slot.appendChild(el);
-          } else {
-            const btn = document.createElement('button');
-            btn.className = 'shift-empty';
-            btn.innerHTML = `<span class="slot-label">${shift.label}</span><span class="plus">+</span>`;
-            btn.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id }); else openLoginModal(); });
-            slot.appendChild(btn);
-          }
-          cell.appendChild(slot);
-        });
-        grid.appendChild(cell);
+    const sections = activePlatform === 'all'
+      ? [{ id: 'fanatics', label: 'Fanatics Live' }, { id: 'whatnot', label: 'Whatnot' }]
+      : [PLATFORMS.find(p => p.id === activePlatform)];
+
+    sections.forEach(section => {
+      if (activePlatform === 'all') {
+        const title = document.createElement('div');
+        title.className = 'platform-section-title ' + section.id;
+        title.textContent = section.label;
+        grid.appendChild(title);
       }
+
+      const corner = document.createElement('div'); corner.className = 'corner'; grid.appendChild(corner);
+      for (let i = 0; i < 7; i++) {
+        const d = addDays(weekStart, i);
+        const head = document.createElement('div');
+        head.className = 'col-head' + (isSameDate(d, today) ? ' today' : '');
+        head.innerHTML = `<div class="dow">${DAY_NAMES[i]}</div><div class="date">${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>`;
+        grid.appendChild(head);
+      }
+
+      rooms.forEach(room => {
+        const rowHead = document.createElement('div');
+        rowHead.className = 'row-head';
+        rowHead.innerHTML = `<input class="name-edit" value="${escapeAttr(room.name)}" data-room="${room.id}" ${isAdmin ? '' : 'disabled'}>${isAdmin ? `<button class="remove-room" data-remove-room="${room.id}" title="Remove room">&times;</button>` : ''}`;
+        grid.appendChild(rowHead);
+        for (let i = 0; i < 7; i++) {
+          const iso = fmtISO(addDays(weekStart, i));
+          const cell = document.createElement('div'); cell.className = 'cell';
+          SHIFTS.forEach(shift => {
+            const slot = document.createElement('div'); slot.className = 'shift-slot';
+            makeSlotDroppable(slot, room.id, iso, shift.id, section.id);
+            const existingSessions = findSessions(room.id, iso, shift.id, section.id);
+            if (existingSessions.length) {
+              existingSessions.forEach(existing => {
+                const el = document.createElement('div');
+                el.className = 'session session-' + shift.id + (existing.flagged ? ' flagged' : '');
+                el.innerHTML = sessionBlockHtml(shift.label, existing);
+                el.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id, session: existing }); else openLoginModal(); });
+                configureSessionElement(el, existing);
+                slot.appendChild(el);
+              });
+            } else {
+              const btn = document.createElement('button');
+              btn.className = 'shift-empty';
+              btn.innerHTML = `<span class="slot-label">${shift.label}</span><span class="plus">+ Add</span>`;
+              btn.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id, platform: section.id }); else openLoginModal(); });
+              slot.appendChild(btn);
+              if (isAdmin && copiedSession) {
+                const pasteBtn = document.createElement('button');
+                pasteBtn.className = 'shift-empty paste-slot';
+                pasteBtn.innerHTML = '<span>Paste copied block</span>';
+                pasteBtn.addEventListener('click', () => pasteSessionAt(room.id, iso, shift.id, section.id));
+                slot.appendChild(pasteBtn);
+              }
+            }
+            cell.appendChild(slot);
+          });
+          grid.appendChild(cell);
+        }
+      });
     });
     grid.querySelectorAll('.name-edit').forEach(input => {
       input.addEventListener('change', (e) => { const room = rooms.find(r => r.id === e.target.dataset.room); if (room) { room.name = e.target.value.trim() || room.name; saveRooms(); } });
@@ -731,31 +856,53 @@
     const el = document.getElementById('mobileList');
     el.innerHTML = '';
     const iso = fmtISO(addDays(weekStart, activeDayIndex));
-    rooms.forEach(room => {
+    const sections = activePlatform === 'all'
+      ? [{ id: 'fanatics', label: 'Fanatics Live' }, { id: 'whatnot', label: 'Whatnot' }]
+      : [PLATFORMS.find(p => p.id === activePlatform)];
+    sections.forEach(section => {
+      if (activePlatform === 'all') {
+        const title = document.createElement('div');
+        title.className = 'platform-section-title ' + section.id;
+        title.textContent = section.label;
+        el.appendChild(title);
+      }
+      rooms.forEach(room => {
       const card = document.createElement('div'); card.className = 'm-room-card';
       const head = document.createElement('div'); head.className = 'm-room-head';
       head.innerHTML = `<input class="name-edit" value="${escapeAttr(room.name)}" data-room="${room.id}" ${isAdmin ? '' : 'disabled'}>${isAdmin ? `<button class="remove-room" data-remove-room="${room.id}" style="background:none;border:none;color:var(--text-muted);font-size:16px;">&times;</button>` : ''}`;
       card.appendChild(head);
       SHIFTS.forEach(shift => {
         const row = document.createElement('div'); row.className = 'm-shift-row';
-        const existing = findSession(room.id, iso, shift.id);
-        if (existing) {
-          const el2 = document.createElement('div');
-          el2.className = 'session session-' + shift.id + (existing.flagged ? ' flagged' : '');
-          el2.style.borderRadius = '8px'; el2.style.padding = '10px';
-          el2.innerHTML = sessionBlockHtml(shift.label, existing);
-          el2.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id, session: existing }); else openLoginModal(); });
-          row.appendChild(el2);
+        makeSlotDroppable(row, room.id, iso, shift.id, section.id);
+        const existingSessions = findSessions(room.id, iso, shift.id, section.id);
+        if (existingSessions.length) {
+          existingSessions.forEach(existing => {
+            const el2 = document.createElement('div');
+            el2.className = 'session session-' + shift.id + (existing.flagged ? ' flagged' : '');
+            el2.style.borderRadius = '8px'; el2.style.padding = '10px';
+            el2.innerHTML = sessionBlockHtml(shift.label, existing);
+            el2.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id, session: existing }); else openLoginModal(); });
+            configureSessionElement(el2, existing);
+            row.appendChild(el2);
+          });
         } else {
           const btn = document.createElement('button');
           btn.className = 'shift-empty'; btn.style.borderRadius = '8px';
           btn.innerHTML = `<span class="slot-label">${shift.label}</span><span class="plus">+ Add</span>`;
-          btn.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id }); else openLoginModal(); });
+          btn.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id, platform: section.id }); else openLoginModal(); });
           row.appendChild(btn);
+          if (isAdmin && copiedSession) {
+            const pasteBtn = document.createElement('button');
+            pasteBtn.className = 'shift-empty paste-slot';
+            pasteBtn.innerHTML = '<span>Paste copied block</span>';
+            pasteBtn.addEventListener('click', () => pasteSessionAt(room.id, iso, shift.id, section.id));
+            row.appendChild(pasteBtn);
+          }
         }
         card.appendChild(row);
       });
       el.appendChild(card);
+      });
     });
     el.querySelectorAll('.name-edit').forEach(input => {
       input.addEventListener('change', (e) => { const room = rooms.find(r => r.id === e.target.dataset.room); if (room) { room.name = e.target.value.trim() || room.name; saveRooms(); } });
@@ -806,7 +953,7 @@
       const row = document.createElement('div');
       row.className = 'product-row';
       row.innerHTML = `
-        <input type="text" class="p-name" list="productList" placeholder="Product name" value="${escapeAttr(p.name)}">
+        <textarea class="p-name" placeholder="Product name" rows="1">${escapeHtml(p.name)}</textarea>
         <input type="number" class="p-breaks" min="0" value="${p.breaks}">
         <input type="number" class="p-boxes" min="0" value="${p.boxes}">
       `;
@@ -818,18 +965,19 @@
     renderProductRows(Number(f.productCount.value), current);
   });
 
-  function openModal({ roomId, date, shiftId, session }) {
+  function openModal({ roomId, date, shiftId, session, platform }) {
     populateRoomSelect(); populateShiftSelect(); populateBreakerList(); populateProductList();
     editingSessionId = session ? session.id : null;
+    editingPlatform = session ? session.platform : (platform || activePlatform);
     f.room.value = roomId; f.shift.value = shiftId;
     const d = new Date(date + 'T00:00:00');
     document.getElementById('modalSub').textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
     document.getElementById('modalTitle').textContent = session ? 'Edit session' : 'Add session';
-    const platformLabel = PLATFORMS.find(p => p.id === activePlatform).label;
+    const platformLabel = PLATFORMS.find(p => p.id === editingPlatform).label;
     const badge = document.getElementById('modalPlatformBadge');
     badge.textContent = platformLabel;
-    badge.style.setProperty('--tab-accent', `var(--${activePlatform})`);
-    badge.style.setProperty('--tab-accent-bg', `var(--${activePlatform}-bg)`);
+    badge.style.setProperty('--tab-accent', `var(--${editingPlatform})`);
+    badge.style.setProperty('--tab-accent-bg', `var(--${editingPlatform}-bg)`);
 
     if (session) {
       f.worker1.value = session.worker1 || ''; f.worker2.value = session.worker2 || '';
@@ -862,8 +1010,8 @@
     await saveBreakers(); await saveProductNames();
 
     const date = overlay.dataset.date, shiftId = f.shift.value, roomId = f.room.value;
-    const conflict = sessions.find(s => s.roomId === roomId && s.date === date && s.shift === shiftId && s.platform === activePlatform && s.id !== editingSessionId);
-    if (conflict) { alert('That room already has a ' + PLATFORMS.find(p=>p.id===activePlatform).label + ' session booked for this shift. Edit the existing one instead.'); return; }
+    const conflict = sessions.find(s => s.roomId === roomId && s.date === date && s.shift === shiftId && s.platform === editingPlatform && s.id !== editingSessionId);
+    if (conflict) { alert('That room already has a ' + PLATFORMS.find(p=>p.id===editingPlatform).label + ' session booked for this shift. Edit the existing one instead.'); return; }
 
     let savedSession;
     if (editingSessionId) {
@@ -871,7 +1019,7 @@
       if (s) { s.roomId = roomId; s.date = date; s.shift = shiftId; s.worker1 = worker1Val; s.worker2 = worker2Val; s.notes = notesVal; s.flagged = f.flagged.checked; s.products = products; }
       savedSession = s;
     } else {
-      savedSession = { id: uid(), roomId, date, shift: shiftId, worker1: worker1Val, worker2: worker2Val, notes: notesVal, flagged: f.flagged.checked, products, platform: activePlatform };
+      savedSession = { id: uid(), roomId, date, shift: shiftId, worker1: worker1Val, worker2: worker2Val, notes: notesVal, flagged: f.flagged.checked, products, platform: editingPlatform };
       sessions.push(savedSession);
     }
     await saveSessionUpsert(savedSession); renderAll(); closeModal();
@@ -941,7 +1089,7 @@
   reportOverlay.addEventListener('click', (e) => { if (e.target === reportOverlay) reportOverlay.style.display = 'none'; });
 
   function computeTotals(startISO, endISO, platformFilter) {
-    const totals = {}; // normalized key -> {label, breaks, boxes, boxesNeeded, slots}
+    const totals = {}; // normalized key -> {label, breaks, boxesNeeded, slots, notes}
     sessions.forEach(s => {
       if (s.date < startISO || s.date > endISO) return;
       if (platformFilter !== 'all' && s.platform !== platformFilter) return;
@@ -950,13 +1098,14 @@
         if (!label) return;
         const key = label.toLowerCase().replace(/\s+/g, ' ');
         const br = Number(p.breaks) || 0, bx = Number(p.boxes) || 0;
-        if (!totals[key]) totals[key] = { label, breaks: 0, boxes: 0, boxesNeeded: 0, slots: 0 };
+        if (!totals[key]) totals[key] = { label, breaks: 0, boxesNeeded: 0, slots: 0, notes: [] };
         totals[key].breaks += br;
-        totals[key].boxes += bx;
         // Boxes needed is breaks x boxes PER SESSION, then summed across sessions for
-        // this product -- not the aggregated Total Breaks x Total Boxes.
+        // this product.
         totals[key].boxesNeeded += br * bx;
         totals[key].slots += 1;
+        const note = (s.notes || '').trim();
+        if (note && !totals[key].notes.includes(note)) totals[key].notes.push(note);
       });
     });
     return Object.values(totals).sort((a, b) => a.label.localeCompare(b.label));
@@ -980,8 +1129,8 @@
 
     const totalsHtml = rows.length === 0
       ? '<div class="report-empty">No products logged in that range.</div>'
-      : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes</th><th>Total boxes needed</th></tr></thead><tbody>${
-          rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxes}</td><td>${r.boxesNeeded}</td></tr>`).join('')
+      : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes needed</th><th>Notes</th></tr></thead><tbody>${
+          rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td><td style="color:var(--danger);">${escapeHtml((r.notes || []).join(' | '))}</td></tr>`).join('')
         }</tbody></table>`;
 
     const detailRows = included.map(s => {
@@ -1006,8 +1155,8 @@
     const { start, end, platform } = currentReportParams();
     if (!start || !end) { alert('Pick a start and end date first.'); return; }
     const rows = computeTotals(start, end, platform);
-    let csv = 'Product,Total Breaks,Total Boxes,Total Boxes Needed\n';
-    rows.forEach(r => { csv += `"${r.label.replace(/"/g,'""')}",${r.breaks},${r.boxes},${r.boxesNeeded}\n`; });
+    let csv = 'Product,Total Breaks,Total Boxes Needed,Notes\n';
+    rows.forEach(r => { csv += `"${r.label.replace(/"/g,'""')}",${r.breaks},${r.boxesNeeded},"${(r.notes || []).join(' | ').replace(/"/g,'""')}"\n`; });
     if (rows.length === 0) csv += 'No products logged in this range,,,\n';
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -1057,8 +1206,8 @@
     const area = document.getElementById('productsTableArea');
     area.innerHTML = rows.length === 0
       ? '<div class="report-empty">No products logged this week.</div>'
-      : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes</th><th>Total boxes needed</th></tr></thead><tbody>${
-          rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxes}</td><td>${r.boxesNeeded}</td></tr>`).join('')
+      : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes needed</th><th>Notes</th></tr></thead><tbody>${
+          rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td><td style="color:var(--danger);">${escapeHtml((r.notes || []).join(' | '))}</td></tr>`).join('')
         }</tbody></table>`;
   }
   document.getElementById('productsPrevWeek').addEventListener('click', () => { productsWeekStart = addDays(productsWeekStart, -7); renderProductsView(); });
@@ -1096,8 +1245,8 @@
       const archivedDate = entry.archivedAt ? new Date(entry.archivedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
       const rowsHtml = (entry.rows || []).length === 0
         ? '<div class="report-empty">No products logged that week.</div>'
-        : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes</th><th>Total boxes needed</th></tr></thead><tbody>${
-            entry.rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxes}</td><td>${r.boxesNeeded}</td></tr>`).join('')
+        : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes needed</th><th>Notes</th></tr></thead><tbody>${
+            entry.rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td><td style="color:var(--danger);">${escapeHtml((r.notes || []).join(' | '))}</td></tr>`).join('')
           }</tbody></table>`;
       return `
         <div class="m-room-card" style="margin-bottom:12px;">

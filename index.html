@@ -45,6 +45,9 @@
   .tab-btn.active.tab-fanatics { border-color: var(--fanatics); background: var(--fanatics-bg); }
 
   .toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .products-toolbar { align-items: flex-end; }
+  .products-toolbar > .week-nav, .products-toolbar > .btn { min-height: 46px; height: 46px; }
+  .products-toolbar .field select { height: 46px; min-width: 190px; }
   .week-nav { display: flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 5px 8px; }
   .week-nav button { background: none; border: none; color: var(--text); font-size: 19px; padding: 4px 8px; border-radius: 4px; }
   .week-nav button:hover { background: var(--surface-2); }
@@ -136,6 +139,7 @@
   .day-chip .n { display: block; font-size: 10px; color: var(--text-muted); font-family: 'Inter', sans-serif; font-weight: 500; }
 
   .mobile-list { display: none; flex-direction: column; gap: 10px; }
+  .mobile-add-room { display: none !important; }
   .m-room-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
   .m-room-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   .m-room-head .name-edit { background: transparent; border: none; color: var(--text); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; }
@@ -144,7 +148,8 @@
 
   @media (max-width: 760px) {
     .grid-wrap { display: none; }
-    .add-room-row.desktop-only { display: none; }
+    .add-room-row.desktop-only { display: none !important; }
+    .mobile-add-room { display: block !important; }
     .day-picker { display: flex; }
     .mobile-list { display: flex; }
   }
@@ -212,11 +217,11 @@
     <div class="grid-wrap"><div class="grid" id="grid"></div></div>
     <div class="add-room-row desktop-only" id="addRoomRowDesktop" style="display:none;"><button id="addRoomBtnDesktop">+ Add room / station</button></div>
     <div class="mobile-list" id="mobileList"></div>
-    <div class="add-room-row" id="addRoomRowMobile" style="display:none;"><button id="addRoomBtnMobile">+ Add room / station</button></div>
+    <div class="add-room-row mobile-add-room" id="addRoomRowMobile" style="display:none;"><button id="addRoomBtnMobile">+ Add room / station</button></div>
   </div>
 
   <div id="productsView" style="display:none;">
-    <div class="toolbar">
+    <div class="toolbar products-toolbar">
       <div class="week-nav">
         <button id="productsPrevWeek" aria-label="Previous week">&#8592;</button>
         <div class="week-label" id="productsWeekLabel">Loading&hellip;</div>
@@ -384,8 +389,10 @@
 (function() {
   const DAY_NAMES = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   const DEFAULT_ROOMS = [
-    { id: 'r1', name: 'Room 1' }, { id: 'r2', name: 'Room 2' },
-    { id: 'r3', name: 'Room 3' }, { id: 'r4', name: 'Room 4' }
+    { id: 'r1', name: 'Room 1', platforms: ['whatnot','fanatics'], platformNames: { whatnot: 'Room 1', fanatics: 'Room 1' } },
+    { id: 'r2', name: 'Room 2', platforms: ['whatnot','fanatics'], platformNames: { whatnot: 'Room 2', fanatics: 'Room 2' } },
+    { id: 'r3', name: 'Room 3', platforms: ['whatnot','fanatics'], platformNames: { whatnot: 'Room 3', fanatics: 'Room 3' } },
+    { id: 'r4', name: 'Room 4', platforms: ['whatnot','fanatics'], platformNames: { whatnot: 'Room 4', fanatics: 'Room 4' } }
   ];
   const DEFAULT_BREAKERS = ['Colin','Chance','Kyle','Chris','Pat','Mike','Mark','Jeremy','Glenn','Johnny'];
   const SHIFTS = [
@@ -477,12 +484,62 @@
     });
   }
 
+  function migrateRooms() {
+    let changed = false;
+    rooms.forEach(room => {
+      if (!Array.isArray(room.platforms)) { room.platforms = ['whatnot', 'fanatics']; changed = true; }
+      room.platforms = room.platforms.filter(p => p === 'whatnot' || p === 'fanatics');
+      if (!room.platformNames || typeof room.platformNames !== 'object') {
+        room.platformNames = { whatnot: room.name || 'Room', fanatics: room.name || 'Room' };
+        changed = true;
+      }
+    });
+    return changed;
+  }
+
+  function visibleRooms(platform) {
+    return rooms.filter(room => (room.platforms || ['whatnot', 'fanatics']).includes(platform));
+  }
+
+  function roomNameFor(room, platform) {
+    return (room.platformNames && room.platformNames[platform]) || room.name || 'Room';
+  }
+
+  function renumberPlatformRooms(platform) {
+    visibleRooms(platform).forEach((room, index) => {
+      const currentName = roomNameFor(room, platform);
+      if (/^Room\s+\d+$/i.test(currentName)) {
+        room.platformNames = room.platformNames || {};
+        room.platformNames[platform] = `Room ${index + 1}`;
+      }
+    });
+  }
+
+  async function removeRoomFromPlatform(id, platform) {
+    const room = rooms.find(r => r.id === id);
+    if (!room) return;
+    const platformLabel = (PLATFORMS.find(p => p.id === platform) || {}).label || platform;
+    const removedIds = sessions.filter(s => s.roomId === id && s.platform === platform).map(s => s.id);
+    const message = removedIds.length
+      ? `Remove "${roomNameFor(room, platform)}" from ${platformLabel}? Its ${platformLabel} schedule blocks will also be deleted.`
+      : `Remove "${roomNameFor(room, platform)}" from ${platformLabel}?`;
+    if (!confirm(message)) return;
+    room.platforms = (room.platforms || ['whatnot', 'fanatics']).filter(p => p !== platform);
+    if (room.platformNames) delete room.platformNames[platform];
+    sessions = sessions.filter(s => !(s.roomId === id && s.platform === platform));
+    if (room.platforms.length === 0) rooms = rooms.filter(r => r.id !== id);
+    renumberPlatformRooms(platform);
+    await saveRooms();
+    if (removedIds.length) await saveSessionsBulkDelete(removedIds);
+    renderAll();
+  }
+
   // Live sync: once the initial load has painted the page, subscribe to
   // Firestore so every open tab/device picks up changes automatically.
   function attachRealtimeSync() {
     if (!usingFirestore) return;
     const col = firestoreDb.collection(FIRESTORE_COLLECTION);
-    col.doc('rooms').onSnapshot(doc => { if (doc.exists) { try { rooms = JSON.parse(doc.data().value); renderAll(); } catch(e) {} } });
+    col.doc('rooms').onSnapshot(doc => { if (doc.exists) { try { rooms = JSON.parse(doc.data().value); migrateRooms(); renderAll(); } catch(e) {} } });
     firestoreDb.collection(SESSIONS_COLLECTION).onSnapshot(snap => {
       try { sessions = snap.docs.map(d => d.data()); migrateSessions(); renderAll(); } catch(e) {}
     });
@@ -496,7 +553,8 @@
 
   // ---- Persistence ----
   async function loadData() {
-    try { const r = await storage.get('rooms'); rooms = r ? JSON.parse(r.value) : DEFAULT_ROOMS.slice(); } catch(e) { rooms = DEFAULT_ROOMS.slice(); }
+    try { const r = await storage.get('rooms'); rooms = r ? JSON.parse(r.value) : JSON.parse(JSON.stringify(DEFAULT_ROOMS)); } catch(e) { rooms = JSON.parse(JSON.stringify(DEFAULT_ROOMS)); }
+    if (migrateRooms()) await saveRooms();
     try {
       if (usingFirestore) {
         const snap = await firestoreDb.collection(SESSIONS_COLLECTION).get();
@@ -809,10 +867,10 @@
         grid.appendChild(head);
       }
 
-      rooms.forEach(room => {
+      visibleRooms(section.id).forEach(room => {
         const rowHead = document.createElement('div');
         rowHead.className = 'row-head';
-        rowHead.innerHTML = `<input class="name-edit" value="${escapeAttr(room.name)}" data-room="${room.id}" ${isAdmin ? '' : 'disabled'}>${isAdmin ? `<button class="remove-room" data-remove-room="${room.id}" title="Remove room">&times;</button>` : ''}`;
+        rowHead.innerHTML = `<input class="name-edit" value="${escapeAttr(roomNameFor(room, section.id))}" data-room="${room.id}" data-room-platform="${section.id}" ${isAdmin ? '' : 'disabled'}>${isAdmin ? `<button class="remove-room" data-remove-room="${room.id}" data-room-platform="${section.id}" title="Remove room from ${escapeAttr(section.label)}">&times;</button>` : ''}`;
         grid.appendChild(rowHead);
         for (let i = 0; i < 7; i++) {
           const iso = fmtISO(addDays(weekStart, i));
@@ -851,24 +909,12 @@
       });
     });
     grid.querySelectorAll('.name-edit').forEach(input => {
-      input.addEventListener('change', (e) => { const room = rooms.find(r => r.id === e.target.dataset.room); if (room) { room.name = e.target.value.trim() || room.name; saveRooms(); } });
+      input.addEventListener('change', (e) => { const room = rooms.find(r => r.id === e.target.dataset.room); if (room) { const platform = e.target.dataset.roomPlatform; room.platformNames = room.platformNames || {}; room.platformNames[platform] = e.target.value.trim() || roomNameFor(room, platform); saveRooms(); } });
     });
     grid.querySelectorAll('[data-remove-room]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const id = e.target.dataset.removeRoom;
-        const room = rooms.find(r => r.id === id);
-        if (!room) return;
-        const hasSessions = sessions.some(s => s.roomId === id);
-        const msg = hasSessions ? `Remove "${room.name}"? Its scheduled sessions will be deleted too.` : `Remove "${room.name}"?`;
-        if (confirm(msg)) {
-          rooms = rooms.filter(r => r.id !== id);
-          const removedIds = sessions.filter(s => s.roomId === id).map(s => s.id);
-          sessions = sessions.filter(s => s.roomId !== id);
-          saveRooms(); saveSessionsBulkDelete(removedIds); renderAll();
-        }
-      });
+      btn.addEventListener('click', (e) => removeRoomFromPlatform(e.currentTarget.dataset.removeRoom, e.currentTarget.dataset.roomPlatform));
     });
-    document.getElementById('addRoomRowDesktop').style.display = isAdmin && rooms.length > 0 ? 'block' : 'none';
+    document.getElementById('addRoomRowDesktop').style.display = isAdmin ? 'block' : 'none';
   }
 
   // ---- Mobile day list ----
@@ -898,10 +944,10 @@
         title.textContent = section.label;
         el.appendChild(title);
       }
-      rooms.forEach(room => {
+      visibleRooms(section.id).forEach(room => {
       const card = document.createElement('div'); card.className = 'm-room-card';
       const head = document.createElement('div'); head.className = 'm-room-head';
-      head.innerHTML = `<input class="name-edit" value="${escapeAttr(room.name)}" data-room="${room.id}" ${isAdmin ? '' : 'disabled'}>${isAdmin ? `<button class="remove-room" data-remove-room="${room.id}" style="background:none;border:none;color:var(--text-muted);font-size:16px;">&times;</button>` : ''}`;
+      head.innerHTML = `<input class="name-edit" value="${escapeAttr(roomNameFor(room, section.id))}" data-room="${room.id}" data-room-platform="${section.id}" ${isAdmin ? '' : 'disabled'}>${isAdmin ? `<button class="remove-room" data-remove-room="${room.id}" data-room-platform="${section.id}" style="background:none;border:none;color:var(--text-muted);font-size:16px;">&times;</button>` : ''}`;
       card.appendChild(head);
       SHIFTS.forEach(shift => {
         const row = document.createElement('div'); row.className = 'm-shift-row';
@@ -937,22 +983,12 @@
       });
     });
     el.querySelectorAll('.name-edit').forEach(input => {
-      input.addEventListener('change', (e) => { const room = rooms.find(r => r.id === e.target.dataset.room); if (room) { room.name = e.target.value.trim() || room.name; saveRooms(); } });
+      input.addEventListener('change', (e) => { const room = rooms.find(r => r.id === e.target.dataset.room); if (room) { const platform = e.target.dataset.roomPlatform; room.platformNames = room.platformNames || {}; room.platformNames[platform] = e.target.value.trim() || roomNameFor(room, platform); saveRooms(); } });
     });
     el.querySelectorAll('[data-remove-room]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const id = e.target.dataset.removeRoom;
-        const room = rooms.find(r => r.id === id);
-        if (!room) return;
-        if (confirm(`Remove "${room.name}"? Its scheduled sessions will be deleted too.`)) {
-          rooms = rooms.filter(r => r.id !== id);
-          const removedIds = sessions.filter(s => s.roomId === id).map(s => s.id);
-          sessions = sessions.filter(s => s.roomId !== id);
-          saveRooms(); saveSessionsBulkDelete(removedIds); renderAll();
-        }
-      });
+      btn.addEventListener('click', (e) => removeRoomFromPlatform(e.currentTarget.dataset.removeRoom, e.currentTarget.dataset.roomPlatform));
     });
-    document.getElementById('addRoomRowMobile').style.display = isAdmin && rooms.length > 0 ? 'block' : 'none';
+    document.getElementById('addRoomRowMobile').style.display = isAdmin ? 'block' : 'none';
   }
 
   // ---- Session modal ----
@@ -966,7 +1002,7 @@
   const deleteBtn = document.getElementById('deleteBtn');
   const productRowsEl = document.getElementById('productRows');
 
-  function populateRoomSelect() { f.room.innerHTML = rooms.map(r => `<option value="${r.id}">${escapeAttr(r.name)}</option>`).join(''); }
+  function populateRoomSelect(platform) { f.room.innerHTML = visibleRooms(platform).map(r => `<option value="${r.id}">${escapeHtml(roomNameFor(r, platform))}</option>`).join(''); }
   function populateShiftSelect() { f.shift.innerHTML = SHIFTS.map(s => `<option value="${s.id}">${s.label}</option>`).join(''); }
   function populateBreakerList() { document.getElementById('breakerList').innerHTML = breakerNames.map(n => `<option value="${escapeAttr(n)}"></option>`).join(''); }
   function populateProductList() { document.getElementById('productList').innerHTML = productNames.map(n => `<option value="${escapeAttr(n)}"></option>`).join(''); }
@@ -998,9 +1034,9 @@
   });
 
   function openModal({ roomId, date, shiftId, session, platform }) {
-    populateRoomSelect(); populateShiftSelect(); populateBreakerList(); populateProductList();
     editingSessionId = session ? session.id : null;
     editingPlatform = session ? session.platform : (platform || activePlatform);
+    populateRoomSelect(editingPlatform); populateShiftSelect(); populateBreakerList(); populateProductList();
     f.room.value = roomId; f.shift.value = shiftId;
     const d = new Date(date + 'T00:00:00');
     document.getElementById('modalSub').textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
@@ -1161,8 +1197,8 @@
 
     const totalsHtml = rows.length === 0
       ? '<div class="report-empty">No products logged in that range.</div>'
-      : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes needed</th><th>Notes</th></tr></thead><tbody>${
-          rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td><td style="color:var(--danger);">${escapeHtml((r.notes || []).join(' | '))}</td></tr>`).join('')
+      : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes needed</th></tr></thead><tbody>${
+          rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td></tr>`).join('')
         }</tbody></table>`;
 
     const detailRows = included.map(s => {
@@ -1170,7 +1206,7 @@
       const shift = SHIFTS.find(sh => sh.id === s.shift);
       const platformLabel = (PLATFORMS.find(p => p.id === s.platform) || {}).label || s.platform;
       const prodStr = (s.products || []).map(p => `${p.name} (${p.breaks}br/${p.boxes}bx)`).join(', ') || '\u2014';
-      return `<tr><td>${escapeHtml(s.date)}</td><td>${escapeHtml(room ? room.name : '(deleted room)')}</td><td>${shift ? shift.label : escapeHtml(s.shift)}</td><td>${escapeHtml(platformLabel)}</td><td>${escapeHtml(prodStr)}</td></tr>`;
+      return `<tr><td>${escapeHtml(s.date)}</td><td>${escapeHtml(room ? roomNameFor(room, s.platform) : '(deleted room)')}</td><td>${shift ? shift.label : escapeHtml(s.shift)}</td><td>${escapeHtml(platformLabel)}</td><td>${escapeHtml(prodStr)}</td></tr>`;
     }).join('');
     const detailHtml = `
       <div style="margin-top:16px; font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:6px;">
@@ -1187,9 +1223,9 @@
     const { start, end, platform } = currentReportParams();
     if (!start || !end) { alert('Pick a start and end date first.'); return; }
     const rows = computeTotals(start, end, platform);
-    let csv = 'Product,Total Breaks,Total Boxes Needed,Notes\n';
-    rows.forEach(r => { csv += `"${r.label.replace(/"/g,'""')}",${r.breaks},${r.boxesNeeded},"${(r.notes || []).join(' | ').replace(/"/g,'""')}"\n`; });
-    if (rows.length === 0) csv += 'No products logged in this range,,,\n';
+    let csv = 'Product,Total Breaks,Total Boxes Needed\n';
+    rows.forEach(r => { csv += `"${r.label.replace(/"/g,'""')}",${r.breaks},${r.boxesNeeded}\n`; });
+    if (rows.length === 0) csv += 'No products logged in this range,,\n';
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -1201,9 +1237,27 @@
 
   // ---- Room add ----
   async function addRoom() {
-    const name = prompt('Name this room or station:', 'Room ' + (rooms.length + 1));
+    let target = activeView === 'schedule' ? activePlatform : (activeView === 'products' ? productsPlatformFilter : 'all');
+    if (target === 'all') {
+      const choice = prompt('Add this room to Whatnot, Fanatics, or Both?', 'Both');
+      if (!choice) return;
+      const normalized = choice.trim().toLowerCase();
+      if (normalized.startsWith('w')) target = 'whatnot';
+      else if (normalized.startsWith('f')) target = 'fanatics';
+      else if (normalized.startsWith('b')) target = 'all';
+      else { alert('Please enter Whatnot, Fanatics, or Both.'); return; }
+    }
+    const targetPlatforms = target === 'all' ? ['whatnot', 'fanatics'] : [target];
+    const suggested = `Room ${visibleRooms(targetPlatforms[0]).length + 1}`;
+    const name = prompt('Name this room or station:', suggested);
     if (!name) return;
-    rooms.push({ id: uid(), name: name.trim() });
+    const automaticName = name.trim().toLowerCase() === suggested.toLowerCase();
+    const platformNames = {};
+    targetPlatforms.forEach(platform => {
+      platformNames[platform] = automaticName ? `Room ${visibleRooms(platform).length + 1}` : name.trim();
+    });
+    rooms.push({ id: uid(), name: name.trim(), platforms: targetPlatforms, platformNames });
+    targetPlatforms.forEach(renumberPlatformRooms);
     await saveRooms(); renderAll();
   }
   document.getElementById('addRoomBtnDesktop').addEventListener('click', addRoom);
@@ -1219,7 +1273,7 @@
   document.getElementById('resetBtn').addEventListener('click', async () => {
     if (!isAdmin) return;
     if (!confirm('Clear all rooms, sessions, staff, products, and color settings? This can\u2019t be undone.')) return;
-    rooms = DEFAULT_ROOMS.slice(); sessions = []; breakerNames = DEFAULT_BREAKERS.slice(); productNames = []; colors = { ...DEFAULT_COLORS };
+    rooms = JSON.parse(JSON.stringify(DEFAULT_ROOMS)); sessions = []; breakerNames = DEFAULT_BREAKERS.slice(); productNames = []; colors = { ...DEFAULT_COLORS };
     await saveRooms(); await clearAllSessionsRemote(); await saveBreakers(); await saveProductNames(); await saveColors();
     applyColors(); renderAll(); flashStatus('Cleared.');
   });
@@ -1254,7 +1308,11 @@
     if (!isAdmin) return;
     const start = fmtISO(productsWeekStart), end = fmtISO(addDays(productsWeekStart, 6));
     const rows = computeTotals(start, end, productsPlatformFilter);
-    if (rows.length === 0 && !confirm('No products logged this week. Archive it anyway?')) return;
+    const platformLabel = productsPlatformFilter === 'all' ? 'both platforms' : ((PLATFORMS.find(p => p.id === productsPlatformFilter) || {}).label || productsPlatformFilter);
+    const archiveMessage = rows.length === 0
+      ? `There are no products logged for ${start} through ${end}. Are you sure you still want to archive this week?`
+      : `Are you sure you want to archive ${start} through ${end} for ${platformLabel}? You can unarchive it later from History.`;
+    if (!confirm(archiveMessage)) return;
     const entry = {
       id: uid(),
       weekStart: start,
@@ -1278,8 +1336,8 @@
       const archivedDate = entry.archivedAt ? new Date(entry.archivedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
       const rowsHtml = (entry.rows || []).length === 0
         ? '<div class="report-empty">No products logged that week.</div>'
-        : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes needed</th><th>Notes</th></tr></thead><tbody>${
-            entry.rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td><td style="color:var(--danger);">${escapeHtml((r.notes || []).join(' | '))}</td></tr>`).join('')
+        : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes needed</th></tr></thead><tbody>${
+            entry.rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td></tr>`).join('')
           }</tbody></table>`;
       return `
         <div class="m-room-card" style="margin-bottom:12px;">
@@ -1288,16 +1346,16 @@
               <div style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:16px;">${escapeHtml(entry.weekStart)} \u2013 ${escapeHtml(entry.weekEnd)}</div>
               <div style="font-size:11.5px; color:var(--text-muted);">${escapeHtml(platformLabel)} \u00b7 archived ${escapeHtml(archivedDate)}</div>
             </div>
-            ${isAdmin ? `<button data-delete-archive="${entry.id}" style="background:none;border:none;color:var(--text-muted);font-size:16px;">&times;</button>` : ''}
+            ${isAdmin ? `<button class="btn btn-sm" data-unarchive="${entry.id}" style="border-color:var(--danger);color:var(--danger);">Unarchive</button>` : ''}
           </div>
           ${rowsHtml}
         </div>
       `;
     }).join('');
-    area.querySelectorAll('[data-delete-archive]').forEach(btn => {
+    area.querySelectorAll('[data-unarchive]').forEach(btn => {
       btn.addEventListener('click', async () => {
-        if (!confirm('Remove this archived week? This can\u2019t be undone.')) return;
-        const id = btn.dataset.deleteArchive;
+        if (!confirm('Are you sure you want to unarchive this week? It will be removed from History, but the live schedule will stay unchanged.')) return;
+        const id = btn.dataset.unarchive;
         archivedWeeks = archivedWeeks.filter(a => a.id !== id);
         await deleteArchiveEntry(id);
         renderAll();
@@ -1318,7 +1376,9 @@
     document.getElementById('scheduleView').style.display = isSchedule ? 'block' : 'none';
     document.getElementById('productsView').style.display = isProducts ? 'block' : 'none';
     document.getElementById('historyView').style.display = isHistory ? 'block' : 'none';
-    document.getElementById('emptyRoomsRecovery').style.display = rooms.length === 0 ? 'block' : 'none';
+    const roomScope = isSchedule ? activePlatform : (isProducts ? productsPlatformFilter : 'all');
+    const relevantRoomCount = roomScope === 'all' ? rooms.length : visibleRooms(roomScope).length;
+    document.getElementById('emptyRoomsRecovery').style.display = !isSchedule && relevantRoomCount === 0 ? 'block' : 'none';
 
     if (isSchedule) {
       renderWeekLabel(); renderGrid(); renderDayPicker(); renderMobileList();

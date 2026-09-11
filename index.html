@@ -1309,20 +1309,27 @@
     const start = fmtISO(productsWeekStart), end = fmtISO(addDays(productsWeekStart, 6));
     const rows = computeTotals(start, end, productsPlatformFilter);
     const platformLabel = productsPlatformFilter === 'all' ? 'both platforms' : ((PLATFORMS.find(p => p.id === productsPlatformFilter) || {}).label || productsPlatformFilter);
+    const includedSessions = getIncludedSessions(start, end, productsPlatformFilter);
     const archiveMessage = rows.length === 0
-      ? `There are no products logged for ${start} through ${end}. Are you sure you still want to archive this week?`
-      : `Are you sure you want to archive ${start} through ${end} for ${platformLabel}? You can unarchive it later from History.`;
+      ? `There are no products logged for ${start} through ${end}. Are you sure you still want to save this week in History?`
+      : `Save ${start} through ${end} for ${platformLabel} in History? This saves a permanent snapshot and will NOT remove anything from the live schedule.`;
     if (!confirm(archiveMessage)) return;
+    const existingArchive = archivedWeeks.find(a => a.weekStart === start && a.weekEnd === end && a.platform === productsPlatformFilter);
     const entry = {
-      id: uid(),
+      id: existingArchive ? existingArchive.id : uid(),
       weekStart: start,
       weekEnd: end,
       platform: productsPlatformFilter,
       rows,
+      sessionSnapshot: JSON.parse(JSON.stringify(includedSessions)),
+      roomSnapshot: JSON.parse(JSON.stringify(rooms)),
       archivedAt: new Date().toISOString()
     };
-    archivedWeeks.push(entry);
+    if (existingArchive) archivedWeeks = archivedWeeks.map(a => a.id === entry.id ? entry : a);
+    else archivedWeeks.push(entry);
     await saveArchiveEntry(entry);
+    // Archiving is snapshot-only. The live sessions array is intentionally
+    // untouched so every block remains on its original week and date.
     renderAll();
   });
 
@@ -1334,6 +1341,7 @@
     area.innerHTML = sorted.map(entry => {
       const platformLabel = entry.platform === 'all' ? 'Both platforms' : (PLATFORMS.find(p => p.id === entry.platform) || {}).label || entry.platform;
       const archivedDate = entry.archivedAt ? new Date(entry.archivedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+      const savedBlockCount = Array.isArray(entry.sessionSnapshot) ? entry.sessionSnapshot.length : null;
       const rowsHtml = (entry.rows || []).length === 0
         ? '<div class="report-empty">No products logged that week.</div>'
         : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes needed</th></tr></thead><tbody>${
@@ -1344,23 +1352,13 @@
           <div class="m-room-head">
             <div>
               <div style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:16px;">${escapeHtml(entry.weekStart)} \u2013 ${escapeHtml(entry.weekEnd)}</div>
-              <div style="font-size:11.5px; color:var(--text-muted);">${escapeHtml(platformLabel)} \u00b7 archived ${escapeHtml(archivedDate)}</div>
+              <div style="font-size:11.5px; color:var(--text-muted);">${escapeHtml(platformLabel)} \u00b7 saved ${escapeHtml(archivedDate)}${savedBlockCount === null ? '' : ` \u00b7 ${savedBlockCount} schedule block${savedBlockCount === 1 ? '' : 's'} stored`}</div>
             </div>
-            ${isAdmin ? `<button class="btn btn-sm" data-unarchive="${entry.id}" style="border-color:var(--danger);color:var(--danger);">Unarchive</button>` : ''}
           </div>
           ${rowsHtml}
         </div>
       `;
     }).join('');
-    area.querySelectorAll('[data-unarchive]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        if (!confirm('Are you sure you want to unarchive this week? It will be removed from History, but the live schedule will stay unchanged.')) return;
-        const id = btn.dataset.unarchive;
-        archivedWeeks = archivedWeeks.filter(a => a.id !== id);
-        await deleteArchiveEntry(id);
-        renderAll();
-      });
-    });
   }
 
   // ---- Render orchestration ----

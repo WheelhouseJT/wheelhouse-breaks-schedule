@@ -48,6 +48,7 @@
   .products-toolbar { align-items: flex-end; }
   .products-toolbar > .week-nav, .products-toolbar > .btn { min-height: 46px; height: 46px; }
   .products-toolbar .field select { height: 46px; min-width: 190px; }
+  .products-toolbar .field input[type=date] { height: 46px; min-width: 155px; }
   .week-nav { display: flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 5px 8px; }
   .week-nav button { background: none; border: none; color: var(--text); font-size: 19px; padding: 4px 8px; border-radius: 4px; }
   .week-nav button:hover { background: var(--surface-2); }
@@ -226,6 +227,8 @@
         <button id="productsNextWeek" aria-label="Next week">&#8594;</button>
       </div>
       <button class="btn btn-ghost" id="productsThisWeekBtn">This week</button>
+      <div class="field" style="margin:0;"><label for="productsRangeStart">From</label><input type="date" id="productsRangeStart"></div>
+      <div class="field" style="margin:0;"><label for="productsRangeEnd">To</label><input type="date" id="productsRangeEnd"></div>
       <div class="field" style="margin:0;"><label for="productsPlatform">Platform</label>
         <select id="productsPlatform">
           <option value="all">Both platforms</option>
@@ -233,7 +236,7 @@
           <option value="fanatics">Fanatics Live only</option>
         </select>
       </div>
-      <button class="btn btn-primary" id="archiveWeekBtn" style="display:none;">Archive this week</button>
+      <button class="btn btn-primary" id="archiveWeekBtn" style="display:none;">Archive date range</button>
     </div>
     <div class="grid-wrap" style="padding:14px;">
       <div id="productsSummary" style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:10px;"></div>
@@ -242,7 +245,7 @@
   </div>
 
   <div id="historyView" style="display:none;">
-    <div class="modal-sub" style="margin-bottom:14px;">Weeks you've archived from the Product List tab. Archiving only happens when someone clicks "Archive this week" &mdash; nothing here changes on its own.</div>
+    <div class="modal-sub" style="margin-bottom:14px;">Date ranges you've archived from the Product List tab. Archiving only happens when someone clicks "Archive date range" &mdash; nothing here changes on its own.</div>
     <div id="historyListArea"></div>
   </div>
 
@@ -407,7 +410,7 @@
   let weekStart = startOfWeek(new Date());
   let activePlatform = 'whatnot';
   let activeView = 'schedule'; // 'schedule' or 'products'
-  let productsWeekStart = startOfWeek(new Date()), productsPlatformFilter = 'all';
+  let productsRangeStart = startOfWeek(new Date()), productsRangeEnd = addDays(startOfWeek(new Date()), 6), productsPlatformFilter = 'all';
   let archivedWeeks = [];
   let activeDayIndex = todayIndexInWeek();
   let editingSessionId = null;
@@ -419,6 +422,7 @@
   function startOfWeek(d) { const date = new Date(d); const day = date.getDay(); const diff = (day === 0 ? -6 : 1 - day); date.setDate(date.getDate() + diff); date.setHours(0,0,0,0); return date; }
   function addDays(d, n) { const nd = new Date(d); nd.setDate(nd.getDate() + n); return nd; }
   function fmtISO(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  function parseISODate(iso) { const [year, month, day] = iso.split('-').map(Number); return new Date(year, month - 1, day); }
   function isSameDate(a, b) { return fmtISO(a) === fmtISO(b); }
   function todayIndexInWeek() { const day = new Date().getDay(); return day === 0 ? 6 : day - 1; }
   function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
@@ -1254,40 +1258,60 @@
     applyColors(); renderAll(); flashStatus('Cleared.');
   });
 
-  // ---- Product List view (live, in-app spreadsheet, week by week) ----
+  // ---- Product List view (live, in-app spreadsheet, custom date range) ----
   function renderProductsView() {
-    const start = fmtISO(productsWeekStart), end = fmtISO(addDays(productsWeekStart, 6));
+    const start = fmtISO(productsRangeStart), end = fmtISO(productsRangeEnd);
     const platformFilter = productsPlatformFilter;
     const opts = { month: 'short', day: 'numeric' };
-    document.getElementById('productsWeekLabel').textContent = productsWeekStart.toLocaleDateString('en-US', opts) + ' \u2013 ' + addDays(productsWeekStart, 6).toLocaleDateString('en-US', opts);
+    document.getElementById('productsWeekLabel').textContent = productsRangeStart.toLocaleDateString('en-US', opts) + ' \u2013 ' + productsRangeEnd.toLocaleDateString('en-US', opts);
+    document.getElementById('productsRangeStart').value = start;
+    document.getElementById('productsRangeEnd').value = end;
     document.getElementById('productsPlatform').value = platformFilter;
     document.getElementById('archiveWeekBtn').style.display = isAdmin ? 'inline-flex' : 'none';
 
     const rows = computeTotals(start, end, platformFilter);
     const included = getIncludedSessions(start, end, platformFilter);
-    document.getElementById('productsSummary').textContent = `${included.length} session${included.length === 1 ? '' : 's'} this week \u2014 updates live as the schedule changes`;
+    const dayCount = Math.round((productsRangeEnd - productsRangeStart) / 86400000) + 1;
+    document.getElementById('productsSummary').textContent = `${included.length} session${included.length === 1 ? '' : 's'} across ${dayCount} day${dayCount === 1 ? '' : 's'} \u2014 updates live as the schedule changes`;
     const area = document.getElementById('productsTableArea');
     area.innerHTML = rows.length === 0
-      ? '<div class="report-empty">No products logged this week.</div>'
+      ? '<div class="report-empty">No products logged in this date range.</div>'
       : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes needed</th></tr></thead><tbody>${
           rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td></tr>`).join('')
         }</tbody></table>`;
   }
-  document.getElementById('productsPrevWeek').addEventListener('click', () => { productsWeekStart = addDays(productsWeekStart, -7); renderProductsView(); });
-  document.getElementById('productsNextWeek').addEventListener('click', () => { productsWeekStart = addDays(productsWeekStart, 7); renderProductsView(); });
-  document.getElementById('productsThisWeekBtn').addEventListener('click', () => { productsWeekStart = startOfWeek(new Date()); renderProductsView(); });
+  function shiftProductsRange(direction) {
+    const dayCount = Math.round((productsRangeEnd - productsRangeStart) / 86400000) + 1;
+    productsRangeStart = addDays(productsRangeStart, direction * dayCount);
+    productsRangeEnd = addDays(productsRangeEnd, direction * dayCount);
+    renderProductsView();
+  }
+  function updateProductsRange() {
+    const startValue = document.getElementById('productsRangeStart').value;
+    const endValue = document.getElementById('productsRangeEnd').value;
+    if (!startValue || !endValue) return;
+    if (startValue > endValue) { alert('The From date must be before the To date.'); renderProductsView(); return; }
+    productsRangeStart = parseISODate(startValue);
+    productsRangeEnd = parseISODate(endValue);
+    renderProductsView();
+  }
+  document.getElementById('productsPrevWeek').addEventListener('click', () => shiftProductsRange(-1));
+  document.getElementById('productsNextWeek').addEventListener('click', () => shiftProductsRange(1));
+  document.getElementById('productsThisWeekBtn').addEventListener('click', () => { productsRangeStart = startOfWeek(new Date()); productsRangeEnd = addDays(productsRangeStart, 6); renderProductsView(); });
+  document.getElementById('productsRangeStart').addEventListener('change', updateProductsRange);
+  document.getElementById('productsRangeEnd').addEventListener('change', updateProductsRange);
   document.getElementById('productsPlatform').addEventListener('change', (e) => { productsPlatformFilter = e.target.value; renderProductsView(); });
 
   // Archiving only ever happens on an explicit click -- nothing here runs
   // automatically when a week ends, by design.
   document.getElementById('archiveWeekBtn').addEventListener('click', async () => {
     if (!isAdmin) return;
-    const start = fmtISO(productsWeekStart), end = fmtISO(addDays(productsWeekStart, 6));
+    const start = fmtISO(productsRangeStart), end = fmtISO(productsRangeEnd);
     const rows = computeTotals(start, end, productsPlatformFilter);
     const platformLabel = productsPlatformFilter === 'all' ? 'both platforms' : ((PLATFORMS.find(p => p.id === productsPlatformFilter) || {}).label || productsPlatformFilter);
     const includedSessions = getIncludedSessions(start, end, productsPlatformFilter);
     const archiveMessage = rows.length === 0
-      ? `There are no products logged for ${start} through ${end}. Are you sure you still want to save this week in History?`
+      ? `There are no products logged for ${start} through ${end}. Are you sure you still want to save this date range in History?`
       : `Save ${start} through ${end} for ${platformLabel} in History? This saves a permanent snapshot and will NOT remove anything from the live schedule.`;
     if (!confirm(archiveMessage)) return;
     const existingArchive = archivedWeeks.find(a => a.weekStart === start && a.weekEnd === end && a.platform === productsPlatformFilter);
@@ -1312,7 +1336,7 @@
   // ---- History view (archived weeks) ----
   function renderHistoryView() {
     const area = document.getElementById('historyListArea');
-    if (archivedWeeks.length === 0) { area.innerHTML = '<div class="report-empty">No weeks archived yet. Use "Archive this week" from the Product List tab when a week is done.</div>'; return; }
+    if (archivedWeeks.length === 0) { area.innerHTML = '<div class="report-empty">No date ranges archived yet. Use "Archive date range" from the Product List tab whenever you want to save a snapshot.</div>'; return; }
     const sorted = [...archivedWeeks].sort((a, b) => b.weekStart.localeCompare(a.weekStart));
     area.innerHTML = sorted.map(entry => {
       const platformLabel = entry.platform === 'all' ? 'Both platforms' : (PLATFORMS.find(p => p.id === entry.platform) || {}).label || entry.platform;

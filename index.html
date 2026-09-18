@@ -159,7 +159,7 @@
   .modal .modal-sub { color: var(--text-muted); font-size: 12.5px; margin-bottom: 14px; }
   .field { margin-bottom: 13px; }
   .field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; font-weight: 600; }
-  .field input[type=text], .field input[type=password], .field input[type=date], .field input[type=number], .field select, .field textarea {
+  .field input[type=text], .field input[type=password], .field input[type=date], .field input[type=time], .field input[type=number], .field select, .field textarea {
     width: 100%; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 6px; font-size: 16px; font-family: 'Inter', sans-serif;
   }
   .field input[type=color] { width: 100%; height: 40px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 4px; }
@@ -274,6 +274,11 @@
     <div class="row-inline">
       <div class="field"><label for="f-room">Room / station</label><select id="f-room"></select></div>
       <div class="field"><label for="f-shift">Shift</label><select id="f-shift"></select></div>
+    </div>
+
+    <div class="row-inline" id="customTimeFields" style="display:none;">
+      <div class="field"><label for="f-customStart">Start time</label><input type="time" id="f-customStart"></div>
+      <div class="field"><label for="f-customEnd">Finish time</label><input type="time" id="f-customEnd"></div>
     </div>
 
     <div class="row-inline">
@@ -733,6 +738,16 @@
     return sessions.filter(s => s.roomId === roomId && s.date === iso && s.shift === shiftId && (platform === 'all' || s.platform === platform));
   }
 
+  function formatTime(time) {
+    if (!time) return '';
+    const [hours, minutes] = time.split(':').map(Number);
+    const suffix = hours >= 12 ? 'pm' : 'am';
+    const displayHour = hours % 12 || 12;
+    return `${displayHour}${minutes ? ':' + String(minutes).padStart(2, '0') : ''}${suffix}`;
+  }
+  function sessionTimeLabel(defaultLabel, s) {
+    return s.customStart && s.customEnd ? `${formatTime(s.customStart)}\u2013${formatTime(s.customEnd)}` : defaultLabel;
+  }
   function sessionBlockHtml(shiftLabel, s) {
     const workers = [s.worker1, s.worker2].filter(Boolean).join(' & ') || 'Unassigned';
     const productLine = (s.products || []).filter(p => p.name).map(p => {
@@ -740,7 +755,7 @@
       return `<div class="product-entry"><div class="product-name">${escapeHtml(p.name)}</div><span class="product-stat">${br} break${br === 1 ? '' : 's'}</span><span class="product-stat">${bx} box${bx === 1 ? '' : 'es'}</span></div>`;
     }).join('');
     const flagBadge = s.flagged ? '<span class="flag-badge">&#9888;</span>' : '';
-    return `${flagBadge}<div class="shift-time">${shiftLabel}</div><div class="breakers">${escapeHtml(workers)}</div>${productLine ? `<div class="product-line">${productLine}</div>` : ''}${s.notes ? `<div class="notes-preview">${escapeHtml(s.notes)}</div>` : ''}`;
+    return `${flagBadge}<div class="shift-time">${escapeHtml(sessionTimeLabel(shiftLabel, s))}</div><div class="breakers">${escapeHtml(workers)}</div>${productLine ? `<div class="product-line">${productLine}</div>` : ''}${s.notes ? `<div class="notes-preview">${escapeHtml(s.notes)}</div>` : ''}`;
   }
 
   function configureSessionElement(el, session) {
@@ -974,6 +989,7 @@
   // ---- Session modal ----
   const f = {
     room: document.getElementById('f-room'), shift: document.getElementById('f-shift'),
+    customStart: document.getElementById('f-customStart'), customEnd: document.getElementById('f-customEnd'),
     worker1: document.getElementById('f-worker1'), worker2: document.getElementById('f-worker2'),
     notes: document.getElementById('f-notes'), flagged: document.getElementById('f-flagged'),
     productCount: document.getElementById('f-productCount')
@@ -983,7 +999,9 @@
   const productRowsEl = document.getElementById('productRows');
 
   function populateRoomSelect(platform) { f.room.innerHTML = visibleRooms(platform).map(r => `<option value="${r.id}">${escapeHtml(roomNameFor(r, platform))}</option>`).join(''); }
-  function populateShiftSelect() { f.shift.innerHTML = SHIFTS.map(s => `<option value="${s.id}">${s.label}</option>`).join(''); }
+  function populateShiftSelect() { f.shift.innerHTML = SHIFTS.map(s => `<option value="${s.id}">${s.label}</option>`).join('') + '<option value="custom">Other / Custom time</option>'; }
+  function toggleCustomTimeFields() { document.getElementById('customTimeFields').style.display = f.shift.value === 'custom' ? 'flex' : 'none'; }
+  f.shift.addEventListener('change', toggleCustomTimeFields);
   function populateBreakerList() { document.getElementById('breakerList').innerHTML = breakerNames.map(n => `<option value="${escapeAttr(n)}"></option>`).join(''); }
   function populateProductList() { document.getElementById('productList').innerHTML = productNames.map(n => `<option value="${escapeAttr(n)}"></option>`).join(''); }
 
@@ -1017,7 +1035,8 @@
     editingSessionId = session ? session.id : null;
     editingPlatform = session ? session.platform : (platform || activePlatform);
     populateRoomSelect(editingPlatform); populateShiftSelect(); populateBreakerList(); populateProductList();
-    f.room.value = roomId; f.shift.value = shiftId;
+    f.room.value = roomId;
+    f.shift.value = session && session.customStart && session.customEnd ? 'custom' : shiftId;
     const d = new Date(date + 'T00:00:00');
     document.getElementById('modalSub').textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
     document.getElementById('modalTitle').textContent = session ? 'Edit session' : 'Add session';
@@ -1028,6 +1047,8 @@
     badge.style.setProperty('--tab-accent-bg', `var(--${editingPlatform}-bg)`);
 
     if (session) {
+      f.customStart.value = session.customStart || '';
+      f.customEnd.value = session.customEnd || '';
       f.worker1.value = session.worker1 || ''; f.worker2.value = session.worker2 || '';
       f.notes.value = session.notes || ''; f.flagged.checked = !!session.flagged;
       const prods = (session.products && session.products.length) ? session.products : [{ name:'', breaks:1, boxes:1 }];
@@ -1035,11 +1056,14 @@
       renderProductRows(Number(f.productCount.value), prods);
       deleteBtn.style.display = 'inline-flex';
     } else {
+      f.customStart.value = '';
+      f.customEnd.value = '';
       f.worker1.value = ''; f.worker2.value = ''; f.notes.value = ''; f.flagged.checked = false;
       f.productCount.value = '1';
       renderProductRows(1, [{ name:'', breaks:1, boxes:1 }]);
       deleteBtn.style.display = 'none';
     }
+    toggleCustomTimeFields();
     overlay.dataset.date = date; overlay.dataset.shift = shiftId;
     overlay.style.display = 'flex';
     setTimeout(() => f.worker1.focus(), 30);
@@ -1057,17 +1081,23 @@
     products.forEach(p => { if (p.name && !productNames.includes(p.name)) productNames.push(p.name); });
     await saveBreakers(); await saveProductNames();
 
-    const date = overlay.dataset.date, shiftId = f.shift.value, roomId = f.room.value;
+    const date = overlay.dataset.date, isCustomTime = f.shift.value === 'custom';
+    const shiftId = isCustomTime ? overlay.dataset.shift : f.shift.value;
+    const roomId = f.room.value;
+    const customStart = isCustomTime ? f.customStart.value : '';
+    const customEnd = isCustomTime ? f.customEnd.value : '';
+    if (isCustomTime && (!customStart || !customEnd)) { alert('Choose both a start time and finish time.'); return; }
+    if (isCustomTime && customStart === customEnd) { alert('The start and finish times cannot be the same.'); return; }
     const conflict = sessions.find(s => s.roomId === roomId && s.date === date && s.shift === shiftId && s.platform === editingPlatform && s.id !== editingSessionId);
     if (conflict) { alert('That room already has a ' + PLATFORMS.find(p=>p.id===editingPlatform).label + ' session booked for this shift. Edit the existing one instead.'); return; }
 
     let savedSession;
     if (editingSessionId) {
       const s = sessions.find(x => x.id === editingSessionId);
-      if (s) { s.roomId = roomId; s.date = date; s.shift = shiftId; s.worker1 = worker1Val; s.worker2 = worker2Val; s.notes = notesVal; s.flagged = f.flagged.checked; s.products = products; }
+      if (s) { s.roomId = roomId; s.date = date; s.shift = shiftId; s.customStart = customStart; s.customEnd = customEnd; s.worker1 = worker1Val; s.worker2 = worker2Val; s.notes = notesVal; s.flagged = f.flagged.checked; s.products = products; }
       savedSession = s;
     } else {
-      savedSession = { id: uid(), roomId, date, shift: shiftId, worker1: worker1Val, worker2: worker2Val, notes: notesVal, flagged: f.flagged.checked, products, platform: editingPlatform };
+      savedSession = { id: uid(), roomId, date, shift: shiftId, customStart, customEnd, worker1: worker1Val, worker2: worker2Val, notes: notesVal, flagged: f.flagged.checked, products, platform: editingPlatform };
       sessions.push(savedSession);
     }
     await saveSessionUpsert(savedSession); renderAll(); closeModal();
@@ -1186,7 +1216,7 @@
       const shift = SHIFTS.find(sh => sh.id === s.shift);
       const platformLabel = (PLATFORMS.find(p => p.id === s.platform) || {}).label || s.platform;
       const prodStr = (s.products || []).map(p => `${p.name} (${p.breaks}br/${p.boxes}bx)`).join(', ') || '\u2014';
-      return `<tr><td>${escapeHtml(s.date)}</td><td>${escapeHtml(room ? roomNameFor(room, s.platform) : '(deleted room)')}</td><td>${shift ? shift.label : escapeHtml(s.shift)}</td><td>${escapeHtml(platformLabel)}</td><td>${escapeHtml(prodStr)}</td></tr>`;
+      return `<tr><td>${escapeHtml(s.date)}</td><td>${escapeHtml(room ? roomNameFor(room, s.platform) : '(deleted room)')}</td><td>${escapeHtml(sessionTimeLabel(shift ? shift.label : s.shift, s))}</td><td>${escapeHtml(platformLabel)}</td><td>${escapeHtml(prodStr)}</td></tr>`;
     }).join('');
     const detailHtml = `
       <div style="margin-top:16px; font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:6px;">

@@ -98,8 +98,6 @@
   .session-action.delete { color: var(--danger); }
   .shift-slot.drag-over, .m-shift-row.drag-over { outline: 3px solid var(--accent); outline-offset: -3px; background: rgba(227,178,60,.12); }
   .paste-slot { color: var(--accent); font-weight: 700; border-top: 1px dashed var(--border); }
-  .delete-confirm-label { display: flex; align-items: flex-start; gap: 9px; margin: 16px 0; padding: 11px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface-2); font-size: 13px; line-height: 1.35; }
-  .delete-confirm-label input { width: 18px; height: 18px; flex: 0 0 auto; accent-color: var(--danger); }
   .session.flagged { box-shadow: 0 0 0 2px var(--flag) inset; }
   .session .flag-badge { position: absolute; top: 4px; right: 5px; font-size: 12px; line-height: 1; }
   .session .shift-time { font-weight: 700; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
@@ -741,30 +739,6 @@
     return `${flagBadge}<div class="shift-time">${shiftLabel}</div><div class="breakers">${escapeHtml(workers)}</div>${productLine ? `<div class="product-line">${productLine}</div>` : ''}${s.notes ? `<div class="notes-preview">${escapeHtml(s.notes)}</div>` : ''}`;
   }
 
-  function confirmDeleteSession(session) {
-    const confirmOverlay = document.createElement('div');
-    confirmOverlay.className = 'overlay';
-    confirmOverlay.innerHTML = `<div class="modal" style="max-width:390px;">
-      <h2>Delete this block?</h2>
-      <div class="modal-sub">This removes the complete schedule block.</div>
-      <label class="delete-confirm-label"><input type="checkbox"><span>I understand this entire block will be deleted.</span></label>
-      <div class="modal-actions"><button class="btn cancel-delete">Cancel</button><button class="btn confirm-delete" style="background:var(--danger);border-color:var(--danger);color:white;" disabled>Delete block</button></div>
-    </div>`;
-    document.body.appendChild(confirmOverlay);
-    const checkbox = confirmOverlay.querySelector('input[type="checkbox"]');
-    const deleteButton = confirmOverlay.querySelector('.confirm-delete');
-    checkbox.addEventListener('change', () => { deleteButton.disabled = !checkbox.checked; });
-    confirmOverlay.querySelector('.cancel-delete').addEventListener('click', () => confirmOverlay.remove());
-    confirmOverlay.addEventListener('click', e => { if (e.target === confirmOverlay) confirmOverlay.remove(); });
-    deleteButton.addEventListener('click', async () => {
-      if (!checkbox.checked) return;
-      sessions = sessions.filter(s => s.id !== session.id);
-      await saveSessionDelete(session.id);
-      confirmOverlay.remove();
-      renderAll();
-    });
-  }
-
   function configureSessionElement(el, session) {
     if (!isAdmin) return;
     el.draggable = true;
@@ -778,9 +752,11 @@
       flashStatus('Block copied — use Paste in any open spot.');
       renderAll();
     });
-    actions.querySelector('.delete').addEventListener('click', e => {
+    actions.querySelector('.delete').addEventListener('click', async e => {
       e.stopPropagation();
-      confirmDeleteSession(session);
+      sessions = sessions.filter(s => s.id !== session.id);
+      await saveSessionDelete(session.id);
+      renderAll();
     });
     el.appendChild(actions);
     const resizeHandle = document.createElement('div');

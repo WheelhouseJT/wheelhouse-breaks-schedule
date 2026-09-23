@@ -16,11 +16,12 @@
     --border: #383D49;
     --text: #EDEBE6;
     --text-muted: #9A9FAC;
-    --whatnot: #433a39;
+    --whatnot: #FFD400;
     --fanatics-bg: rgba(74, 127, 201, 0.16);
-    --accent: #E3B23C;
+    --accent: #55A9FF;
+    --accent-dark: #123F73;
     --danger: #C24949;
-    --flag: #E3B23C;
+    --flag: #55A9FF;
     --shift-morning: #D8D9DC;
     --shift-afternoon: #BEE0FA;
     --shift-night: #F6D2A8;
@@ -30,6 +31,60 @@
   html, body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
   h1, h2, h3, .display { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.01em; }
   button { font-family: 'Inter', sans-serif; cursor: pointer; }
+  .public-page { min-height: 100vh; background:#000; color:var(--text); padding:28px 18px 110px; }
+  .public-shell { width: min(1080px, 100%); margin: 0 auto; }
+  .public-brand { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:28px; }
+  .public-logo { display:block; width:clamp(210px,32vw,330px); height:auto; }
+  .live-mark { display:inline-flex; align-items:center; gap:8px; color:#cbd0da; font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+  .live-mark::before { content:''; width:9px; height:9px; border-radius:50%; background:#e44b4b; box-shadow:0 0 0 5px rgba(228,75,75,.13); }
+  .public-heading { margin:0 0 6px; font-size:clamp(34px,6vw,68px); line-height:.95; }
+  .public-intro { margin:0; color:#aeb4c0; font-size:16px; }
+  .public-calendar { margin-top:26px; background:#080b10; border:1px solid #153b64; border-radius:18px; overflow:hidden; box-shadow:0 22px 70px rgba(0,0,0,.55),0 0 0 1px rgba(85,169,255,.07); }
+  .public-calendar-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:17px 18px; border-bottom:1px solid var(--border); }
+  .public-range { font-family:'Barlow Condensed',sans-serif; font-size:21px; font-weight:700; text-align:center; }
+  .public-nav { width:42px; height:42px; border-radius:50%; border:1px solid #245b91; background:#102945; color:white; font-size:20px; }
+  .public-nav:hover { background:#194778; }
+  .public-days { display:grid; grid-template-columns:repeat(7,1fr); border-bottom:1px solid var(--border); }
+  .public-day { border:0; border-right:1px solid var(--border); background:transparent; color:#9299a7; padding:13px 5px 12px; min-width:0; }
+  .public-day:last-child { border-right:0; }
+  .public-day .day-name { display:block; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+  .public-day .day-number { display:grid; place-items:center; width:36px; height:36px; margin:6px auto 0; border-radius:50%; font-family:'Barlow Condensed',sans-serif; font-size:21px; font-weight:700; color:#e9e7e2; }
+  .public-day.active { background:rgba(85,169,255,.10); color:#78bbff; }
+  .public-day.active .day-number { background:linear-gradient(145deg,#66b4ff,#245f9b); color:#fff; }
+  .public-day.today:not(.active) .day-number { box-shadow:inset 0 0 0 1px var(--accent); }
+  .public-schedule { padding:18px; }
+  .public-selected { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:14px; }
+  .public-selected h2 { margin:0; font-size:28px; }
+  .public-count { color:#8f96a4; font-size:13px; }
+  .public-events { display:flex; flex-direction:column; gap:10px; }
+  .public-event { display:grid; grid-template-columns:105px 1fr auto; align-items:center; gap:18px; padding:17px 18px; border:1px solid #d4d8df; background:linear-gradient(135deg,#fff 0%,#f1f3f6 100%); color:#101319; border-radius:12px; text-decoration:none; transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease; }
+  .public-event:hover { transform:translateY(-2px); border-color:#55a9ff; box-shadow:0 10px 26px rgba(20,78,132,.24); }
+  .public-event:focus-visible { outline:3px solid #55a9ff; outline-offset:2px; }
+  .public-time { font-family:'Barlow Condensed',sans-serif; font-size:21px; font-weight:700; color:#0b2845; }
+  .public-products { font-weight:700; font-size:16px; line-height:1.3; }
+  .public-breaker { margin-top:4px; color:#616873; font-size:13px; }
+  .public-platform { display:inline-flex; align-items:center; gap:7px; border-radius:999px; padding:7px 11px; font-size:12px; font-weight:800; white-space:nowrap; }
+  .public-platform::before { content:''; width:7px; height:7px; border-radius:50%; background:currentColor; }
+  .public-platform.fanatics { color:#fff; background:#153f70; }
+  .public-platform.whatnot { color:#111; background:#ffd400; }
+  .public-empty { text-align:center; color:#9ca5b3; padding:46px 18px 52px; border:1px solid #202a36; border-radius:12px; background:#0d1117; }
+  .public-empty strong { display:block; color:#75baff; font-size:20px; margin-bottom:6px; }
+  .admin-corner { position:static; display:block; margin:28px 0 0 auto; border:1px solid #3a404c; background:#191c23; color:#aeb4c0; border-radius:999px; padding:10px 14px; font-size:12px; font-weight:700; box-shadow:0 8px 28px rgba(0,0,0,.3); }
+  .admin-corner:hover { color:white; border-color:#5b6373; }
+  .back-public { border-color:transparent; background:transparent; color:var(--text-muted); }
+  @media (max-width:680px) {
+    .public-page { padding:20px 10px 90px; }
+    .public-brand { margin-bottom:24px; }
+    .live-mark { font-size:11px; }
+    .public-calendar-head { padding:13px 10px; }
+    .public-range { font-size:18px; }
+    .public-day { padding:10px 1px; }
+    .public-day .day-number { width:31px; height:31px; font-size:18px; }
+    .public-schedule { padding:13px 10px; }
+    .public-event { grid-template-columns:82px 1fr; gap:11px; padding:14px 12px; }
+    .public-platform { grid-column:2; justify-self:start; }
+    .public-time { font-size:18px; }
+  }
   .app { max-width: 1400px; margin: 0 auto; padding: 16px 12px 60px; }
 
   .topbar { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
@@ -192,7 +247,34 @@
 </style>
 </head>
 <body>
-<div class="app">
+<main class="public-page" id="publicPage">
+  <div class="public-shell">
+    <header class="public-brand">
+      <img class="public-logo" src="data:image/png;base64,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" alt="Wheelhouse Cards">
+      <div class="live-mark">Break schedule</div>
+    </header>
+    <h1 class="public-heading">Upcoming Breaks</h1>
+    <p class="public-intro">Pick a date to see what’s breaking, when it starts, and where to watch.</p>
+    <section class="public-calendar" aria-label="Wheelhouse break calendar">
+      <div class="public-calendar-head">
+        <button class="public-nav" id="publicPrevWeek" aria-label="Previous week">&#8592;</button>
+        <div class="public-range" id="publicWeekLabel">Loading&hellip;</div>
+        <button class="public-nav" id="publicNextWeek" aria-label="Next week">&#8594;</button>
+      </div>
+      <div class="public-days" id="publicDays"></div>
+      <div class="public-schedule">
+        <div class="public-selected">
+          <h2 id="publicSelectedDate">Today</h2>
+          <div class="public-count" id="publicEventCount"></div>
+        </div>
+        <div class="public-events" id="publicEvents"></div>
+      </div>
+    </section>
+  </div>
+  <button class="admin-corner" id="publicAdminLogin">Staff login</button>
+</main>
+
+<div class="app" id="adminApp" style="display:none;">
   <div class="topbar">
     <div>
       <h1>Break Room Schedule</h1>
@@ -319,8 +401,8 @@
 <!-- Login modal -->
 <div class="overlay" id="loginOverlay" style="display:none;">
   <div class="modal" style="max-width:340px;">
-    <h2>Admin login</h2>
-    <div class="modal-sub">Enter the admin password to make changes.</div>
+    <h2>Staff login</h2>
+    <div class="modal-sub">Enter your admin or breaker password.</div>
     <div class="field"><label for="loginPassword">Password</label><input type="password" id="loginPassword" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"></div>
     <div class="error-text" id="loginError">That password isn&rsquo;t right &mdash; try again.</div>
     <div class="modal-actions">
@@ -392,6 +474,7 @@
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 (function() {
@@ -409,8 +492,11 @@
     { id: 'night', label: '8pm\u20132am' }
   ];
   const PLATFORMS = [ { id: 'whatnot', label: 'Whatnot' }, { id: 'fanatics', label: 'Fanatics Live' } ];
-  const ADMIN_PASSWORD = 'breaks67';
-  const DEFAULT_COLORS = { whatnot: '#D6553D', fanatics: '#4A7FC9' };
+  // These are account identifiers only. The passwords are stored securely by
+  // Firebase Authentication and never appear in this webpage's source code.
+  const STAFF_AUTH_EMAIL = 'staff@wheelhousecards.com';
+  const EDITOR_AUTH_EMAIL = 'editor@wheelhousecards.com';
+  const DEFAULT_COLORS = { whatnot: '#FFD400', fanatics: '#245F9B' };
   const MAX_PRODUCTS = 5;
 
   let rooms = [], sessions = [], breakerNames = [], productNames = [], colors = { ...DEFAULT_COLORS };
@@ -425,6 +511,11 @@
   let copiedSession = null;
   let draggedSessionId = null;
   let isAdmin = false;
+  let accessRole = null;
+  let loginMode = 'staff';
+
+  function canEdit() { return accessRole === 'editor'; }
+  function canDelete() { return canEdit(); }
 
   function startOfWeek(d) { const date = new Date(d); const day = date.getDay(); const diff = (day === 0 ? -6 : 1 - day); date.setDate(date.getDate() + diff); date.setHours(0,0,0,0); return date; }
   function addDays(d, n) { const nd = new Date(d); nd.setDate(nd.getDate() + n); return nd; }
@@ -450,12 +541,24 @@
   const SESSIONS_COLLECTION = 'wheelhouse-break-schedule-sessions';
   const ARCHIVES_COLLECTION = 'wheelhouse-break-schedule-archives';
   let firestoreDb = null;
+  let firebaseAuth = null;
+  let authReady = Promise.resolve();
   try {
     if (typeof firebase !== 'undefined' && FIREBASE_CONFIG.apiKey) {
       firebase.initializeApp(FIREBASE_CONFIG);
       firestoreDb = firebase.firestore();
+      firebaseAuth = firebase.auth();
+      authReady = firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
+        .catch(() => {})
+        .then(() => new Promise(resolve => {
+          const stopWatching = firebaseAuth.onAuthStateChanged(user => {
+            syncAccessFromFirebase(user);
+            stopWatching();
+            resolve();
+          }, () => resolve());
+        }));
     }
-  } catch (e) { firestoreDb = null; }
+  } catch (e) { firestoreDb = null; firebaseAuth = null; }
   const usingFirestore = !!firestoreDb;
 
   // Storage adapter, in priority order: Firestore (shared across every device)
@@ -525,6 +628,7 @@
   }
 
   async function removeRoomFromPlatform(id, platform) {
+    if (!canDelete()) return;
     const room = rooms.find(r => r.id === id);
     if (!room) return;
     const platformLabel = (PLATFORMS.find(p => p.id === platform) || {}).label || platform;
@@ -576,7 +680,11 @@
     } catch(e) { sessions = []; }
     try { const r = await storage.get('breakers'); breakerNames = r ? JSON.parse(r.value) : DEFAULT_BREAKERS.slice(); } catch(e) { breakerNames = DEFAULT_BREAKERS.slice(); }
     try { const r = await storage.get('products'); productNames = r ? JSON.parse(r.value) : []; } catch(e) { productNames = []; }
-    try { const r = await storage.get('colors'); colors = r ? { ...DEFAULT_COLORS, ...JSON.parse(r.value) } : { ...DEFAULT_COLORS }; } catch(e) { colors = { ...DEFAULT_COLORS }; }
+    try {
+      const r = await storage.get('colors');
+      colors = r ? { ...DEFAULT_COLORS, ...JSON.parse(r.value) } : { ...DEFAULT_COLORS };
+      if ((colors.whatnot || '').toUpperCase() === '#D6553D') colors.whatnot = DEFAULT_COLORS.whatnot;
+    } catch(e) { colors = { ...DEFAULT_COLORS }; }
     try {
       if (usingFirestore) {
         const snap = await firestoreDb.collection(ARCHIVES_COLLECTION).get();
@@ -586,7 +694,7 @@
         archivedWeeks = r ? JSON.parse(r.value) : [];
       }
     } catch(e) { archivedWeeks = []; }
-    try { isAdmin = sessionStorage.getItem('wheelhouse-admin') === '1'; } catch(e) { isAdmin = false; }
+    await authReady;
   }
   async function saveRooms() { try { await storage.set('rooms', JSON.stringify(rooms)); } catch(e) { flashStatus('Couldn\u2019t save room changes.'); } }
   async function saveSessions() { try { await storage.set('sessions', JSON.stringify(sessions)); flashStatus('Saved.'); } catch(e) { flashStatus('Couldn\u2019t save. Try again.'); } }
@@ -601,12 +709,14 @@
     } else { await saveSessions(); }
   }
   async function saveSessionDelete(id) {
+    if (!canDelete()) return;
     if (usingFirestore) {
       try { await firestoreDb.collection(SESSIONS_COLLECTION).doc(id).delete(); flashStatus('Saved.'); }
       catch(e) { flashStatus('Couldn\u2019t delete. Try again.'); }
     } else { await saveSessions(); }
   }
   async function saveSessionsBulkDelete(ids) {
+    if (!canDelete()) return;
     if (usingFirestore) {
       try {
         const batch = firestoreDb.batch();
@@ -617,6 +727,7 @@
     } else { await saveSessions(); }
   }
   async function clearAllSessionsRemote() {
+    if (!canDelete()) return;
     if (usingFirestore) {
       try {
         const snap = await firestoreDb.collection(SESSIONS_COLLECTION).get();
@@ -642,6 +753,7 @@
     }
   }
   async function deleteArchiveEntry(id) {
+    if (!canDelete()) return;
     if (usingFirestore) {
       try { await firestoreDb.collection(ARCHIVES_COLLECTION).doc(id).delete(); flashStatus('Removed.'); }
       catch(e) { flashStatus('Couldn\u2019t remove. Try again.'); }
@@ -669,22 +781,92 @@
     document.documentElement.style.setProperty('--fanatics-bg', hexToRgba(colors.fanatics, 0.16));
   }
 
+  // ---- Public customer schedule ----
+  function publicSessionStart(session) {
+    if (session.customStart) return session.customStart;
+    const defaults = { morning: '08:00', afternoon: '14:00', night: '20:00' };
+    return defaults[session.shift] || '23:59';
+  }
+  function renderPublicSchedule() {
+    const selected = addDays(weekStart, activeDayIndex);
+    const selectedDateLabel = selected.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+    document.getElementById('publicWeekLabel').textContent = selectedDateLabel;
+
+    const today = new Date();
+    const daysEl = document.getElementById('publicDays');
+    daysEl.innerHTML = '';
+    for (let i = 0; i < 7; i++) {
+      const date = addDays(weekStart, i);
+      const btn = document.createElement('button');
+      btn.className = `public-day${i === activeDayIndex ? ' active' : ''}${isSameDate(date, today) ? ' today' : ''}`;
+      btn.setAttribute('aria-label', date.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' }));
+      btn.innerHTML = `<span class="day-name">${DAY_NAMES[i]}</span><span class="day-number">${date.getDate()}</span>`;
+      btn.addEventListener('click', () => { activeDayIndex = i; renderPublicSchedule(); });
+      daysEl.appendChild(btn);
+    }
+
+    const selectedISO = fmtISO(selected);
+    document.getElementById('publicSelectedDate').textContent = selected.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+    const daySessions = sessions.filter(s => s.date === selectedISO).sort((a,b) => publicSessionStart(a).localeCompare(publicSessionStart(b)));
+    document.getElementById('publicEventCount').textContent = `${daySessions.length} scheduled break${daySessions.length === 1 ? '' : 's'}`;
+    const eventsEl = document.getElementById('publicEvents');
+    if (!daySessions.length) {
+      eventsEl.innerHTML = '<div class="public-empty"><strong>Coming soon</strong>Breaks for this date will be posted here.</div>';
+      return;
+    }
+    eventsEl.innerHTML = daySessions.map(session => {
+      const shift = SHIFTS.find(item => item.id === session.shift);
+      const time = sessionTimeLabel(shift ? shift.label : session.shift, session);
+      const products = (session.products || []).filter(p => p.name).map(p => escapeHtml(p.name)).join(' + ') || 'Break details coming soon';
+      const breakers = [session.worker1, session.worker2].filter(Boolean).map(escapeHtml).join(' & ') || 'Breaker to be announced';
+      const platform = session.platform === 'fanatics' ? 'Fanatics Live' : 'Whatnot';
+      const platformClass = session.platform === 'fanatics' ? 'fanatics' : 'whatnot';
+      const platformUrl = session.platform === 'fanatics'
+        ? 'https://www.fanatics.live/shops/wheelhouse-breaks'
+        : 'https://www.whatnot.com/user/wheelhousecards';
+      return `<a class="public-event" href="${platformUrl}" target="_blank" rel="noopener noreferrer" aria-label="Watch ${products} on ${platform}">
+        <div class="public-time">${escapeHtml(time)}</div>
+        <div><div class="public-products">${products}</div><div class="public-breaker">with ${breakers}</div></div>
+        <div class="public-platform ${platformClass}">${platform}</div>
+      </a>`;
+    }).join('');
+  }
+  document.getElementById('publicPrevWeek').addEventListener('click', () => { weekStart = addDays(weekStart, -7); activeDayIndex = 0; renderPublicSchedule(); });
+  document.getElementById('publicNextWeek').addEventListener('click', () => { weekStart = addDays(weekStart, 7); activeDayIndex = 0; renderPublicSchedule(); });
+  document.getElementById('publicAdminLogin').addEventListener('click', () => openLoginModal('staff'));
+
   // ---- Auth ----
+  function syncAccessFromFirebase(user) {
+    const email = user && user.email ? user.email.toLowerCase() : '';
+    accessRole = email === EDITOR_AUTH_EMAIL ? 'editor' : (email === STAFF_AUTH_EMAIL ? 'viewer' : null);
+    isAdmin = !!accessRole;
+  }
+
   function renderAuthArea() {
     const el = document.getElementById('authArea');
     if (isAdmin) {
-      el.innerHTML = `<span class="admin-pill">Admin</span><button class="btn btn-sm" id="logoutBtn">Log out</button>`;
-      document.getElementById('logoutBtn').addEventListener('click', () => {
+      const editorButton = canEdit() ? '' : '<button class="btn btn-sm" id="editorLoginBtn">Editor login</button>';
+      const roleLabel = canEdit() ? 'Editing unlocked' : 'View only';
+      el.innerHTML = `<span class="admin-pill">${roleLabel}</span>${editorButton}<button class="btn btn-sm" id="logoutBtn">Log out</button>`;
+      const editorLoginBtn = document.getElementById('editorLoginBtn');
+      if (editorLoginBtn) editorLoginBtn.addEventListener('click', () => openLoginModal('editor'));
+      document.getElementById('logoutBtn').addEventListener('click', async () => {
+        if (firebaseAuth) await firebaseAuth.signOut().catch(() => {});
         isAdmin = false;
-        try { sessionStorage.removeItem('wheelhouse-admin'); } catch(e) {}
+        accessRole = null;
         renderAll();
       });
     } else {
-      el.innerHTML = `<button class="btn btn-sm" id="loginBtn">Admin login</button>`;
-      document.getElementById('loginBtn').addEventListener('click', openLoginModal);
+      el.innerHTML = `<button class="btn btn-sm" id="loginBtn">Staff login</button>`;
+      document.getElementById('loginBtn').addEventListener('click', () => openLoginModal('staff'));
     }
   }
-  function openLoginModal() {
+  function openLoginModal(mode = 'staff') {
+    loginMode = mode === 'editor' ? 'editor' : 'staff';
+    document.querySelector('#loginOverlay h2').textContent = loginMode === 'editor' ? 'Editor login' : 'Staff login';
+    document.querySelector('#loginOverlay .modal-sub').textContent = loginMode === 'editor'
+      ? 'Enter the editor password to add, change, or delete schedule blocks.'
+      : 'Enter the staff password to view the internal schedule.';
     document.getElementById('loginPassword').value = '';
     document.getElementById('loginError').style.display = 'none';
     document.getElementById('loginOverlay').style.display = 'flex';
@@ -692,15 +874,27 @@
   }
   document.getElementById('loginCancelBtn').addEventListener('click', () => { document.getElementById('loginOverlay').style.display = 'none'; });
   document.getElementById('loginOverlay').addEventListener('click', (e) => { if (e.target.id === 'loginOverlay') document.getElementById('loginOverlay').style.display = 'none'; });
-  function submitLogin() {
+  async function submitLogin() {
     const val = document.getElementById('loginPassword').value;
-    if (val === ADMIN_PASSWORD) {
-      isAdmin = true;
-      try { sessionStorage.setItem('wheelhouse-admin', '1'); } catch(e) {}
+    const submitBtn = document.getElementById('loginSubmitBtn');
+    if (!firebaseAuth || !val) {
+      document.getElementById('loginError').style.display = 'block';
+      return;
+    }
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Checking\u2026';
+    try {
+      const email = loginMode === 'editor' ? EDITOR_AUTH_EMAIL : STAFF_AUTH_EMAIL;
+      const credential = await firebaseAuth.signInWithEmailAndPassword(email, val);
+      syncAccessFromFirebase(credential.user);
+      if ((loginMode === 'editor' && !canEdit()) || (loginMode === 'staff' && !isAdmin)) throw new Error('Wrong account role');
       document.getElementById('loginOverlay').style.display = 'none';
       renderAll();
-    } else {
+    } catch (e) {
       document.getElementById('loginError').style.display = 'block';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Log in';
     }
   }
   document.getElementById('loginSubmitBtn').addEventListener('click', submitLogin);
@@ -722,8 +916,12 @@
   // ---- Admin toolbar ----
   function renderAdminToolbar() {
     const el = document.getElementById('adminToolbar');
-    document.getElementById('resetBtn').style.display = isAdmin ? 'inline-flex' : 'none';
-    if (!isAdmin) { el.innerHTML = ''; return; }
+    document.getElementById('resetBtn').style.display = canDelete() ? 'inline-flex' : 'none';
+    if (!canEdit()) {
+      el.innerHTML = `<button class="btn" id="unlockEditingBtn" style="border-color:var(--accent);">&#128274; Editing locked &mdash; unlock</button>`;
+      document.getElementById('unlockEditingBtn').addEventListener('click', () => openLoginModal('editor'));
+      return;
+    }
     el.innerHTML = `<button class="btn" id="manageStaffBtn">Manage staff</button><button class="btn" id="settingsBtn">Settings</button><button class="btn" id="reportBtn">Export report</button>`;
     document.getElementById('manageStaffBtn').addEventListener('click', openStaffModal);
     document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
@@ -761,20 +959,22 @@
   }
 
   function configureSessionElement(el, session) {
-    if (!isAdmin) return;
+    if (!canEdit()) return;
     el.draggable = true;
     if (session.blockHeight) el.style.height = `${Math.max(110, Number(session.blockHeight) || 110)}px`;
     const actions = document.createElement('div');
     actions.className = 'session-actions';
-    actions.innerHTML = `<button class="session-action copy" title="Copy this block">&#10697;</button><button class="session-action delete" title="Delete this block">&times;</button>`;
+    actions.innerHTML = `<button class="session-action copy" title="Copy this block">&#10697;</button>${canDelete() ? '<button class="session-action delete" title="Delete this block">&times;</button>' : ''}`;
     actions.querySelector('.copy').addEventListener('click', e => {
       e.stopPropagation();
       copiedSession = JSON.parse(JSON.stringify(session));
       flashStatus('Block copied — use Paste in any open spot.');
       renderAll();
     });
-    actions.querySelector('.delete').addEventListener('click', async e => {
+    const sessionDeleteBtn = actions.querySelector('.delete');
+    if (sessionDeleteBtn) sessionDeleteBtn.addEventListener('click', async e => {
       e.stopPropagation();
+      if (!canDelete()) return;
       sessions = sessions.filter(s => s.id !== session.id);
       await saveSessionDelete(session.id);
       renderAll();
@@ -821,7 +1021,7 @@
   }
 
   function makeSlotDroppable(slot, roomId, date, shiftId, platform) {
-    if (!isAdmin) return;
+    if (!canEdit()) return;
     slot.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; slot.classList.add('drag-over'); });
     slot.addEventListener('dragleave', e => { if (!slot.contains(e.relatedTarget)) slot.classList.remove('drag-over'); });
     slot.addEventListener('drop', async e => {
@@ -867,7 +1067,7 @@
       visibleRooms(section.id).forEach(room => {
         const rowHead = document.createElement('div');
         rowHead.className = 'row-head';
-        rowHead.innerHTML = `<input class="name-edit" value="${escapeAttr(roomNameFor(room, section.id))}" data-room="${room.id}" data-room-platform="${section.id}" ${isAdmin ? '' : 'disabled'}>${isAdmin ? `<button class="remove-room" data-remove-room="${room.id}" data-room-platform="${section.id}" title="Remove room from ${escapeAttr(section.label)}">&times;</button>` : ''}`;
+        rowHead.innerHTML = `<input class="name-edit" value="${escapeAttr(roomNameFor(room, section.id))}" data-room="${room.id}" data-room-platform="${section.id}" ${canEdit() ? '' : 'disabled'}>${canDelete() ? `<button class="remove-room" data-remove-room="${room.id}" data-room-platform="${section.id}" title="Remove room from ${escapeAttr(section.label)}">&times;</button>` : ''}`;
         grid.appendChild(rowHead);
         for (let i = 0; i < 7; i++) {
           const iso = fmtISO(addDays(weekStart, i));
@@ -881,7 +1081,7 @@
                 const el = document.createElement('div');
                 el.className = 'session session-' + shift.id + (existing.flagged ? ' flagged' : '');
                 el.innerHTML = sessionBlockHtml(shift.label, existing);
-                el.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id, session: existing }); else openLoginModal(); });
+                el.addEventListener('click', () => { if (canEdit()) openModal({ roomId: room.id, date: iso, shiftId: shift.id, session: existing }); else openLoginModal('editor'); });
                 configureSessionElement(el, existing);
                 slot.appendChild(el);
               });
@@ -889,9 +1089,9 @@
               const btn = document.createElement('button');
               btn.className = 'shift-empty';
               btn.innerHTML = `<span class="slot-label">${shift.label}</span><span class="plus">+ Add</span>`;
-              btn.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id, platform: section.id }); else openLoginModal(); });
+              btn.addEventListener('click', () => { if (canEdit()) openModal({ roomId: room.id, date: iso, shiftId: shift.id, platform: section.id }); else openLoginModal('editor'); });
               slot.appendChild(btn);
-              if (isAdmin && copiedSession) {
+              if (canEdit() && copiedSession) {
                 const pasteBtn = document.createElement('button');
                 pasteBtn.className = 'shift-empty paste-slot';
                 pasteBtn.innerHTML = '<span>Paste copied block</span>';
@@ -911,7 +1111,7 @@
     grid.querySelectorAll('[data-remove-room]').forEach(btn => {
       btn.addEventListener('click', (e) => removeRoomFromPlatform(e.currentTarget.dataset.removeRoom, e.currentTarget.dataset.roomPlatform));
     });
-    document.getElementById('addRoomRowDesktop').style.display = isAdmin ? 'block' : 'none';
+    document.getElementById('addRoomRowDesktop').style.display = canEdit() ? 'block' : 'none';
   }
 
   // ---- Mobile day list ----
@@ -944,7 +1144,7 @@
       visibleRooms(section.id).forEach(room => {
       const card = document.createElement('div'); card.className = 'm-room-card';
       const head = document.createElement('div'); head.className = 'm-room-head';
-      head.innerHTML = `<input class="name-edit" value="${escapeAttr(roomNameFor(room, section.id))}" data-room="${room.id}" data-room-platform="${section.id}" ${isAdmin ? '' : 'disabled'}>${isAdmin ? `<button class="remove-room" data-remove-room="${room.id}" data-room-platform="${section.id}" style="background:none;border:none;color:var(--text-muted);font-size:16px;">&times;</button>` : ''}`;
+      head.innerHTML = `<input class="name-edit" value="${escapeAttr(roomNameFor(room, section.id))}" data-room="${room.id}" data-room-platform="${section.id}" ${canEdit() ? '' : 'disabled'}>${canDelete() ? `<button class="remove-room" data-remove-room="${room.id}" data-room-platform="${section.id}" style="background:none;border:none;color:var(--text-muted);font-size:16px;">&times;</button>` : ''}`;
       card.appendChild(head);
       SHIFTS.forEach(shift => {
         const row = document.createElement('div'); row.className = 'm-shift-row';
@@ -956,7 +1156,7 @@
             el2.className = 'session session-' + shift.id + (existing.flagged ? ' flagged' : '');
             el2.style.borderRadius = '8px'; el2.style.padding = '10px';
             el2.innerHTML = sessionBlockHtml(shift.label, existing);
-            el2.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id, session: existing }); else openLoginModal(); });
+            el2.addEventListener('click', () => { if (canEdit()) openModal({ roomId: room.id, date: iso, shiftId: shift.id, session: existing }); else openLoginModal('editor'); });
             configureSessionElement(el2, existing);
             row.appendChild(el2);
           });
@@ -964,9 +1164,9 @@
           const btn = document.createElement('button');
           btn.className = 'shift-empty'; btn.style.borderRadius = '8px';
           btn.innerHTML = `<span class="slot-label">${shift.label}</span><span class="plus">+ Add</span>`;
-          btn.addEventListener('click', () => { if (isAdmin) openModal({ roomId: room.id, date: iso, shiftId: shift.id, platform: section.id }); else openLoginModal(); });
+          btn.addEventListener('click', () => { if (canEdit()) openModal({ roomId: room.id, date: iso, shiftId: shift.id, platform: section.id }); else openLoginModal('editor'); });
           row.appendChild(btn);
-          if (isAdmin && copiedSession) {
+          if (canEdit() && copiedSession) {
             const pasteBtn = document.createElement('button');
             pasteBtn.className = 'shift-empty paste-slot';
             pasteBtn.innerHTML = '<span>Paste copied block</span>';
@@ -985,7 +1185,7 @@
     el.querySelectorAll('[data-remove-room]').forEach(btn => {
       btn.addEventListener('click', (e) => removeRoomFromPlatform(e.currentTarget.dataset.removeRoom, e.currentTarget.dataset.roomPlatform));
     });
-    document.getElementById('addRoomRowMobile').style.display = isAdmin ? 'block' : 'none';
+    document.getElementById('addRoomRowMobile').style.display = canEdit() ? 'block' : 'none';
   }
 
   // ---- Session modal ----
@@ -1056,7 +1256,7 @@
       const prods = (session.products && session.products.length) ? session.products : [{ name:'', breaks:1, boxes:1 }];
       f.productCount.value = String(Math.min(Math.max(prods.length,1), MAX_PRODUCTS));
       renderProductRows(Number(f.productCount.value), prods);
-      deleteBtn.style.display = 'inline-flex';
+      deleteBtn.style.display = canDelete() ? 'inline-flex' : 'none';
     } else {
       f.customStart.value = '';
       f.customEnd.value = '';
@@ -1105,7 +1305,7 @@
     await saveSessionUpsert(savedSession); renderAll(); closeModal();
   });
   deleteBtn.addEventListener('click', async () => {
-    if (!editingSessionId) return;
+    if (!editingSessionId || !canDelete()) return;
     const idToDelete = editingSessionId;
     sessions = sessions.filter(s => s.id !== idToDelete);
     await saveSessionDelete(idToDelete); renderAll(); closeModal();
@@ -1117,8 +1317,8 @@
   function renderStaffList() {
     const el = document.getElementById('staffList');
     if (breakerNames.length === 0) { el.innerHTML = '<div style="color:var(--text-muted); font-size:13px;">No employees yet. Add one below.</div>'; return; }
-    el.innerHTML = breakerNames.map(name => `<div class="staff-row"><span style="font-size:13.5px;">${escapeHtml(name)}</span><button data-remove-staff="${escapeAttr(name)}" style="background:none; border:none; color:var(--text-muted); font-size:15px;">&times;</button></div>`).join('');
-    el.querySelectorAll('[data-remove-staff]').forEach(btn => { btn.addEventListener('click', async () => { breakerNames = breakerNames.filter(n => n !== btn.dataset.removeStaff); await saveBreakers(); renderStaffList(); }); });
+    el.innerHTML = breakerNames.map(name => `<div class="staff-row"><span style="font-size:13.5px;">${escapeHtml(name)}</span>${canDelete() ? `<button data-remove-staff="${escapeAttr(name)}" style="background:none; border:none; color:var(--text-muted); font-size:15px;">&times;</button>` : ''}</div>`).join('');
+    el.querySelectorAll('[data-remove-staff]').forEach(btn => { btn.addEventListener('click', async () => { if (!canDelete()) return; breakerNames = breakerNames.filter(n => n !== btn.dataset.removeStaff); await saveBreakers(); renderStaffList(); }); });
   }
   document.getElementById('closeStaffBtn').addEventListener('click', () => { staffOverlay.style.display = 'none'; });
   staffOverlay.addEventListener('click', (e) => { if (e.target === staffOverlay) staffOverlay.style.display = 'none'; });
@@ -1274,7 +1474,7 @@
   }
   document.getElementById('addRoomBtnDesktop').addEventListener('click', addRoom);
   document.getElementById('addRoomBtnMobile').addEventListener('click', addRoom);
-  document.getElementById('emptyRoomsAddBtn').addEventListener('click', () => { if (isAdmin) addRoom(); else openLoginModal(); });
+  document.getElementById('emptyRoomsAddBtn').addEventListener('click', () => { if (canEdit()) addRoom(); else openLoginModal('editor'); });
 
   // ---- Week nav ----
   document.getElementById('prevWeek').addEventListener('click', () => { weekStart = addDays(weekStart, -7); renderAll(); });
@@ -1283,7 +1483,7 @@
 
   // ---- Reset ----
   document.getElementById('resetBtn').addEventListener('click', async () => {
-    if (!isAdmin) return;
+    if (!canDelete()) return;
     if (!confirm('Clear all rooms, sessions, staff, products, and color settings? This can\u2019t be undone.')) return;
     rooms = JSON.parse(JSON.stringify(DEFAULT_ROOMS)); sessions = []; breakerNames = DEFAULT_BREAKERS.slice(); productNames = []; colors = { ...DEFAULT_COLORS };
     await saveRooms(); await clearAllSessionsRemote(); await saveBreakers(); await saveProductNames(); await saveColors();
@@ -1299,7 +1499,7 @@
     document.getElementById('productsRangeStart').value = start;
     document.getElementById('productsRangeEnd').value = end;
     document.getElementById('productsPlatform').value = platformFilter;
-    document.getElementById('archiveWeekBtn').style.display = isAdmin ? 'inline-flex' : 'none';
+    document.getElementById('archiveWeekBtn').style.display = canEdit() ? 'inline-flex' : 'none';
 
     const rows = computeTotals(start, end, platformFilter);
     const included = getIncludedSessions(start, end, platformFilter);
@@ -1337,7 +1537,7 @@
   // Archiving only ever happens on an explicit click -- nothing here runs
   // automatically when a week ends, by design.
   document.getElementById('archiveWeekBtn').addEventListener('click', async () => {
-    if (!isAdmin) return;
+    if (!canEdit()) return;
     const start = fmtISO(productsRangeStart), end = fmtISO(productsRangeEnd);
     const rows = computeTotals(start, end, productsPlatformFilter);
     const platformLabel = productsPlatformFilter === 'all' ? 'both platforms' : ((PLATFORMS.find(p => p.id === productsPlatformFilter) || {}).label || productsPlatformFilter);
@@ -1395,6 +1595,9 @@
 
   // ---- Render orchestration ----
   function renderAll() {
+    document.getElementById('publicPage').style.display = isAdmin ? 'none' : 'block';
+    document.getElementById('adminApp').style.display = isAdmin ? 'block' : 'none';
+    renderPublicSchedule();
     renderAuthArea(); renderTabs(); renderAdminToolbar();
 
     const isSchedule = activeView === 'schedule';

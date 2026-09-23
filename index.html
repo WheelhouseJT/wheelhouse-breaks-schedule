@@ -530,12 +530,13 @@
 
   // ---- Firebase (shared, multi-device storage) ----
   const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyCF9N9Pgnf8P7a6QCcY-ArcwVeXhz0x76Q",
-    authDomain: "wheelhouse-breaks-scheduling.firebaseapp.com",
-    projectId: "wheelhouse-breaks-scheduling",
-    storageBucket: "wheelhouse-breaks-scheduling.firebasestorage.app",
-    messagingSenderId: "501077189590",
-    appId: "1:501077189590:web:af801d0ce34a614facba77"
+    apiKey: "AIzaSyDLtQCJgelCtCVvEusmEnhruQfLaNXa32Q",
+    authDomain: "breakschedule-e3e8b.firebaseapp.com",
+    projectId: "breakschedule-e3e8b",
+    storageBucket: "breakschedule-e3e8b.firebasestorage.app",
+    messagingSenderId: "99490785145",
+    appId: "1:99490785145:web:30509db269098b932bb1a8",
+    measurementId: "G-5YSEN4D3YH"
   };
   const FIRESTORE_COLLECTION = 'wheelhouse-break-schedule';
   const SESSIONS_COLLECTION = 'wheelhouse-break-schedule-sessions';
@@ -868,7 +869,9 @@
       ? 'Enter the editor password to add, change, or delete schedule blocks.'
       : 'Enter the staff password to view the internal schedule.';
     document.getElementById('loginPassword').value = '';
-    document.getElementById('loginError').style.display = 'none';
+    const loginError = document.getElementById('loginError');
+    loginError.textContent = 'That password isn\u2019t right \u2014 try again.';
+    loginError.style.display = 'none';
     document.getElementById('loginOverlay').style.display = 'flex';
     setTimeout(() => document.getElementById('loginPassword').focus(), 30);
   }
@@ -884,6 +887,8 @@
     submitBtn.disabled = true;
     submitBtn.textContent = 'Checking\u2026';
     try {
+      await authReady;
+      if (!firebaseAuth) throw new Error('Firebase did not load');
       const email = loginMode === 'editor' ? EDITOR_AUTH_EMAIL : STAFF_AUTH_EMAIL;
       const credential = await firebaseAuth.signInWithEmailAndPassword(email, val);
       syncAccessFromFirebase(credential.user);
@@ -891,7 +896,19 @@
       document.getElementById('loginOverlay').style.display = 'none';
       renderAll();
     } catch (e) {
-      document.getElementById('loginError').style.display = 'block';
+      const errorCode = e && e.code ? e.code : '';
+      const messages = {
+        'auth/invalid-credential': 'The Firebase email or password does not match.',
+        'auth/wrong-password': 'The Firebase email or password does not match.',
+        'auth/user-not-found': 'The matching Firebase user was not found.',
+        'auth/unauthorized-domain': 'This website domain is not authorized in Firebase.',
+        'auth/operation-not-allowed': 'Email/password login is not enabled in Firebase.',
+        'auth/network-request-failed': 'Firebase could not be reached. Check the internet connection.'
+      };
+      const loginError = document.getElementById('loginError');
+      loginError.textContent = messages[errorCode] || ('Firebase login failed' + (errorCode ? ': ' + errorCode : '.'));
+      loginError.style.display = 'block';
+      console.error('Firebase login error:', e);
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = 'Log in';

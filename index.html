@@ -185,6 +185,10 @@
   .session.session-afternoon .notes-preview,
   .session.session-night .notes-preview { color: var(--danger); }
 
+  .session.flagged { background:#e32636 !important; color:#fff !important; box-shadow:inset 0 0 0 3px #a40016; }
+  .session.flagged .shift-time, .session.flagged .product-line, .session.flagged .notes-preview { color:#fff !important; }
+  .session.flagged .product-entry { border-color:rgba(255,255,255,.4); }
+  .product-day { margin:20px 0 8px; }
   .add-room-row { padding: 10px 0; }
   .add-room-row button { width: 100%; background: transparent; border: 1px dashed var(--border); color: var(--text-muted); border-radius: var(--radius); padding: 9px; font-size: 12.5px; }
   .add-room-row button:hover { color: var(--text); border-color: var(--text-muted); }
@@ -280,7 +284,7 @@
       <h1>Break Room Schedule</h1>
       <div class="sub">Wheelhouse &middot; who&rsquo;s breaking, what wax, which platform</div>
     </div>
-    <div class="auth-area" id="authArea"></div>
+    <div class="auth-area" id="authArea"></div><button class="btn btn-sm" id="backupScheduleBtn" style="display:none;">Download schedule backup</button>
   </div>
 
   <div class="tabs" id="platformTabs"></div>
@@ -349,6 +353,7 @@
     <h2 id="modalTitle">Add session</h2>
     <div class="modal-sub" id="modalSub"></div>
     <div style="margin-bottom:14px;"><span class="platform-badge" id="modalPlatformBadge"></span></div>
+    <div class="field" id="whatnotAccountField" style="display:none"><label for="whatnotAccount">Whatnot account</label><select id="whatnotAccount"><option value="wheelhousecards">Wheelhouse Cards (@wheelhousecards)</option><option value="wheelhousebreaks">Wheelhouse Breaks (@wheelhousebreaks)</option></select></div>
 
     <label class="flag-check">
       <input type="checkbox" id="f-flagged">
@@ -404,6 +409,7 @@
     <h2>Staff login</h2>
     <div class="modal-sub">Enter your admin or breaker password.</div>
     <div class="field"><label for="loginPassword">Password</label><input type="password" id="loginPassword" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"></div>
+    <label class="flag-check"><input type="checkbox" id="keepSignedIn"> <span>Keep me signed in</span></label>
     <div class="error-text" id="loginError">That password isn&rsquo;t right &mdash; try again.</div>
     <div class="modal-actions">
       <div style="display:flex; gap:8px; margin-left:auto;">
@@ -511,10 +517,11 @@
   let copiedSession = null;
   let draggedSessionId = null;
   let isAdmin = false;
+  let scheduleLoaded = false;
   let accessRole = null;
   let loginMode = 'staff';
 
-  function canEdit() { return accessRole === 'editor'; }
+  function canEdit() { return accessRole === 'editor' && scheduleLoaded; }
   function canDelete() { return canEdit(); }
 
   function startOfWeek(d) { const date = new Date(d); const day = date.getDay(); const diff = (day === 0 ? -6 : 1 - day); date.setDate(date.getDate() + diff); date.setHours(0,0,0,0); return date; }
@@ -549,15 +556,13 @@
       firebase.initializeApp(FIREBASE_CONFIG);
       firestoreDb = firebase.firestore();
       firebaseAuth = firebase.auth();
-      authReady = firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
-        .catch(() => {})
-        .then(() => new Promise(resolve => {
+      authReady = new Promise(resolve => {
           const stopWatching = firebaseAuth.onAuthStateChanged(user => {
             syncAccessFromFirebase(user);
             stopWatching();
             resolve();
           }, () => resolve());
-        }));
+        });
     }
   } catch (e) { firestoreDb = null; firebaseAuth = null; }
   const usingFirestore = !!firestoreDb;
@@ -655,7 +660,7 @@
     const col = firestoreDb.collection(FIRESTORE_COLLECTION);
     col.doc('rooms').onSnapshot(doc => { if (doc.exists) { try { rooms = JSON.parse(doc.data().value); migrateRooms(); renderAll(); } catch(e) {} } });
     firestoreDb.collection(SESSIONS_COLLECTION).onSnapshot(snap => {
-      try { sessions = snap.docs.map(d => d.data()); migrateSessions(); renderAll(); } catch(e) {}
+      try { sessions = snap.docs.map(d => d.data()); migrateSessions(); scheduleLoaded = true; renderAll(); } catch(e) { scheduleLoaded = false; }
     });
     col.doc('breakers').onSnapshot(doc => { if (doc.exists) { try { breakerNames = JSON.parse(doc.data().value); } catch(e) {} } });
     col.doc('products').onSnapshot(doc => { if (doc.exists) { try { productNames = JSON.parse(doc.data().value); } catch(e) {} } });
@@ -667,8 +672,9 @@
 
   // ---- Persistence ----
   async function loadData() {
+    await authReady;
     try { const r = await storage.get('rooms'); rooms = r ? JSON.parse(r.value) : JSON.parse(JSON.stringify(DEFAULT_ROOMS)); } catch(e) { rooms = JSON.parse(JSON.stringify(DEFAULT_ROOMS)); }
-    if (migrateRooms()) await saveRooms();
+    migrateRooms(); // Display legacy rooms without writing during page load.
     try {
       if (usingFirestore) {
         const snap = await firestoreDb.collection(SESSIONS_COLLECTION).get();
@@ -678,7 +684,8 @@
         sessions = r ? JSON.parse(r.value) : [];
       }
       migrateSessions();
-    } catch(e) { sessions = []; }
+      scheduleLoaded = true;
+    } catch(e) { scheduleLoaded = false; sessions = []; console.error('Schedule could not be loaded', e); }
     try { const r = await storage.get('breakers'); breakerNames = r ? JSON.parse(r.value) : DEFAULT_BREAKERS.slice(); } catch(e) { breakerNames = DEFAULT_BREAKERS.slice(); }
     try { const r = await storage.get('products'); productNames = r ? JSON.parse(r.value) : []; } catch(e) { productNames = []; }
     try {
@@ -820,11 +827,11 @@
       const time = sessionTimeLabel(shift ? shift.label : session.shift, session);
       const products = (session.products || []).filter(p => p.name).map(p => escapeHtml(p.name)).join(' + ') || 'Break details coming soon';
       const breakers = [session.worker1, session.worker2].filter(Boolean).map(escapeHtml).join(' & ') || 'Breaker to be announced';
-      const platform = session.platform === 'fanatics' ? 'Fanatics Live' : 'Whatnot';
+      const platform = session.platform === 'fanatics' ? 'Fanatics Live' : (session.whatnotAccount === 'wheelhousebreaks' ? 'Whatnot · Wheelhouse Breaks' : 'Whatnot · Wheelhouse Cards');
       const platformClass = session.platform === 'fanatics' ? 'fanatics' : 'whatnot';
       const platformUrl = session.platform === 'fanatics'
         ? 'https://www.fanatics.live/shops/wheelhouse-breaks'
-        : 'https://www.whatnot.com/user/wheelhousecards';
+        : (session.whatnotAccount === 'wheelhousebreaks' ? 'https://www.whatnot.com/user/wheelhousebreaks' : 'https://www.whatnot.com/user/wheelhousecards');
       return `<a class="public-event" href="${platformUrl}" target="_blank" rel="noopener noreferrer" aria-label="Watch ${products} on ${platform}">
         <div class="public-time">${escapeHtml(time)}</div>
         <div><div class="public-products">${products}</div><div class="public-breaker">with ${breakers}</div></div>
@@ -889,9 +896,11 @@
     try {
       await authReady;
       if (!firebaseAuth) throw new Error('Firebase did not load');
+      await firebaseAuth.setPersistence(document.getElementById('keepSignedIn').checked ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION);
       const email = loginMode === 'editor' ? EDITOR_AUTH_EMAIL : STAFF_AUTH_EMAIL;
       const credential = await firebaseAuth.signInWithEmailAndPassword(email, val);
       syncAccessFromFirebase(credential.user);
+      if (!scheduleLoaded) await loadData();
       if ((loginMode === 'editor' && !canEdit()) || (loginMode === 'staff' && !isAdmin)) throw new Error('Wrong account role');
       document.getElementById('loginOverlay').style.display = 'none';
       renderAll();
@@ -971,7 +980,7 @@
       const br = Number(p.breaks) || 0, bx = Number(p.boxes) || 0;
       return `<div class="product-entry"><div class="product-name">${escapeHtml(p.name)}</div><span class="product-stat">${br} break${br === 1 ? '' : 's'}</span><span class="product-stat">${bx} box${bx === 1 ? '' : 'es'}</span></div>`;
     }).join('');
-    const flagBadge = s.flagged ? '<span class="flag-badge">&#9888;</span>' : '';
+    const flagBadge = '';
     return `${flagBadge}<div class="shift-time">${escapeHtml(sessionTimeLabel(shiftLabel, s))}</div><div class="breakers">${escapeHtml(workers)}</div>${productLine ? `<div class="product-line">${productLine}</div>` : ''}${s.notes ? `<div class="notes-preview">${escapeHtml(s.notes)}</div>` : ''}`;
   }
 
@@ -1259,6 +1268,8 @@
     const d = new Date(date + 'T00:00:00');
     document.getElementById('modalSub').textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
     document.getElementById('modalTitle').textContent = session ? 'Edit session' : 'Add session';
+    document.getElementById('whatnotAccountField').style.display = editingPlatform === 'whatnot' ? 'block' : 'none';
+    document.getElementById('whatnotAccount').value = session?.whatnotAccount === 'wheelhousebreaks' ? 'wheelhousebreaks' : 'wheelhousecards';
     const platformLabel = PLATFORMS.find(p => p.id === editingPlatform).label;
     const badge = document.getElementById('modalPlatformBadge');
     badge.textContent = platformLabel;
@@ -1319,6 +1330,7 @@
       savedSession = { id: uid(), roomId, date, shift: shiftId, customStart, customEnd, worker1: worker1Val, worker2: worker2Val, notes: notesVal, flagged: f.flagged.checked, products, platform: editingPlatform };
       sessions.push(savedSession);
     }
+    if (savedSession && editingPlatform === 'whatnot') savedSession.whatnotAccount = document.getElementById('whatnotAccount').value;
     await saveSessionUpsert(savedSession); renderAll(); closeModal();
   });
   deleteBtn.addEventListener('click', async () => {
@@ -1523,11 +1535,18 @@
     const dayCount = Math.round((productsRangeEnd - productsRangeStart) / 86400000) + 1;
     document.getElementById('productsSummary').textContent = `${included.length} session${included.length === 1 ? '' : 's'} across ${dayCount} day${dayCount === 1 ? '' : 's'} \u2014 updates live as the schedule changes`;
     const area = document.getElementById('productsTableArea');
-    area.innerHTML = rows.length === 0
+    const allRowsHtml = rows.length === 0
       ? '<div class="report-empty">No products logged in this date range.</div>'
       : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes needed</th></tr></thead><tbody>${
           rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td></tr>`).join('')
         }</tbody></table>`;
+    let daily = '';
+    for (let d = new Date(productsRangeStart), n = 0; d <= productsRangeEnd && n < 366; d = addDays(d, 1), n++) {
+      const day = fmtISO(d), dayRows = computeTotals(day, day, platformFilter);
+      const title = d.toLocaleDateString('en-US', {weekday:'long',month:'short',day:'numeric'});
+      daily += `<h3 class="product-day">${escapeHtml(title)}</h3>` + (dayRows.length ? `<table class="report-table"><thead><tr><th>Product</th><th>Breaks</th><th>Boxes needed</th></tr></thead><tbody>${dayRows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td></tr>`).join('')}</tbody></table>` : '<div class="report-empty">No products scheduled.</div>');
+    }
+    area.innerHTML = '<h3 class="product-day">All days total</h3>' + allRowsHtml + daily + (Math.round((productsRangeEnd-productsRangeStart)/86400000) >= 366 ? '<p>Daily view shows the first 366 days. The total includes the full range.</p>' : '');
   }
   function shiftProductsRange(direction) {
     const dayCount = Math.round((productsRangeEnd - productsRangeStart) / 86400000) + 1;
@@ -1610,12 +1629,26 @@
     }).join('');
   }
 
+  document.getElementById('backupScheduleBtn').addEventListener('click', async () => {
+    try {
+      if (!usingFirestore) throw new Error('Firebase is not connected');
+      const [blocks, archiveDocs, roomsDoc] = await Promise.all([
+        firestoreDb.collection(SESSIONS_COLLECTION).get({source:'server'}),
+        firestoreDb.collection(ARCHIVES_COLLECTION).get({source:'server'}),
+        firestoreDb.collection(FIRESTORE_COLLECTION).doc('rooms').get({source:'server'})
+      ]);
+      const backup = {exportedAt:new Date().toISOString(), sessions:blocks.docs.map(d=>({documentId:d.id,data:d.data()})), archives:archiveDocs.docs.map(d=>({documentId:d.id,data:d.data()})), rooms:roomsDoc.exists?roomsDoc.data():null};
+      const link=document.createElement('a'); link.href=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],{type:'application/json'})); link.download='wheelhouse-schedule-backup-'+fmtISO(new Date())+'.json'; link.click(); setTimeout(()=>URL.revokeObjectURL(link.href),1000);
+    } catch(e) { alert('Backup failed. Check your Firebase connection and try again.'); }
+  });
+
   // ---- Render orchestration ----
   function renderAll() {
     document.getElementById('publicPage').style.display = isAdmin ? 'none' : 'block';
     document.getElementById('adminApp').style.display = isAdmin ? 'block' : 'none';
     renderPublicSchedule();
     renderAuthArea(); renderTabs(); renderAdminToolbar();
+    document.getElementById('backupScheduleBtn').style.display = isAdmin ? 'inline-flex' : 'none';
 
     const isSchedule = activeView === 'schedule';
     const isProducts = activeView === 'products';

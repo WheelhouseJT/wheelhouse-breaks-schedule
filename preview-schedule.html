@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Wheelhouse Break Schedule</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAAFACAIAAABC8jL9AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAE1GlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSfvu78nIGlkPSdXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQnPz4KPHg6eG1wbWV0YSB4bWxuczp4PSdhZG9iZTpuczptZXRhLyc+CjxyZGY6UkRGIHhtbG5zOnJkZj0naHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyc+CgogPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9JycKICB4bWxuczpBdHRyaWI9J2h0dHA6Ly9ucy5hdHRyaWJ1dGlvbi5jb20vYWRzLzEuMC8nPgogIDxBdHRyaWI6QWRzPgogICA8cmRmOlNlcT4KICAgIDxyZGY6bGkgcmRmOnBhcnNlVHlwZT0nUmVzb3VyY2UnPgogICAgIDxBdHRyaWI6Q3JlYXRlZD4yMDI1LTEyLTAzPC9BdHRyaWI6Q3JlYXRlZD4KICAgICA8QXR0cmliOkV4dElkPjY0ZmEzZjE1LWJiMjgtNDM1MC05Yjg5LTcyMjgyN2RjZDU3YTwvQXR0cmliOkV4dElkPgogICAgIDxBdHRyaWI6RmJJZD41MjUyNjU5MTQxNzk1ODA8L0F0dHJpYjpGYklkPgogICAgIDxBdHRyaWI6VG91Y2hUeXBlPjI8L0F0dHJpYjpUb3VjaFR5cGU+CiAgICA8L3JkZjpsaT4KICAgPC9yZGY6U2VxPgogIDwvQXR0cmliOkFkcz4KIDwvcmRmOkRlc2NyaXB0aW9uPgoKIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PScnCiAgeG1sbnM6ZGM9J2h0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvJz4KICA8ZGM6dGl0bGU+CiAgIDxyZGY6QWx0PgogICAgPHJkZjpsaSB4bWw6bGFuZz0neC1kZWZhdWx0Jz5XSCAtIFdIIExPR088L3JkZjpsaT4KICAgPC9yZGY6QWx0PgogIDwvZGM6dGl0bGU+CiA8L3JkZjpEZXNjcmlwdGlvbj4KCiA8cmRmOkRlc2NyaXB0aW9uIHJkZjph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">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAAFACAIAAABC8jL9AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAE1GlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSfvu78nIGlkPSdXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQnPz4KPHg6eG1wbWV0YSB4bWxuczp4PSdhZG9iZTpuczptZXRhLyc+CjxyZGY6UkRGIHhtbG5zOnJkZj0naHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyc+CgogPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9JycKICB4bWxuczpBdHRyaWI9J2h0dHA6Ly9ucy5hdHRyaWJ1dGlvbi5jb20vYWRzLzEuMC8nPgogIDxBdHRyaWI6QWRzPgogICA8cmRmOlNlcT4KICAgIDxyZGY6bGkgcmRmOnBhcnNlVHlwZT0nUmVzb3VyY2UnPgogICAgIDxBdHRyaWI6Q3JlYXRlZD4yMDI1LTEyLTAzPC9BdHRyaWI6Q3JlYXRlZD4KICAgICA8QXR0cmliOkV4dElkPjY0ZmEzZjE1LWJiMjgtNDM1MC05Yjg5LTcyMjgyN2RjZDU3YTwvQXR0cmliOkV4dElkPgogICAgIDxBdHRyaWI6RmJJZD41MjUyNjU5MTQxNzk1ODA8L0F0dHJpYjpGYklkPgogICAgIDxBdHRyaWI6VG91Y2hUeXBlPjI8L0F0dHJpYjpUb3VjaFR5cGU+CiAgICA8L3JkZjpsaT4KICAgPC9yZGY6U2VxPgogIDwvQXR0cmliOkFkcz4KIDwvcmRmOkRlc2NyaXB0aW9uPgoKIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PScnCiAgeG1sbnM6ZGM9J2h0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvJz4KICA8ZGM6dGl0bGU+CiAgIDxyZGY6QWx0PgogICAgPHJkZjpsaSB4bWw6bGFuZz0neC1kZWZhdWx0Jz5XSCAtIFdIIExPR088L3JkZjpsaT4KICAgPC9yZGY6QWx0PgogIDwvZGM6dGl0bGU+CiA8L3JkZjpEZXNjcmlwdGlvbj4KCiA8cmRmOkRlc2NyaXB0aW9uIHJkZjph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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1B1E24;
+    --surface: #23262E;
+    --surface-2: #2A2E38;
+    --border: #383D49;
+    --text: #EDEBE6;
+    --text-muted: #9A9FAC;
+    --whatnot: #FFD400;
+    --fanatics-bg: rgba(74, 127, 201, 0.16);
+    --accent: #55A9FF;
+    --accent-dark: #123F73;
+    --danger: #C24949;
+    --flag: #55A9FF;
+    --shift-morning: #D8D9DC;
+    --shift-afternoon: #BEE0FA;
+    --shift-night: #F6D2A8;
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, .display { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: 0.01em; }
+  button { font-family: 'Inter', sans-serif; cursor: pointer; }
+  .public-page { min-height: 100vh; background:#000; color:var(--text); padding:28px 18px 110px; }
+  .public-shell { width: min(1080px, 100%); margin: 0 auto; }
+  .public-brand { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:28px; }
+  .public-logo { display:block; width:clamp(210px,32vw,330px); height:auto; }
+  .live-mark { display:inline-flex; align-items:center; gap:8px; color:#cbd0da; font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+  .live-mark::before { content:''; width:9px; height:9px; border-radius:50%; background:#e44b4b; box-shadow:0 0 0 5px rgba(228,75,75,.13); }
+  .public-heading { margin:0 0 6px; font-size:clamp(34px,6vw,68px); line-height:.95; }
+  .public-intro { margin:0; color:#aeb4c0; font-size:16px; }
+  .public-calendar { margin-top:26px; background:#080b10; border:1px solid #153b64; border-radius:18px; overflow:hidden; box-shadow:0 22px 70px rgba(0,0,0,.55),0 0 0 1px rgba(85,169,255,.07); }
+  .public-calendar-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:17px 18px; border-bottom:1px solid var(--border); }
+  .public-range { font-family:'Barlow Condensed',sans-serif; font-size:21px; font-weight:700; text-align:center; }
+  .public-nav { width:42px; height:42px; border-radius:50%; border:1px solid #245b91; background:#102945; color:white; font-size:20px; }
+  .public-nav:hover { background:#194778; }
+  .public-days { display:grid; grid-template-columns:repeat(7,1fr); border-bottom:1px solid var(--border); }
+  .public-day { border:0; border-right:1px solid var(--border); background:transparent; color:#9299a7; padding:13px 5px 12px; min-width:0; }
+  .public-day:last-child { border-right:0; }
+  .public-day .day-name { display:block; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+  .public-day .day-number { display:grid; place-items:center; width:36px; height:36px; margin:6px auto 0; border-radius:50%; font-family:'Barlow Condensed',sans-serif; font-size:21px; font-weight:700; color:#e9e7e2; }
+  .public-day.active { background:rgba(85,169,255,.10); color:#78bbff; }
+  .public-day.active .day-number { background:linear-gradient(145deg,#66b4ff,#245f9b); color:#fff; }
+  .public-day.today:not(.active) .day-number { box-shadow:inset 0 0 0 1px var(--accent); }
+  .public-schedule { padding:18px; }
+  .public-selected { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:14px; }
+  .public-selected h2 { margin:0; font-size:28px; }
+  .public-count { color:#8f96a4; font-size:13px; }
+  .public-events { display:flex; flex-direction:column; gap:10px; }
+  .public-event { display:grid; grid-template-columns:105px 1fr auto; align-items:center; gap:18px; padding:17px 18px; border:1px solid #d4d8df; background:linear-gradient(135deg,#fff 0%,#f1f3f6 100%); color:#101319; border-radius:12px; text-decoration:none; transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease; }
+  .public-event:hover { transform:translateY(-2px); border-color:#55a9ff; box-shadow:0 10px 26px rgba(20,78,132,.24); }
+  .public-event:focus-visible { outline:3px solid #55a9ff; outline-offset:2px; }
+  .public-time { font-family:'Barlow Condensed',sans-serif; font-size:21px; font-weight:700; color:#0b2845; }
+  .public-products { font-weight:700; font-size:16px; line-height:1.3; }
+  .public-breaker { margin-top:4px; color:#616873; font-size:13px; }
+  .public-platform { display:inline-flex; align-items:center; gap:7px; border-radius:999px; padding:7px 11px; font-size:12px; font-weight:800; white-space:nowrap; }
+  .public-platform::before { content:''; width:7px; height:7px; border-radius:50%; background:currentColor; }
+  .public-platform.fanatics { color:#fff; background:#153f70; }
+  .public-platform.whatnot { color:#111; background:#ffd400; }
+  .public-empty { text-align:center; color:#9ca5b3; padding:46px 18px 52px; border:1px solid #202a36; border-radius:12px; background:#0d1117; }
+  .public-empty strong { display:block; color:#75baff; font-size:20px; margin-bottom:6px; }
+  .admin-corner { position:static; display:block; margin:28px 0 0 auto; border:1px solid #3a404c; background:#191c23; color:#aeb4c0; border-radius:999px; padding:10px 14px; font-size:12px; font-weight:700; box-shadow:0 8px 28px rgba(0,0,0,.3); }
+  .admin-corner:hover { color:white; border-color:#5b6373; }
+  .back-public { border-color:transparent; background:transparent; color:var(--text-muted); }
+  @media (max-width:680px) {
+    .public-page { padding:20px 10px 90px; }
+    .public-brand { margin-bottom:24px; }
+    .live-mark { font-size:11px; }
+    .public-calendar-head { padding:13px 10px; }
+    .public-range { font-size:18px; }
+    .public-day { padding:10px 1px; }
+    .public-day .day-number { width:31px; height:31px; font-size:18px; }
+    .public-schedule { padding:13px 10px; }
+    .public-event { grid-template-columns:82px 1fr; gap:11px; padding:14px 12px; }
+    .public-platform { grid-column:2; justify-self:start; }
+    .public-time { font-size:18px; }
+  }
+  .app { max-width: 1400px; margin: 0 auto; padding: 16px 12px 60px; }
+
+  .topbar { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  .topbar h1 { font-size: 27px; margin: 0; line-height: 1; }
+  .topbar .sub { color: var(--text-muted); font-size: 12.5px; margin-top: 4px; }
+
+  .auth-area { display: flex; align-items: center; gap: 8px; }
+  .admin-pill { font-size: 11.5px; font-weight: 700; color: #1B1E24; background: var(--accent); padding: 4px 9px; border-radius: 20px; letter-spacing: 0.02em; }
+
+  .tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+  .tab-btn { flex: 1; max-width: 220px; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .tab-btn .swatch { width: 9px; height: 9px; border-radius: 50%; }
+  .tab-btn.active { color: var(--text); border-width: 2px; }
+  .tab-btn.active.tab-whatnot { border-color: var(--whatnot); background: var(--whatnot-bg); }
+  .tab-btn.active.tab-fanatics { border-color: var(--fanatics); background: var(--fanatics-bg); }
+
+  .toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .products-toolbar { align-items: flex-end; }
+  .products-toolbar > .week-nav, .products-toolbar > .btn { min-height: 46px; height: 46px; }
+  .products-toolbar .field select { height: 46px; min-width: 190px; }
+  .products-toolbar .field input[type=date] { height: 46px; min-width: 155px; }
+  .week-nav { display: flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 5px 8px; }
+  .week-nav button { background: none; border: none; color: var(--text); font-size: 19px; padding: 4px 8px; border-radius: 4px; }
+  .week-nav button:hover { background: var(--surface-2); }
+  .week-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 15px; min-width: 130px; text-align: center; }
+
+  .btn { border: 1px solid var(--border); background: var(--surface); color: var(--text); padding: 9px 14px; border-radius: var(--radius); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; min-height: 38px; }
+  .btn:hover { background: var(--surface-2); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #1B1E24; }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-ghost { background: transparent; border-color: transparent; color: var(--text-muted); }
+  .btn-ghost:hover { color: var(--text); background: var(--surface); }
+  .btn-sm { padding: 6px 10px; font-size: 12px; min-height: 30px; }
+
+  .grid-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+  .grid { display: grid; grid-template-columns: 128px repeat(7, minmax(160px, 1fr)); min-width: 1240px; }
+  .cell { border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); padding: 6px; display: flex; flex-direction: column; gap: 4px; }
+  .grid > .cell:nth-child(8n) { border-right: none; }
+
+  .col-head { position: sticky; top: 0; background: var(--surface-2); z-index: 2; padding: 9px 8px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); font-family: 'Barlow Condensed', sans-serif; }
+  .col-head .dow { font-size: 14px; font-weight: 700; }
+  .col-head .date { font-size: 10.5px; color: var(--text-muted); }
+  .col-head.today { background: #33302A; }
+  .col-head.today .dow { color: var(--accent); }
+
+  .row-head { position: sticky; left: 0; background: var(--surface-2); z-index: 1; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 9px 9px; display: flex; align-items: center; justify-content: space-between; gap: 6px; font-size: 13.5px; font-weight: 600; }
+  .row-head .name-edit { background: transparent; border: none; color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; width: 100%; outline: none; }
+  .row-head .remove-room { background: none; border: none; color: var(--text-muted); font-size: 15px; padding: 0 2px; }
+  .row-head .remove-room:hover { color: var(--danger); }
+
+  .corner { position: sticky; left: 0; top: 0; z-index: 3; background: var(--surface-2); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .platform-section-title { grid-column: 1 / -1; padding: 13px 16px; color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: 21px; font-weight: 700; letter-spacing: 0.04em; text-align: center; text-transform: uppercase; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .platform-section-title.fanatics { background: var(--fanatics); }
+  .platform-section-title.whatnot { background: var(--whatnot); }
+
+  .shift-slot { border: 1px solid var(--border); border-radius: 6px; min-height: 40px; display: flex; flex-direction: column; gap: 5px; }
+  .shift-empty { width: 100%; background: none; border: none; color: var(--text-muted); font-size: 11px; text-align: center; padding: 6px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-height: 40px; }
+  .shift-empty:hover { background: var(--surface-2); color: var(--text); }
+  .shift-empty .slot-label { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+  .shift-empty .plus { font-size: 15px; line-height: 1; }
+
+  .session { position: relative; border-left: none; background: var(--tab-accent-bg, var(--whatnot-bg)); border-radius: 6px; padding: 15px 12px 18px; min-height: 110px; font-size: 11.5px; cursor: pointer; line-height: 1.3; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+  .session:hover { filter: brightness(1.15); }
+  .session[draggable="true"] { cursor: grab; }
+  .session[draggable="true"]:active { cursor: grabbing; }
+  .session-actions { position: absolute; top: 5px; left: 5px; right: 5px; display: flex; justify-content: space-between; opacity: 0; transition: opacity .15s ease; pointer-events: none; }
+  .session:hover .session-actions { opacity: 1; }
+  .session-action { pointer-events: auto; width: 24px; height: 24px; padding: 0; border: 1px solid rgba(27,30,36,.25); border-radius: 5px; background: rgba(255,255,255,.88); color: #1B1E24; font-size: 14px; font-weight: 700; line-height: 1; }
+  .session-action.delete { color: var(--danger); }
+  .shift-slot.drag-over, .m-shift-row.drag-over { outline: 3px solid var(--accent); outline-offset: -3px; background: rgba(227,178,60,.12); }
+  .paste-slot { color: var(--accent); font-weight: 700; border-top: 1px dashed var(--border); }
+  .session.flagged { box-shadow: 0 0 0 2px var(--flag) inset; }
+  .session .flag-badge { position: absolute; top: 4px; right: 5px; font-size: 12px; line-height: 1; }
+  .session .shift-time { font-weight: 700; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+  .session .breakers { font-weight: 600; margin-top: 1px; }
+  .session .product-line { color: var(--text-muted); white-space: normal; word-break: break-word; }
+  .session .product-entry { width: 100%; padding: 6px 2px; border-top: 1px solid rgba(27,30,36,0.15); display: flex; flex-direction: column; align-items: center; gap: 1px; }
+  .session .product-entry:first-child { border-top: none; }
+  .session .product-name { font-weight: 600; line-height: 1.25; }
+  .session .product-stat { display: block; line-height: 1.25; }
+  .session-resize-handle { position: absolute; left: 30%; right: 30%; bottom: 2px; height: 12px; cursor: ns-resize; z-index: 4; }
+  .session-resize-handle::after { content: ''; position: absolute; left: 20%; right: 20%; bottom: 3px; height: 3px; border-top: 1px solid rgba(27,30,36,.4); border-bottom: 1px solid rgba(27,30,36,.4); }
+  .session .notes-preview { color: var(--danger); font-style: italic; font-weight: 600; white-space: normal; word-break: break-word; margin-top: 4px; }
+  .session .session-platform { display: inline-flex; align-self: center; margin-bottom: 5px; padding: 2px 7px; border-radius: 999px; background: rgba(27, 30, 36, 0.12); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+  .combined-empty { cursor: default; text-align: center; justify-content: center; }
+
+  /* Filled slots are tinted by shift period (not platform) so the day's rhythm
+     is scannable at a glance; the left border still shows platform color. */
+  .session.session-morning { background: var(--shift-morning); color: #1B1E24; }
+  .session.session-afternoon { background: var(--shift-afternoon); color: #1B1E24; }
+  .session.session-night { background: var(--shift-night); color: #1B1E24; }
+  .session.session-morning .shift-time, .session.session-morning .product-line,
+  .session.session-afternoon .shift-time, .session.session-afternoon .product-line,
+  .session.session-night .shift-time, .session.session-night .product-line {
+    color: rgba(27, 30, 36, 0.65);
+  }
+  .session.session-morning .notes-preview,
+  .session.session-afternoon .notes-preview,
+  .session.session-night .notes-preview { color: var(--danger); }
+
+  .session.flagged { background:#e32636 !important; color:#fff !important; box-shadow:inset 0 0 0 3px #a40016; }
+  .session.flagged .shift-time, .session.flagged .product-line, .session.flagged .notes-preview { color:#fff !important; }
+  .session.flagged .product-entry { border-color:rgba(255,255,255,.4); }
+  .product-day { margin:20px 0 8px; }
+  .add-room-row { padding: 10px 0; }
+  .add-room-row button { width: 100%; background: transparent; border: 1px dashed var(--border); color: var(--text-muted); border-radius: var(--radius); padding: 9px; font-size: 12.5px; }
+  .add-room-row button:hover { color: var(--text); border-color: var(--text-muted); }
+
+  .day-picker { display: none; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 10px; }
+  .day-chip { flex: 0 0 auto; padding: 8px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13.5px; }
+  .day-chip.active { color: var(--text); border-color: var(--tab-accent, var(--accent)); background: var(--tab-accent-bg, var(--surface-2)); }
+  .day-chip .n { display: block; font-size: 10px; color: var(--text-muted); font-family: 'Inter', sans-serif; font-weight: 500; }
+
+  .mobile-list { display: none; flex-direction: column; gap: 10px; }
+  .mobile-add-room { display: none !important; }
+  .m-room-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+  .m-room-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .m-room-head .name-edit { background: transparent; border: none; color: var(--text); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; }
+  .m-shift-row { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; }
+  .m-shift-row:last-child { margin-bottom: 0; }
+
+  @media (max-width: 760px) {
+    .grid-wrap { display: none; }
+    .add-room-row.desktop-only { display: none !important; }
+    .mobile-add-room { display: block !important; }
+    .day-picker { display: flex; }
+    .mobile-list { display: flex; }
+  }
+
+  .overlay { position: fixed; inset: 0; background: rgba(10, 11, 14, 0.65); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; width: 100%; max-width: 460px; padding: 20px; max-height: 90vh; overflow-y: auto; }
+  .modal h2 { font-size: 21px; margin: 0 0 4px; }
+  .modal .modal-sub { color: var(--text-muted); font-size: 12.5px; margin-bottom: 14px; }
+  .field { margin-bottom: 13px; }
+  .field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; font-weight: 600; }
+  .field input[type=text], .field input[type=password], .field input[type=date], .field input[type=time], .field input[type=number], .field select, .field textarea {
+    width: 100%; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 6px; font-size: 16px; font-family: 'Inter', sans-serif;
+  }
+  .field input[type=color] { width: 100%; height: 40px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 4px; }
+  .field textarea { resize: vertical; min-height: 54px; font-size: 14px; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+  .platform-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--tab-accent); background: var(--tab-accent-bg); color: var(--text); }
+  .modal-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; gap: 8px; }
+  .row-inline { display: flex; gap: 10px; }
+  .row-inline .field { flex: 1; }
+  .error-text { color: var(--danger); font-size: 12.5px; margin-top: -6px; margin-bottom: 10px; display: none; }
+  .footer-note { margin-top: 14px; font-size: 11.5px; color: var(--text-muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .staff-row { display: flex; align-items: center; justify-content: space-between; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; }
+
+  .flag-check { display: flex; align-items: center; gap: 8px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 10px; margin-bottom: 13px; cursor: pointer; }
+  .flag-check input { width: 17px; height: 17px; accent-color: var(--flag); }
+  .flag-check span { font-size: 13px; font-weight: 600; }
+
+  .product-row { display: grid; grid-template-columns: 1fr 78px 78px; gap: 6px; margin-bottom: 6px; align-items: start; }
+  .product-row .p-name { width: 100%; min-height: 42px; resize: vertical; overflow: auto; font-size: 14px; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 6px; font-family: 'Inter', sans-serif; }
+  .product-row .p-name:focus { outline: none; border-color: var(--accent); }
+  .product-row input[type=number] { font-size: 14px; padding: 10px 6px; text-align: center; }
+  .product-row-labels { display: grid; grid-template-columns: 1fr 78px 78px; gap: 6px; font-size: 10.5px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.03em; }
+
+  .report-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+  .report-table th, .report-table td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--border); }
+  .report-table th { color: var(--text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .report-empty { color: var(--text-muted); font-size: 13px; padding: 14px 0; text-align: center; }
+</style>
+</head>
+<body>
+<main class="public-page" id="publicPage">
+  <div class="public-shell">
+    <header class="public-brand">
+      <img class="public-logo" src="data:image/png;base64,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" alt="Wheelhouse Cards">
+      <div class="live-mark">Break schedule</div>
+    </header>
+    <h1 class="public-heading">Upcoming Breaks</h1>
+    <p class="public-intro">Pick a date to see what’s breaking, when it starts, and where to watch.</p>
+    <section class="public-calendar" aria-label="Wheelhouse break calendar">
+      <div class="public-calendar-head">
+        <button class="public-nav" id="publicPrevWeek" aria-label="Previous week">&#8592;</button>
+        <div class="public-range" id="publicWeekLabel">Loading&hellip;</div>
+        <button class="public-nav" id="publicNextWeek" aria-label="Next week">&#8594;</button>
+      </div>
+      <div class="public-days" id="publicDays"></div>
+      <div class="public-schedule">
+        <div class="public-selected">
+          <h2 id="publicSelectedDate">Today</h2>
+          <div class="public-count" id="publicEventCount"></div>
+        </div>
+        <div class="public-events" id="publicEvents"></div>
+      </div>
+    </section>
+  </div>
+  <button class="admin-corner" id="publicAdminLogin">Staff login</button>
+</main>
+
+<div class="app" id="adminApp" style="display:none;">
+  <div class="topbar">
+    <div>
+      <h1>Break Room Schedule</h1>
+      <div class="sub">Wheelhouse &middot; who&rsquo;s breaking, what wax, which platform</div>
+    </div>
+    <div class="auth-area" id="authArea"></div><button class="btn btn-sm" id="backupScheduleBtn" style="display:none;">Download schedule backup</button>
+  </div>
+
+  <div class="tabs" id="platformTabs"></div>
+
+  <div class="toolbar">
+    <div class="week-nav" id="weekNavWrap">
+      <button id="prevWeek" aria-label="Previous week">&#8592;</button>
+      <div class="week-label" id="weekLabel">Loading&hellip;</div>
+      <button id="nextWeek" aria-label="Next week">&#8594;</button>
+    </div>
+    <button class="btn btn-ghost" id="todayBtn">This week</button>
+    <div id="adminToolbar" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+  </div>
+
+  <div id="scheduleView">
+    <div class="day-picker" id="dayPicker"></div>
+    <div class="grid-wrap"><div class="grid" id="grid"></div></div>
+    <div class="add-room-row desktop-only" id="addRoomRowDesktop" style="display:none;"><button id="addRoomBtnDesktop">+ Add room / station</button></div>
+    <div class="mobile-list" id="mobileList"></div>
+    <div class="add-room-row mobile-add-room" id="addRoomRowMobile" style="display:none;"><button id="addRoomBtnMobile">+ Add room / station</button></div>
+  </div>
+
+  <div id="productsView" style="display:none;">
+    <div class="toolbar products-toolbar">
+      <div class="week-nav">
+        <button id="productsPrevWeek" aria-label="Previous week">&#8592;</button>
+        <div class="week-label" id="productsWeekLabel">Loading&hellip;</div>
+        <button id="productsNextWeek" aria-label="Next week">&#8594;</button>
+      </div>
+      <button class="btn btn-ghost" id="productsThisWeekBtn">This week</button>
+      <div class="field" style="margin:0;"><label for="productsRangeStart">From</label><input type="date" id="productsRangeStart"></div>
+      <div class="field" style="margin:0;"><label for="productsRangeEnd">To</label><input type="date" id="productsRangeEnd"></div>
+      <div class="field" style="margin:0;"><label for="productsPlatform">Platform</label>
+        <select id="productsPlatform">
+          <option value="all">Both platforms</option>
+          <option value="whatnot">Whatnot only</option>
+          <option value="fanatics">Fanatics Live only</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" id="archiveWeekBtn" style="display:none;">Archive date range</button>
+    </div>
+    <div class="grid-wrap" style="padding:14px;">
+      <div id="productsSummary" style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:10px;"></div>
+      <div id="productsTableArea"></div>
+    </div>
+  </div>
+
+  <div id="historyView" style="display:none;">
+    <div class="modal-sub" style="margin-bottom:14px;">Date ranges you've archived from the Product List tab. Archiving only happens when someone clicks "Archive date range" &mdash; nothing here changes on its own.</div>
+    <div id="historyListArea"></div>
+  </div>
+
+  <div class="add-room-row" id="emptyRoomsRecovery" style="display:none;">
+    <button id="emptyRoomsAddBtn">+ Add your first room / station</button>
+  </div>
+
+  <div class="footer-note">
+    <span id="statusNote">Loading&hellip;</span>
+    <button class="btn btn-ghost btn-sm" id="resetBtn" style="display:none;">Clear all data</button>
+  </div>
+</div>
+
+<!-- Session modal -->
+<div class="overlay" id="overlay" style="display:none;">
+  <div class="modal">
+    <h2 id="modalTitle">Add session</h2>
+    <div class="modal-sub" id="modalSub"></div>
+    <div style="margin-bottom:14px;"><span class="platform-badge" id="modalPlatformBadge"></span></div>
+    <div class="field" id="whatnotAccountField" style="display:none"><label for="whatnotAccount">Whatnot account</label><select id="whatnotAccount"><option value="wheelhousecards">Wheelhouse Cards (@wheelhousecards)</option><option value="wheelhousebreaks">Wheelhouse Breaks (@wheelhousebreaks)</option></select></div>
+
+    <label class="flag-check">
+      <input type="checkbox" id="f-flagged">
+      <span>&#9888; Flag this &mdash; needs attention (e.g. boxes changed)</span>
+    </label>
+
+    <div class="row-inline">
+      <div class="field"><label for="f-room">Room / station</label><select id="f-room"></select></div>
+      <div class="field"><label for="f-shift">Shift</label><select id="f-shift"></select></div>
+    </div>
+
+    <div class="row-inline" id="customTimeFields" style="display:none;">
+      <div class="field"><label for="f-customStart">Start time</label><input type="time" id="f-customStart"></div>
+      <div class="field"><label for="f-customEnd">Finish time</label><input type="time" id="f-customEnd"></div>
+    </div>
+
+    <div class="row-inline">
+      <div class="field"><label for="f-worker1">Worker 1</label><input type="text" id="f-worker1" list="breakerList" placeholder="e.g. Colin"></div>
+      <div class="field"><label for="f-worker2">Worker 2 (optional)</label><input type="text" id="f-worker2" list="breakerList" placeholder="e.g. Chance"></div>
+    </div>
+    <datalist id="breakerList"></datalist>
+    <datalist id="productList"></datalist>
+
+    <div class="field">
+      <label for="f-productCount">Number of products this slot</label>
+      <select id="f-productCount">
+        <option value="1">1 product</option>
+        <option value="2">2 products</option>
+        <option value="3">3 products</option>
+        <option value="4">4 products</option>
+        <option value="5">5 products</option>
+      </select>
+    </div>
+
+    <div class="product-row-labels"><span>Product</span><span>Breaks</span><span>Boxes</span></div>
+    <div id="productRows"></div>
+
+    <div class="field" style="margin-top:6px;"><label for="f-notes">Notes</label><textarea id="f-notes" placeholder="Anything else worth flagging"></textarea></div>
+
+    <div class="modal-actions">
+      <button class="btn" id="deleteBtn" style="border-color:var(--danger); color:var(--danger); display:none;">Delete</button>
+      <div style="display:flex; gap:8px; margin-left:auto;">
+        <button class="btn btn-ghost" id="cancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="saveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Login modal -->
+<div class="overlay" id="loginOverlay" style="display:none;">
+  <div class="modal" style="max-width:340px;">
+    <h2>Staff login</h2>
+    <div class="modal-sub">Enter your admin or breaker password.</div>
+    <div class="field"><label for="loginPassword">Password</label><input type="password" id="loginPassword" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"></div>
+    <label class="flag-check"><input type="checkbox" id="keepSignedIn"> <span>Keep me signed in</span></label>
+    <div class="error-text" id="loginError">That password isn&rsquo;t right &mdash; try again.</div>
+    <div class="modal-actions">
+      <div style="display:flex; gap:8px; margin-left:auto;">
+        <button class="btn btn-ghost" id="loginCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="loginSubmitBtn">Log in</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Manage staff modal -->
+<div class="overlay" id="staffOverlay" style="display:none;">
+  <div class="modal">
+    <h2>Manage staff</h2>
+    <div class="modal-sub">Add or remove people who show up in the worker fields.</div>
+    <div id="staffList" style="max-height:280px; overflow-y:auto; margin-bottom:14px;"></div>
+    <div class="row-inline" style="align-items:flex-end;">
+      <div class="field" style="margin-bottom:0;"><label for="newStaffInput">Add employee</label><input type="text" id="newStaffInput" placeholder="Full name"></div>
+      <button class="btn btn-primary" id="addStaffBtn" style="margin-bottom:0; height:42px;">Add</button>
+    </div>
+    <div class="modal-actions"><div style="margin-left:auto;"><button class="btn btn-ghost" id="closeStaffBtn">Done</button></div></div>
+  </div>
+</div>
+
+<!-- Settings / colors modal -->
+<div class="overlay" id="settingsOverlay" style="display:none;">
+  <div class="modal">
+    <h2>Settings</h2>
+    <div class="modal-sub">Set the color used for each platform&rsquo;s time blocks.</div>
+    <div class="field"><label for="colorWhatnot">Whatnot block color</label><input type="color" id="colorWhatnot"></div>
+    <div class="field"><label for="colorFanatics">Fanatics Live block color</label><input type="color" id="colorFanatics"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="resetColorsBtn">Reset to default</button>
+      <div style="display:flex; gap:8px; margin-left:auto;">
+        <button class="btn btn-ghost" id="settingsCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="settingsSaveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Export report modal -->
+<div class="overlay" id="reportOverlay" style="display:none;">
+  <div class="modal" style="max-width:520px;">
+    <h2>Export wax report</h2>
+    <div class="modal-sub">Totals every product broken in the date range into one row each &mdash; different products (e.g. Hobby vs. Jumbo) stay separate.</div>
+    <div class="row-inline">
+      <div class="field"><label for="reportStart">From</label><input type="date" id="reportStart"></div>
+      <div class="field"><label for="reportEnd">To</label><input type="date" id="reportEnd"></div>
+    </div>
+    <div class="field">
+      <label for="reportPlatform">Platform</label>
+      <select id="reportPlatform">
+        <option value="all">Both platforms</option>
+        <option value="whatnot">Whatnot only</option>
+        <option value="fanatics">Fanatics Live only</option>
+      </select>
+    </div>
+    <button class="btn" id="reportPreviewBtn">Preview totals</button>
+    <div id="reportPreviewArea"></div>
+    <div class="modal-actions">
+      <div style="display:flex; gap:8px; margin-left:auto;">
+        <button class="btn btn-ghost" id="reportCancelBtn">Close</button>
+        <button class="btn btn-primary" id="reportDownloadBtn">Download CSV</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+(function() {
+  const DAY_NAMES = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const DEFAULT_ROOMS = [
+    { id: 'r1', name: 'Room 1', platforms: ['whatnot','fanatics'], platformNames: { whatnot: 'Room 1', fanatics: 'Room 1' } },
+    { id: 'r2', name: 'Room 2', platforms: ['whatnot','fanatics'], platformNames: { whatnot: 'Room 2', fanatics: 'Room 2' } },
+    { id: 'r3', name: 'Room 3', platforms: ['whatnot','fanatics'], platformNames: { whatnot: 'Room 3', fanatics: 'Room 3' } },
+    { id: 'r4', name: 'Room 4', platforms: ['whatnot','fanatics'], platformNames: { whatnot: 'Room 4', fanatics: 'Room 4' } }
+  ];
+  const DEFAULT_BREAKERS = ['Colin','Chance','Kyle','Chris','Pat','Mike','Mark','Jeremy','Glenn','Johnny'];
+  const SHIFTS = [
+    { id: 'morning', label: '8am\u20132pm' },
+    { id: 'afternoon', label: '2pm\u20138pm' },
+    { id: 'night', label: '8pm\u20132am' }
+  ];
+  const PLATFORMS = [ { id: 'whatnot', label: 'Whatnot' }, { id: 'fanatics', label: 'Fanatics Live' } ];
+  // These are account identifiers only. The passwords are stored securely by
+  // Firebase Authentication and never appear in this webpage's source code.
+  const STAFF_AUTH_EMAIL = 'staff@wheelhousecards.com';
+  const EDITOR_AUTH_EMAIL = 'editor@wheelhousecards.com';
+  const DEFAULT_COLORS = { whatnot: '#FFD400', fanatics: '#245F9B' };
+  const MAX_PRODUCTS = 5;
+
+  let rooms = [], sessions = [], breakerNames = [], productNames = [], colors = { ...DEFAULT_COLORS };
+  let weekStart = startOfWeek(new Date());
+  let activePlatform = 'whatnot';
+  let activeView = 'schedule'; // 'schedule' or 'products'
+  let productsRangeStart = startOfWeek(new Date()), productsRangeEnd = addDays(startOfWeek(new Date()), 6), productsPlatformFilter = 'all';
+  let archivedWeeks = [];
+  let activeDayIndex = todayIndexInWeek();
+  let editingSessionId = null;
+  let editingPlatform = 'whatnot';
+  let copiedSession = null;
+  let draggedSessionId = null;
+  let isAdmin = false;
+  let scheduleLoaded = false;
+  let accessRole = null;
+  let loginMode = 'staff';
+
+  function canEdit() { return accessRole === 'editor' && scheduleLoaded; }
+  function canDelete() { return canEdit(); }
+
+  function startOfWeek(d) { const date = new Date(d); const day = date.getDay(); const diff = (day === 0 ? -6 : 1 - day); date.setDate(date.getDate() + diff); date.setHours(0,0,0,0); return date; }
+  function addDays(d, n) { const nd = new Date(d); nd.setDate(nd.getDate() + n); return nd; }
+  function fmtISO(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  function parseISODate(iso) { const [year, month, day] = iso.split('-').map(Number); return new Date(year, month - 1, day); }
+  function isSameDate(a, b) { return fmtISO(a) === fmtISO(b); }
+  function todayIndexInWeek() { const day = new Date().getDay(); return day === 0 ? 6 : day - 1; }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str || ''; return d.innerHTML; }
+  function escapeAttr(str) { return (str || '').replace(/"/g, '&quot;'); }
+  function hexToRgba(hex, alpha) { const h = hex.replace('#',''); const r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16); return `rgba(${r}, ${g}, ${b}, ${alpha})`; }
+
+  // ---- Firebase (shared, multi-device storage) ----
+  const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyDLtQCJgelCtCVvEusmEnhruQfLaNXa32Q",
+    authDomain: "breakschedule-e3e8b.firebaseapp.com",
+    projectId: "breakschedule-e3e8b",
+    storageBucket: "breakschedule-e3e8b.firebasestorage.app",
+    messagingSenderId: "99490785145",
+    appId: "1:99490785145:web:30509db269098b932bb1a8",
+    measurementId: "G-5YSEN4D3YH"
+  };
+  const FIRESTORE_COLLECTION = 'wheelhouse-break-schedule';
+  const SESSIONS_COLLECTION = 'wheelhouse-break-schedule-sessions';
+  const ARCHIVES_COLLECTION = 'wheelhouse-break-schedule-archives';
+  let firestoreDb = null;
+  let firebaseAuth = null;
+  let authReady = Promise.resolve();
+  try {
+    if (typeof firebase !== 'undefined' && FIREBASE_CONFIG.apiKey) {
+      firebase.initializeApp(FIREBASE_CONFIG);
+      firestoreDb = firebase.firestore();
+      firebaseAuth = firebase.auth();
+      authReady = new Promise(resolve => {
+          const stopWatching = firebaseAuth.onAuthStateChanged(user => {
+            syncAccessFromFirebase(user);
+            stopWatching();
+            resolve();
+          }, () => resolve());
+        });
+    }
+  } catch (e) { firestoreDb = null; firebaseAuth = null; }
+  const usingFirestore = !!firestoreDb;
+
+  // Storage adapter, in priority order: Firestore (shared across every device)
+  // > Claude's window.storage (this Claude account only) > localStorage (this
+  // browser only). This lets the same file work whether it's hosted standalone,
+  // opened inside Claude, or opened with no backend configured at all.
+  const usingClaudeStorage = (typeof window.storage !== 'undefined' && window.storage !== null);
+  const storage = {
+    async get(key) {
+      if (usingFirestore) {
+        try {
+          const snap = await firestoreDb.collection(FIRESTORE_COLLECTION).doc(key).get();
+          return snap.exists ? { key, value: snap.data().value } : null;
+        } catch (e) { return null; }
+      }
+      if (usingClaudeStorage) { try { return await window.storage.get(key); } catch (e) { return null; } }
+      const raw = localStorage.getItem('wheelhouse-break-schedule:' + key);
+      return raw === null ? null : { key, value: raw };
+    },
+    async set(key, value) {
+      if (usingFirestore) {
+        await firestoreDb.collection(FIRESTORE_COLLECTION).doc(key).set({ value });
+        return { key, value };
+      }
+      if (usingClaudeStorage) { return await window.storage.set(key, value); }
+      localStorage.setItem('wheelhouse-break-schedule:' + key, value);
+      return { key, value };
+    }
+  };
+
+  function migrateSessions() {
+    sessions.forEach(s => {
+      if (!Array.isArray(s.products)) { s.products = s.wax ? [{ name: s.wax, breaks: 1, boxes: 1 }] : []; }
+      if (typeof s.flagged !== 'boolean') s.flagged = false;
+    });
+  }
+
+  function migrateRooms() {
+    let changed = false;
+    rooms.forEach(room => {
+      if (!Array.isArray(room.platforms)) { room.platforms = ['whatnot', 'fanatics']; changed = true; }
+      room.platforms = room.platforms.filter(p => p === 'whatnot' || p === 'fanatics');
+      if (!room.platformNames || typeof room.platformNames !== 'object') {
+        room.platformNames = { whatnot: room.name || 'Room', fanatics: room.name || 'Room' };
+        changed = true;
+      }
+    });
+    return changed;
+  }
+
+  function visibleRooms(platform) {
+    return rooms.filter(room => (room.platforms || ['whatnot', 'fanatics']).includes(platform));
+  }
+
+  function roomNameFor(room, platform) {
+    return (room.platformNames && room.platformNames[platform]) || room.name || 'Room';
+  }
+
+  function renumberPlatformRooms(platform) {
+    visibleRooms(platform).forEach((room, index) => {
+      const currentName = roomNameFor(room, platform);
+      if (/^Room\s+\d+$/i.test(currentName)) {
+        room.platformNames = room.platformNames || {};
+        room.platformNames[platform] = `Room ${index + 1}`;
+      }
+    });
+  }
+
+  async function removeRoomFromPlatform(id, platform) {
+    if (!canDelete()) return;
+    const room = rooms.find(r => r.id === id);
+    if (!room) return;
+    const platformLabel = (PLATFORMS.find(p => p.id === platform) || {}).label || platform;
+    const removedIds = sessions.filter(s => s.roomId === id && s.platform === platform).map(s => s.id);
+    const message = removedIds.length
+      ? `Remove "${roomNameFor(room, platform)}" from ${platformLabel}? Its ${platformLabel} schedule blocks will also be deleted.`
+      : `Remove "${roomNameFor(room, platform)}" from ${platformLabel}?`;
+    if (!confirm(message)) return;
+    room.platforms = (room.platforms || ['whatnot', 'fanatics']).filter(p => p !== platform);
+    if (room.platformNames) delete room.platformNames[platform];
+    sessions = sessions.filter(s => !(s.roomId === id && s.platform === platform));
+    if (room.platforms.length === 0) rooms = rooms.filter(r => r.id !== id);
+    renumberPlatformRooms(platform);
+    await saveRooms();
+    if (removedIds.length) await saveSessionsBulkDelete(removedIds);
+    renderAll();
+  }
+
+  // Live sync: once the initial load has painted the page, subscribe to
+  // Firestore so every open tab/device picks up changes automatically.
+  function attachRealtimeSync() {
+    if (!usingFirestore) return;
+    const col = firestoreDb.collection(FIRESTORE_COLLECTION);
+    col.doc('rooms').onSnapshot(doc => { if (doc.exists) { try { rooms = JSON.parse(doc.data().value); migrateRooms(); renderAll(); } catch(e) {} } });
+    firestoreDb.collection(SESSIONS_COLLECTION).onSnapshot(snap => {
+      try { sessions = snap.docs.map(d => d.data()); migrateSessions(); scheduleLoaded = true; renderAll(); } catch(e) { scheduleLoaded = false; }
+    });
+    col.doc('breakers').onSnapshot(doc => { if (doc.exists) { try { breakerNames = JSON.parse(doc.data().value); } catch(e) {} } });
+    col.doc('products').onSnapshot(doc => { if (doc.exists) { try { productNames = JSON.parse(doc.data().value); } catch(e) {} } });
+    col.doc('colors').onSnapshot(doc => { if (doc.exists) { try { colors = { ...DEFAULT_COLORS, ...JSON.parse(doc.data().value) }; applyColors(); renderAll(); } catch(e) {} } });
+    firestoreDb.collection(ARCHIVES_COLLECTION).onSnapshot(snap => {
+      try { archivedWeeks = snap.docs.map(d => d.data()); if (activeView === 'history') renderAll(); } catch(e) {}
+    });
+  }
+
+  // ---- Persistence ----
+  async function loadData() {
+    await authReady;
+    try { const r = await storage.get('rooms'); rooms = r ? JSON.parse(r.value) : JSON.parse(JSON.stringify(DEFAULT_ROOMS)); } catch(e) { rooms = JSON.parse(JSON.stringify(DEFAULT_ROOMS)); }
+    migrateRooms(); // Display legacy rooms without writing during page load.
+    try {
+      if (usingFirestore) {
+        const snap = await firestoreDb.collection(SESSIONS_COLLECTION).get();
+        sessions = snap.docs.map(d => d.data());
+      } else {
+        const r = await storage.get('sessions');
+        sessions = r ? JSON.parse(r.value) : [];
+      }
+      migrateSessions();
+      scheduleLoaded = true;
+    } catch(e) { scheduleLoaded = false; sessions = []; console.error('Schedule could not be loaded', e); }
+    try { const r = await storage.get('breakers'); breakerNames = r ? JSON.parse(r.value) : DEFAULT_BREAKERS.slice(); } catch(e) { breakerNames = DEFAULT_BREAKERS.slice(); }
+    try { const r = await storage.get('products'); productNames = r ? JSON.parse(r.value) : []; } catch(e) { productNames = []; }
+    try {
+      const r = await storage.get('colors');
+      colors = r ? { ...DEFAULT_COLORS, ...JSON.parse(r.value) } : { ...DEFAULT_COLORS };
+      if ((colors.whatnot || '').toUpperCase() === '#D6553D') colors.whatnot = DEFAULT_COLORS.whatnot;
+    } catch(e) { colors = { ...DEFAULT_COLORS }; }
+    try {
+      if (usingFirestore) {
+        const snap = await firestoreDb.collection(ARCHIVES_COLLECTION).get();
+        archivedWeeks = snap.docs.map(d => d.data());
+      } else {
+        const r = await storage.get('archives');
+        archivedWeeks = r ? JSON.parse(r.value) : [];
+      }
+    } catch(e) { archivedWeeks = []; }
+    await authReady;
+  }
+  async function saveRooms() { try { await storage.set('rooms', JSON.stringify(rooms)); } catch(e) { flashStatus('Couldn\u2019t save room changes.'); } }
+  async function saveSessions() { try { await storage.set('sessions', JSON.stringify(sessions)); flashStatus('Saved.'); } catch(e) { flashStatus('Couldn\u2019t save. Try again.'); } }
+
+  // Each session saves/deletes as its own Firestore document, so one person's
+  // save can never overwrite another's addition made moments earlier -- unlike
+  // storing the whole list in a single document.
+  async function saveSessionUpsert(session) {
+    if (usingFirestore) {
+      try { await firestoreDb.collection(SESSIONS_COLLECTION).doc(session.id).set(session); flashStatus('Saved.'); }
+      catch(e) { flashStatus('Couldn\u2019t save. Try again.'); }
+    } else { await saveSessions(); }
+  }
+  async function saveSessionDelete(id) {
+    if (!canDelete()) return;
+    if (usingFirestore) {
+      try { await firestoreDb.collection(SESSIONS_COLLECTION).doc(id).delete(); flashStatus('Saved.'); }
+      catch(e) { flashStatus('Couldn\u2019t delete. Try again.'); }
+    } else { await saveSessions(); }
+  }
+  async function saveSessionsBulkDelete(ids) {
+    if (!canDelete()) return;
+    if (usingFirestore) {
+      try {
+        const batch = firestoreDb.batch();
+        ids.forEach(id => batch.delete(firestoreDb.collection(SESSIONS_COLLECTION).doc(id)));
+        await batch.commit();
+        flashStatus('Saved.');
+      } catch(e) { flashStatus('Couldn\u2019t save. Try again.'); }
+    } else { await saveSessions(); }
+  }
+  async function clearAllSessionsRemote() {
+    if (!canDelete()) return;
+    if (usingFirestore) {
+      try {
+        const snap = await firestoreDb.collection(SESSIONS_COLLECTION).get();
+        const batch = firestoreDb.batch();
+        snap.docs.forEach(d => batch.delete(d.ref));
+        await batch.commit();
+      } catch(e) {}
+    } else { await saveSessions(); }
+  }
+  async function saveBreakers() { try { await storage.set('breakers', JSON.stringify(breakerNames)); } catch(e) {} }
+  async function saveProductNames() { try { await storage.set('products', JSON.stringify(productNames)); } catch(e) {} }
+  async function saveColors() { try { await storage.set('colors', JSON.stringify(colors)); } catch(e) { flashStatus('Couldn\u2019t save colors.'); } }
+
+  // Archives: one document per archived week so multiple archives never clobber
+  // each other, same reasoning as sessions.
+  async function saveArchiveEntry(entry) {
+    if (usingFirestore) {
+      try { await firestoreDb.collection(ARCHIVES_COLLECTION).doc(entry.id).set(entry); flashStatus('Archived.'); }
+      catch(e) { flashStatus('Couldn\u2019t archive. Try again.'); }
+    } else {
+      try { await storage.set('archives', JSON.stringify(archivedWeeks)); flashStatus('Archived.'); }
+      catch(e) { flashStatus('Couldn\u2019t archive. Try again.'); }
+    }
+  }
+  async function deleteArchiveEntry(id) {
+    if (!canDelete()) return;
+    if (usingFirestore) {
+      try { await firestoreDb.collection(ARCHIVES_COLLECTION).doc(id).delete(); flashStatus('Removed.'); }
+      catch(e) { flashStatus('Couldn\u2019t remove. Try again.'); }
+    } else {
+      try { await storage.set('archives', JSON.stringify(archivedWeeks)); flashStatus('Removed.'); }
+      catch(e) { flashStatus('Couldn\u2019t remove. Try again.'); }
+    }
+  }
+
+  let statusTimer;
+  function flashStatus(msg) {
+    document.getElementById('statusNote').textContent = msg;
+    clearTimeout(statusTimer);
+    statusTimer = setTimeout(() => {
+      document.getElementById('statusNote').textContent = usingFirestore
+        ? 'Synced live across your team'
+        : (usingClaudeStorage ? 'Synced to your Claude account' : 'Saved to this browser on this device');
+    }, 2200);
+  }
+
+  function applyColors() {
+    document.documentElement.style.setProperty('--whatnot', colors.whatnot);
+    document.documentElement.style.setProperty('--whatnot-bg', hexToRgba(colors.whatnot, 0.16));
+    document.documentElement.style.setProperty('--fanatics', colors.fanatics);
+    document.documentElement.style.setProperty('--fanatics-bg', hexToRgba(colors.fanatics, 0.16));
+  }
+
+  // ---- Public customer schedule ----
+  function publicSessionStart(session) {
+    if (session.customStart) return session.customStart;
+    const defaults = { morning: '08:00', afternoon: '14:00', night: '20:00' };
+    return defaults[session.shift] || '23:59';
+  }
+  function renderPublicSchedule() {
+    const selected = addDays(weekStart, activeDayIndex);
+    const selectedDateLabel = selected.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+    document.getElementById('publicWeekLabel').textContent = selectedDateLabel;
+
+    const today = new Date();
+    const daysEl = document.getElementById('publicDays');
+    daysEl.innerHTML = '';
+    for (let i = 0; i < 7; i++) {
+      const date = addDays(weekStart, i);
+      const btn = document.createElement('button');
+      btn.className = `public-day${i === activeDayIndex ? ' active' : ''}${isSameDate(date, today) ? ' today' : ''}`;
+      btn.setAttribute('aria-label', date.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' }));
+      btn.innerHTML = `<span class="day-name">${DAY_NAMES[i]}</span><span class="day-number">${date.getDate()}</span>`;
+      btn.addEventListener('click', () => { activeDayIndex = i; renderPublicSchedule(); });
+      daysEl.appendChild(btn);
+    }
+
+    const selectedISO = fmtISO(selected);
+    document.getElementById('publicSelectedDate').textContent = selected.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+    const daySessions = sessions.filter(s => s.date === selectedISO).sort((a,b) => publicSessionStart(a).localeCompare(publicSessionStart(b)));
+    document.getElementById('publicEventCount').textContent = `${daySessions.length} scheduled break${daySessions.length === 1 ? '' : 's'}`;
+    const eventsEl = document.getElementById('publicEvents');
+    if (!daySessions.length) {
+      eventsEl.innerHTML = '<div class="public-empty"><strong>Coming soon</strong>Breaks for this date will be posted here.</div>';
+      return;
+    }
+    eventsEl.innerHTML = daySessions.map(session => {
+      const shift = SHIFTS.find(item => item.id === session.shift);
+      const time = sessionTimeLabel(shift ? shift.label : session.shift, session);
+      const products = (session.products || []).filter(p => p.name).map(p => escapeHtml(p.name)).join(' + ') || 'Break details coming soon';
+      const breakers = [session.worker1, session.worker2].filter(Boolean).map(escapeHtml).join(' & ') || 'Breaker to be announced';
+      const platform = session.platform === 'fanatics' ? 'Fanatics Live' : (session.whatnotAccount === 'wheelhousebreaks' ? 'Whatnot · Wheelhouse Breaks' : 'Whatnot · Wheelhouse Cards');
+      const platformClass = session.platform === 'fanatics' ? 'fanatics' : 'whatnot';
+      const platformUrl = session.platform === 'fanatics'
+        ? 'https://www.fanatics.live/shops/wheelhouse-breaks'
+        : (session.whatnotAccount === 'wheelhousebreaks' ? 'https://www.whatnot.com/user/wheelhousebreaks' : 'https://www.whatnot.com/user/wheelhousecards');
+      return `<a class="public-event" href="${platformUrl}" target="_blank" rel="noopener noreferrer" aria-label="Watch ${products} on ${platform}">
+        <div class="public-time">${escapeHtml(time)}</div>
+        <div><div class="public-products">${products}</div><div class="public-breaker">with ${breakers}</div></div>
+        <div class="public-platform ${platformClass}">${platform}</div>
+      </a>`;
+    }).join('');
+  }
+  document.getElementById('publicPrevWeek').addEventListener('click', () => { weekStart = addDays(weekStart, -7); activeDayIndex = 0; renderPublicSchedule(); });
+  document.getElementById('publicNextWeek').addEventListener('click', () => { weekStart = addDays(weekStart, 7); activeDayIndex = 0; renderPublicSchedule(); });
+  document.getElementById('publicAdminLogin').addEventListener('click', () => openLoginModal('staff'));
+
+  // ---- Auth ----
+  function syncAccessFromFirebase(user) {
+    const email = user && user.email ? user.email.toLowerCase() : '';
+    accessRole = email === EDITOR_AUTH_EMAIL ? 'editor' : (email === STAFF_AUTH_EMAIL ? 'viewer' : null);
+    isAdmin = !!accessRole;
+  }
+
+  function renderAuthArea() {
+    const el = document.getElementById('authArea');
+    if (isAdmin) {
+      const editorButton = canEdit() ? '' : '<button class="btn btn-sm" id="editorLoginBtn">Editor login</button>';
+      const roleLabel = canEdit() ? 'Editing unlocked' : 'View only';
+      el.innerHTML = `<span class="admin-pill">${roleLabel}</span>${editorButton}<button class="btn btn-sm" id="logoutBtn">Log out</button>`;
+      const editorLoginBtn = document.getElementById('editorLoginBtn');
+      if (editorLoginBtn) editorLoginBtn.addEventListener('click', () => openLoginModal('editor'));
+      document.getElementById('logoutBtn').addEventListener('click', async () => {
+        if (firebaseAuth) await firebaseAuth.signOut().catch(() => {});
+        isAdmin = false;
+        accessRole = null;
+        renderAll();
+      });
+    } else {
+      el.innerHTML = `<button class="btn btn-sm" id="loginBtn">Staff login</button>`;
+      document.getElementById('loginBtn').addEventListener('click', () => openLoginModal('staff'));
+    }
+  }
+  function openLoginModal(mode = 'staff') {
+    loginMode = mode === 'editor' ? 'editor' : 'staff';
+    document.querySelector('#loginOverlay h2').textContent = loginMode === 'editor' ? 'Editor login' : 'Staff login';
+    document.querySelector('#loginOverlay .modal-sub').textContent = loginMode === 'editor'
+      ? 'Enter the editor password to add, change, or delete schedule blocks.'
+      : 'Enter the staff password to view the internal schedule.';
+    document.getElementById('loginPassword').value = '';
+    const loginError = document.getElementById('loginError');
+    loginError.textContent = 'That password isn\u2019t right \u2014 try again.';
+    loginError.style.display = 'none';
+    document.getElementById('loginOverlay').style.display = 'flex';
+    setTimeout(() => document.getElementById('loginPassword').focus(), 30);
+  }
+  document.getElementById('loginCancelBtn').addEventListener('click', () => { document.getElementById('loginOverlay').style.display = 'none'; });
+  document.getElementById('loginOverlay').addEventListener('click', (e) => { if (e.target.id === 'loginOverlay') document.getElementById('loginOverlay').style.display = 'none'; });
+  async function submitLogin() {
+    const val = document.getElementById('loginPassword').value;
+    const submitBtn = document.getElementById('loginSubmitBtn');
+    if (!firebaseAuth || !val) {
+      document.getElementById('loginError').style.display = 'block';
+      return;
+    }
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Checking\u2026';
+    try {
+      await authReady;
+      if (!firebaseAuth) throw new Error('Firebase did not load');
+      await firebaseAuth.setPersistence(document.getElementById('keepSignedIn').checked ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION);
+      const email = loginMode === 'editor' ? EDITOR_AUTH_EMAIL : STAFF_AUTH_EMAIL;
+      const credential = await firebaseAuth.signInWithEmailAndPassword(email, val);
+      syncAccessFromFirebase(credential.user);
+      if (!scheduleLoaded) await loadData();
+      if ((loginMode === 'editor' && !canEdit()) || (loginMode === 'staff' && !isAdmin)) throw new Error('Wrong account role');
+      document.getElementById('loginOverlay').style.display = 'none';
+      renderAll();
+    } catch (e) {
+      const errorCode = e && e.code ? e.code : '';
+      const messages = {
+        'auth/invalid-credential': 'The Firebase email or password does not match.',
+        'auth/wrong-password': 'The Firebase email or password does not match.',
+        'auth/user-not-found': 'The matching Firebase user was not found.',
+        'auth/unauthorized-domain': 'This website domain is not authorized in Firebase.',
+        'auth/operation-not-allowed': 'Email/password login is not enabled in Firebase.',
+        'auth/network-request-failed': 'Firebase could not be reached. Check the internet connection.'
+      };
+      const loginError = document.getElementById('loginError');
+      loginError.textContent = messages[errorCode] || ('Firebase login failed' + (errorCode ? ': ' + errorCode : '.'));
+      loginError.style.display = 'block';
+      console.error('Firebase login error:', e);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Log in';
+    }
+  }
+  document.getElementById('loginSubmitBtn').addEventListener('click', submitLogin);
+  document.getElementById('loginPassword').addEventListener('keydown', (e) => { if (e.key === 'Enter') submitLogin(); });
+
+  // ---- Tabs ----
+  function renderTabs() {
+    const el = document.getElementById('platformTabs');
+    const platformTabsHtml = PLATFORMS.map(p => `<button class="tab-btn ${activeView === 'schedule' && activePlatform === p.id ? 'active tab-' + p.id : ''}" data-platform="${p.id}"><span class="swatch" style="background:var(--${p.id})"></span>${p.label}</button>`).join('');
+    const combinedTabHtml = `<button class="tab-btn ${activeView === 'schedule' && activePlatform === 'all' ? 'active' : ''}" data-platform="all" style="${activeView === 'schedule' && activePlatform === 'all' ? 'border-color:var(--accent); background:rgba(227,178,60,0.14); color:var(--text);' : ''}"><span class="swatch" style="background:linear-gradient(90deg,var(--whatnot) 50%,var(--fanatics) 50%)"></span>Combined View</button>`;
+    const productsTabHtml = `<button class="tab-btn ${activeView === 'products' ? 'active' : ''}" data-view="products" style="${activeView === 'products' ? 'border-color:var(--accent); background:rgba(227,178,60,0.14); color:var(--text);' : ''}">Product List</button>`;
+    const historyTabHtml = `<button class="tab-btn ${activeView === 'history' ? 'active' : ''}" data-view="history" style="${activeView === 'history' ? 'border-color:var(--accent); background:rgba(227,178,60,0.14); color:var(--text);' : ''}">History</button>`;
+    el.innerHTML = platformTabsHtml + combinedTabHtml + productsTabHtml + historyTabHtml;
+    el.querySelectorAll('[data-platform]').forEach(btn => { btn.addEventListener('click', () => { activeView = 'schedule'; activePlatform = btn.dataset.platform; renderAll(); }); });
+    el.querySelector('[data-view="products"]').addEventListener('click', () => { activeView = 'products'; renderAll(); });
+    el.querySelector('[data-view="history"]').addEventListener('click', () => { activeView = 'history'; renderAll(); });
+  }
+
+  // ---- Admin toolbar ----
+  function renderAdminToolbar() {
+    const el = document.getElementById('adminToolbar');
+    document.getElementById('resetBtn').style.display = canDelete() ? 'inline-flex' : 'none';
+    if (!canEdit()) {
+      el.innerHTML = `<button class="btn" id="unlockEditingBtn" style="border-color:var(--accent);">&#128274; Editing locked &mdash; unlock</button>`;
+      document.getElementById('unlockEditingBtn').addEventListener('click', () => openLoginModal('editor'));
+      return;
+    }
+    el.innerHTML = `<button class="btn" id="manageStaffBtn">Manage staff</button><button class="btn" id="settingsBtn">Settings</button><button class="btn" id="reportBtn">Export report</button>`;
+    document.getElementById('manageStaffBtn').addEventListener('click', openStaffModal);
+    document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
+    document.getElementById('reportBtn').addEventListener('click', openReportModal);
+  }
+
+  function renderWeekLabel() {
+    const end = addDays(weekStart, 6);
+    const opts = { month: 'short', day: 'numeric' };
+    document.getElementById('weekLabel').textContent = weekStart.toLocaleDateString('en-US', opts) + ' \u2013 ' + end.toLocaleDateString('en-US', opts);
+  }
+
+  function findSessions(roomId, iso, shiftId, platform = activePlatform) {
+    return sessions.filter(s => s.roomId === roomId && s.date === iso && s.shift === shiftId && (platform === 'all' || s.platform === platform));
+  }
+
+  function formatTime(time) {
+    if (!time) return '';
+    const [hours, minutes] = time.split(':').map(Number);
+    const suffix = hours >= 12 ? 'pm' : 'am';
+    const displayHour = hours % 12 || 12;
+    return `${displayHour}${minutes ? ':' + String(minutes).padStart(2, '0') : ''}${suffix}`;
+  }
+  function sessionTimeLabel(defaultLabel, s) {
+    return s.customStart && s.customEnd ? `${formatTime(s.customStart)}\u2013${formatTime(s.customEnd)}` : defaultLabel;
+  }
+  function sessionBlockHtml(shiftLabel, s) {
+    const workers = [s.worker1, s.worker2].filter(Boolean).join(' & ') || 'Unassigned';
+    const productLine = (s.products || []).filter(p => p.name).map(p => {
+      const br = Number(p.breaks) || 0, bx = Number(p.boxes) || 0;
+      return `<div class="product-entry"><div class="product-name">${escapeHtml(p.name)}</div><span class="product-stat">${br} break${br === 1 ? '' : 's'}</span><span class="product-stat">${bx} box${bx === 1 ? '' : 'es'}</span></div>`;
+    }).join('');
+    const flagBadge = '';
+    return `${flagBadge}<div class="shift-time">${escapeHtml(sessionTimeLabel(shiftLabel, s))}</div><div class="breakers">${escapeHtml(workers)}</div>${productLine ? `<div class="product-line">${productLine}</div>` : ''}${s.notes ? `<div class="notes-preview">${escapeHtml(s.notes)}</div>` : ''}`;
+  }
+
+  function configureSessionElement(el, session) {
+    if (!canEdit()) return;
+    el.draggable = true;
+    if (session.blockHeight) el.style.height = `${Math.max(110, Number(session.blockHeight) || 110)}px`;
+    const actions = document.createElement('div');
+    actions.className = 'session-actions';
+    actions.innerHTML = `<button class="session-action copy" title="Copy this block">&#10697;</button>${canDelete() ? '<button class="session-action delete" title="Delete this block">&times;</button>' : ''}`;
+    actions.querySelector('.copy').addEventListener('click', e => {
+      e.stopPropagation();
+      copiedSession = JSON.parse(JSON.stringify(session));
+      flashStatus('Block copied — use Paste in any open spot.');
+      renderAll();
+    });
+    const sessionDeleteBtn = actions.querySelector('.delete');
+    if (sessionDeleteBtn) sessionDeleteBtn.addEventListener('click', async e => {
+      e.stopPropagation();
+      if (!canDelete()) return;
+      sessions = sessions.filter(s => s.id !== session.id);
+      await saveSessionDelete(session.id);
+      renderAll();
+    });
+    el.appendChild(actions);
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'session-resize-handle';
+    resizeHandle.title = 'Drag down to make this block taller';
+    resizeHandle.addEventListener('click', e => e.stopPropagation());
+    resizeHandle.addEventListener('pointerdown', e => {
+      e.preventDefault(); e.stopPropagation();
+      el.draggable = false;
+      const startY = e.clientY, startHeight = el.offsetHeight;
+      const onMove = moveEvent => { el.style.height = `${Math.max(110, startHeight + moveEvent.clientY - startY)}px`; };
+      const onUp = async () => {
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        el.draggable = true;
+        session.blockHeight = el.offsetHeight;
+        await saveSessionUpsert(session);
+      };
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+    });
+    el.appendChild(resizeHandle);
+    el.addEventListener('dragstart', e => {
+      draggedSessionId = session.id;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', session.id);
+    });
+    el.addEventListener('dragend', () => { draggedSessionId = null; document.querySelectorAll('.drag-over').forEach(x => x.classList.remove('drag-over')); });
+  }
+
+  async function pasteSessionAt(roomId, date, shiftId, platform) {
+    if (!copiedSession) return;
+    const conflict = sessions.some(s => s.roomId === roomId && s.date === date && s.shift === shiftId && s.platform === platform);
+    if (conflict) { alert('That spot already has a block. Choose an empty spot.'); return; }
+    const copy = JSON.parse(JSON.stringify(copiedSession));
+    copy.id = uid(); copy.roomId = roomId; copy.date = date; copy.shift = shiftId; copy.platform = platform;
+    sessions.push(copy);
+    await saveSessionUpsert(copy);
+    copiedSession = null;
+    renderAll();
+  }
+
+  function makeSlotDroppable(slot, roomId, date, shiftId, platform) {
+    if (!canEdit()) return;
+    slot.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; slot.classList.add('drag-over'); });
+    slot.addEventListener('dragleave', e => { if (!slot.contains(e.relatedTarget)) slot.classList.remove('drag-over'); });
+    slot.addEventListener('drop', async e => {
+      e.preventDefault(); slot.classList.remove('drag-over');
+      const id = draggedSessionId || e.dataTransfer.getData('text/plain');
+      const moving = sessions.find(s => s.id === id);
+      if (!moving) return;
+      if (moving.roomId === roomId && moving.date === date && moving.shift === shiftId && moving.platform === platform) return;
+      const conflict = sessions.some(s => s.id !== moving.id && s.roomId === roomId && s.date === date && s.shift === shiftId && s.platform === platform);
+      if (conflict) { alert('That spot already has a block. Drop it into an empty spot.'); return; }
+      moving.roomId = roomId; moving.date = date; moving.shift = shiftId; moving.platform = platform;
+      await saveSessionUpsert(moving);
+      renderAll();
+    });
+  }
+
+  // ---- Desktop grid ----
+  function renderGrid() {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    const today = new Date();
+    const sections = activePlatform === 'all'
+      ? [{ id: 'fanatics', label: 'Fanatics Live' }, { id: 'whatnot', label: 'Whatnot' }]
+      : [PLATFORMS.find(p => p.id === activePlatform)];
+
+    sections.forEach(section => {
+      if (activePlatform === 'all') {
+        const title = document.createElement('div');
+        title.className = 'platform-section-title ' + section.id;
+        title.textContent = section.label;
+        grid.appendChild(title);
+      }
+
+      const corner = document.createElement('div'); corner.className = 'corner'; grid.appendChild(corner);
+      for (let i = 0; i < 7; i++) {
+        const d = addDays(weekStart, i);
+        const head = document.createElement('div');
+        head.className = 'col-head' + (isSameDate(d, today) ? ' today' : '');
+        head.innerHTML = `<div class="dow">${DAY_NAMES[i]}</div><div class="date">${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>`;
+        grid.appendChild(head);
+      }
+
+      visibleRooms(section.id).forEach(room => {
+        const rowHead = document.createElement('div');
+        rowHead.className = 'row-head';
+        rowHead.innerHTML = `<input class="name-edit" value="${escapeAttr(roomNameFor(room, section.id))}" data-room="${room.id}" data-room-platform="${section.id}" ${canEdit() ? '' : 'disabled'}>${canDelete() ? `<button class="remove-room" data-remove-room="${room.id}" data-room-platform="${section.id}" title="Remove room from ${escapeAttr(section.label)}">&times;</button>` : ''}`;
+        grid.appendChild(rowHead);
+        for (let i = 0; i < 7; i++) {
+          const iso = fmtISO(addDays(weekStart, i));
+          const cell = document.createElement('div'); cell.className = 'cell';
+          SHIFTS.forEach(shift => {
+            const slot = document.createElement('div'); slot.className = 'shift-slot';
+            makeSlotDroppable(slot, room.id, iso, shift.id, section.id);
+            const existingSessions = findSessions(room.id, iso, shift.id, section.id);
+            if (existingSessions.length) {
+              existingSessions.forEach(existing => {
+                const el = document.createElement('div');
+                el.className = 'session session-' + shift.id + (existing.flagged ? ' flagged' : '');
+                el.innerHTML = sessionBlockHtml(shift.label, existing);
+                el.addEventListener('click', () => { if (canEdit()) openModal({ roomId: room.id, date: iso, shiftId: shift.id, session: existing }); else openLoginModal('editor'); });
+                configureSessionElement(el, existing);
+                slot.appendChild(el);
+              });
+            } else {
+              const btn = document.createElement('button');
+              btn.className = 'shift-empty';
+              btn.innerHTML = `<span class="slot-label">${shift.label}</span><span class="plus">+ Add</span>`;
+              btn.addEventListener('click', () => { if (canEdit()) openModal({ roomId: room.id, date: iso, shiftId: shift.id, platform: section.id }); else openLoginModal('editor'); });
+              slot.appendChild(btn);
+              if (canEdit() && copiedSession) {
+                const pasteBtn = document.createElement('button');
+                pasteBtn.className = 'shift-empty paste-slot';
+                pasteBtn.innerHTML = '<span>Paste copied block</span>';
+                pasteBtn.addEventListener('click', () => pasteSessionAt(room.id, iso, shift.id, section.id));
+                slot.appendChild(pasteBtn);
+              }
+            }
+            cell.appendChild(slot);
+          });
+          grid.appendChild(cell);
+        }
+      });
+    });
+    grid.querySelectorAll('.name-edit').forEach(input => {
+      input.addEventListener('change', (e) => { const room = rooms.find(r => r.id === e.target.dataset.room); if (room) { const platform = e.target.dataset.roomPlatform; room.platformNames = room.platformNames || {}; room.platformNames[platform] = e.target.value.trim() || roomNameFor(room, platform); saveRooms(); } });
+    });
+    grid.querySelectorAll('[data-remove-room]').forEach(btn => {
+      btn.addEventListener('click', (e) => removeRoomFromPlatform(e.currentTarget.dataset.removeRoom, e.currentTarget.dataset.roomPlatform));
+    });
+    document.getElementById('addRoomRowDesktop').style.display = canEdit() ? 'block' : 'none';
+  }
+
+  // ---- Mobile day list ----
+  function renderDayPicker() {
+    const el = document.getElementById('dayPicker');
+    el.innerHTML = '';
+    for (let i = 0; i < 7; i++) {
+      const d = addDays(weekStart, i);
+      const chip = document.createElement('button');
+      chip.className = 'day-chip' + (i === activeDayIndex ? ' active tab-' + activePlatform : '');
+      chip.innerHTML = `${DAY_NAMES[i]}<span class="n">${d.getDate()}</span>`;
+      chip.addEventListener('click', () => { activeDayIndex = i; renderMobileList(); renderDayPicker(); });
+      el.appendChild(chip);
+    }
+  }
+  function renderMobileList() {
+    const el = document.getElementById('mobileList');
+    el.innerHTML = '';
+    const iso = fmtISO(addDays(weekStart, activeDayIndex));
+    const sections = activePlatform === 'all'
+      ? [{ id: 'fanatics', label: 'Fanatics Live' }, { id: 'whatnot', label: 'Whatnot' }]
+      : [PLATFORMS.find(p => p.id === activePlatform)];
+    sections.forEach(section => {
+      if (activePlatform === 'all') {
+        const title = document.createElement('div');
+        title.className = 'platform-section-title ' + section.id;
+        title.textContent = section.label;
+        el.appendChild(title);
+      }
+      visibleRooms(section.id).forEach(room => {
+      const card = document.createElement('div'); card.className = 'm-room-card';
+      const head = document.createElement('div'); head.className = 'm-room-head';
+      head.innerHTML = `<input class="name-edit" value="${escapeAttr(roomNameFor(room, section.id))}" data-room="${room.id}" data-room-platform="${section.id}" ${canEdit() ? '' : 'disabled'}>${canDelete() ? `<button class="remove-room" data-remove-room="${room.id}" data-room-platform="${section.id}" style="background:none;border:none;color:var(--text-muted);font-size:16px;">&times;</button>` : ''}`;
+      card.appendChild(head);
+      SHIFTS.forEach(shift => {
+        const row = document.createElement('div'); row.className = 'm-shift-row';
+        makeSlotDroppable(row, room.id, iso, shift.id, section.id);
+        const existingSessions = findSessions(room.id, iso, shift.id, section.id);
+        if (existingSessions.length) {
+          existingSessions.forEach(existing => {
+            const el2 = document.createElement('div');
+            el2.className = 'session session-' + shift.id + (existing.flagged ? ' flagged' : '');
+            el2.style.borderRadius = '8px'; el2.style.padding = '10px';
+            el2.innerHTML = sessionBlockHtml(shift.label, existing);
+            el2.addEventListener('click', () => { if (canEdit()) openModal({ roomId: room.id, date: iso, shiftId: shift.id, session: existing }); else openLoginModal('editor'); });
+            configureSessionElement(el2, existing);
+            row.appendChild(el2);
+          });
+        } else {
+          const btn = document.createElement('button');
+          btn.className = 'shift-empty'; btn.style.borderRadius = '8px';
+          btn.innerHTML = `<span class="slot-label">${shift.label}</span><span class="plus">+ Add</span>`;
+          btn.addEventListener('click', () => { if (canEdit()) openModal({ roomId: room.id, date: iso, shiftId: shift.id, platform: section.id }); else openLoginModal('editor'); });
+          row.appendChild(btn);
+          if (canEdit() && copiedSession) {
+            const pasteBtn = document.createElement('button');
+            pasteBtn.className = 'shift-empty paste-slot';
+            pasteBtn.innerHTML = '<span>Paste copied block</span>';
+            pasteBtn.addEventListener('click', () => pasteSessionAt(room.id, iso, shift.id, section.id));
+            row.appendChild(pasteBtn);
+          }
+        }
+        card.appendChild(row);
+      });
+      el.appendChild(card);
+      });
+    });
+    el.querySelectorAll('.name-edit').forEach(input => {
+      input.addEventListener('change', (e) => { const room = rooms.find(r => r.id === e.target.dataset.room); if (room) { const platform = e.target.dataset.roomPlatform; room.platformNames = room.platformNames || {}; room.platformNames[platform] = e.target.value.trim() || roomNameFor(room, platform); saveRooms(); } });
+    });
+    el.querySelectorAll('[data-remove-room]').forEach(btn => {
+      btn.addEventListener('click', (e) => removeRoomFromPlatform(e.currentTarget.dataset.removeRoom, e.currentTarget.dataset.roomPlatform));
+    });
+    document.getElementById('addRoomRowMobile').style.display = canEdit() ? 'block' : 'none';
+  }
+
+  // ---- Session modal ----
+  const f = {
+    room: document.getElementById('f-room'), shift: document.getElementById('f-shift'),
+    customStart: document.getElementById('f-customStart'), customEnd: document.getElementById('f-customEnd'),
+    worker1: document.getElementById('f-worker1'), worker2: document.getElementById('f-worker2'),
+    notes: document.getElementById('f-notes'), flagged: document.getElementById('f-flagged'),
+    productCount: document.getElementById('f-productCount')
+  };
+  const overlay = document.getElementById('overlay');
+  const deleteBtn = document.getElementById('deleteBtn');
+  const productRowsEl = document.getElementById('productRows');
+
+  function populateRoomSelect(platform) { f.room.innerHTML = visibleRooms(platform).map(r => `<option value="${r.id}">${escapeHtml(roomNameFor(r, platform))}</option>`).join(''); }
+  function populateShiftSelect() { f.shift.innerHTML = SHIFTS.map(s => `<option value="${s.id}">${s.label}</option>`).join('') + '<option value="custom">Other / Custom time</option>'; }
+  function toggleCustomTimeFields() { document.getElementById('customTimeFields').style.display = f.shift.value === 'custom' ? 'flex' : 'none'; }
+  f.shift.addEventListener('change', toggleCustomTimeFields);
+  function populateBreakerList() { document.getElementById('breakerList').innerHTML = breakerNames.map(n => `<option value="${escapeAttr(n)}"></option>`).join(''); }
+  function populateProductList() { document.getElementById('productList').innerHTML = productNames.map(n => `<option value="${escapeAttr(n)}"></option>`).join(''); }
+
+  function gatherProductRows() {
+    return Array.from(productRowsEl.querySelectorAll('.product-row')).map(row => ({
+      name: row.querySelector('.p-name').value.trim(),
+      breaks: Number(row.querySelector('.p-breaks').value) || 0,
+      boxes: Number(row.querySelector('.p-boxes').value) || 0
+    }));
+  }
+  function renderProductRows(count, existing) {
+    productRowsEl.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+      const p = existing[i] || { name: '', breaks: 1, boxes: 1 };
+      const row = document.createElement('div');
+      row.className = 'product-row';
+      row.innerHTML = `
+        <textarea class="p-name" placeholder="Product name" rows="1">${escapeHtml(p.name)}</textarea>
+        <input type="number" class="p-breaks" min="0" value="${p.breaks}">
+        <input type="number" class="p-boxes" min="0" value="${p.boxes}">
+      `;
+      productRowsEl.appendChild(row);
+    }
+  }
+  f.productCount.addEventListener('change', () => {
+    const current = gatherProductRows();
+    renderProductRows(Number(f.productCount.value), current);
+  });
+
+  function openModal({ roomId, date, shiftId, session, platform }) {
+    editingSessionId = session ? session.id : null;
+    editingPlatform = session ? session.platform : (platform || activePlatform);
+    populateRoomSelect(editingPlatform); populateShiftSelect(); populateBreakerList(); populateProductList();
+    f.room.value = roomId;
+    f.shift.value = session && session.customStart && session.customEnd ? 'custom' : shiftId;
+    const d = new Date(date + 'T00:00:00');
+    document.getElementById('modalSub').textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    document.getElementById('modalTitle').textContent = session ? 'Edit session' : 'Add session';
+    document.getElementById('whatnotAccountField').style.display = editingPlatform === 'whatnot' ? 'block' : 'none';
+    document.getElementById('whatnotAccount').value = session?.whatnotAccount === 'wheelhousebreaks' ? 'wheelhousebreaks' : 'wheelhousecards';
+    const platformLabel = PLATFORMS.find(p => p.id === editingPlatform).label;
+    const badge = document.getElementById('modalPlatformBadge');
+    badge.textContent = platformLabel;
+    badge.style.setProperty('--tab-accent', `var(--${editingPlatform})`);
+    badge.style.setProperty('--tab-accent-bg', `var(--${editingPlatform}-bg)`);
+
+    if (session) {
+      f.customStart.value = session.customStart || '';
+      f.customEnd.value = session.customEnd || '';
+      f.worker1.value = session.worker1 || ''; f.worker2.value = session.worker2 || '';
+      f.notes.value = session.notes || ''; f.flagged.checked = !!session.flagged;
+      const prods = (session.products && session.products.length) ? session.products : [{ name:'', breaks:1, boxes:1 }];
+      f.productCount.value = String(Math.min(Math.max(prods.length,1), MAX_PRODUCTS));
+      renderProductRows(Number(f.productCount.value), prods);
+      deleteBtn.style.display = canDelete() ? 'inline-flex' : 'none';
+    } else {
+      f.customStart.value = '';
+      f.customEnd.value = '';
+      f.worker1.value = ''; f.worker2.value = ''; f.notes.value = ''; f.flagged.checked = false;
+      f.productCount.value = '1';
+      renderProductRows(1, [{ name:'', breaks:1, boxes:1 }]);
+      deleteBtn.style.display = 'none';
+    }
+    toggleCustomTimeFields();
+    overlay.dataset.date = date; overlay.dataset.shift = shiftId;
+    overlay.style.display = 'flex';
+    setTimeout(() => f.worker1.focus(), 30);
+  }
+  function closeModal() { overlay.style.display = 'none'; editingSessionId = null; }
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+
+  document.getElementById('saveBtn').addEventListener('click', async () => {
+    const worker1Val = f.worker1.value.trim(), worker2Val = f.worker2.value.trim();
+    const notesVal = f.notes.value.trim();
+    if (!worker1Val) { f.worker1.focus(); return; }
+    const products = gatherProductRows().filter(p => p.name);
+    [worker1Val, worker2Val].forEach(name => { if (name && !breakerNames.includes(name)) breakerNames.push(name); });
+    products.forEach(p => { if (p.name && !productNames.includes(p.name)) productNames.push(p.name); });
+    await saveBreakers(); await saveProductNames();
+
+    const date = overlay.dataset.date, isCustomTime = f.shift.value === 'custom';
+    const shiftId = isCustomTime ? overlay.dataset.shift : f.shift.value;
+    const roomId = f.room.value;
+    const customStart = isCustomTime ? f.customStart.value : '';
+    const customEnd = isCustomTime ? f.customEnd.value : '';
+    if (isCustomTime && (!customStart || !customEnd)) { alert('Choose both a start time and finish time.'); return; }
+    if (isCustomTime && customStart === customEnd) { alert('The start and finish times cannot be the same.'); return; }
+    const conflict = sessions.find(s => s.roomId === roomId && s.date === date && s.shift === shiftId && s.platform === editingPlatform && s.id !== editingSessionId);
+    if (conflict) { alert('That room already has a ' + PLATFORMS.find(p=>p.id===editingPlatform).label + ' session booked for this shift. Edit the existing one instead.'); return; }
+
+    let savedSession;
+    if (editingSessionId) {
+      const s = sessions.find(x => x.id === editingSessionId);
+      if (s) { s.roomId = roomId; s.date = date; s.shift = shiftId; s.customStart = customStart; s.customEnd = customEnd; s.worker1 = worker1Val; s.worker2 = worker2Val; s.notes = notesVal; s.flagged = f.flagged.checked; s.products = products; }
+      savedSession = s;
+    } else {
+      savedSession = { id: uid(), roomId, date, shift: shiftId, customStart, customEnd, worker1: worker1Val, worker2: worker2Val, notes: notesVal, flagged: f.flagged.checked, products, platform: editingPlatform };
+      sessions.push(savedSession);
+    }
+    if (savedSession && editingPlatform === 'whatnot') savedSession.whatnotAccount = document.getElementById('whatnotAccount').value;
+    await saveSessionUpsert(savedSession); renderAll(); closeModal();
+  });
+  deleteBtn.addEventListener('click', async () => {
+    if (!editingSessionId || !canDelete()) return;
+    const idToDelete = editingSessionId;
+    sessions = sessions.filter(s => s.id !== idToDelete);
+    await saveSessionDelete(idToDelete); renderAll(); closeModal();
+  });
+
+  // ---- Staff modal ----
+  const staffOverlay = document.getElementById('staffOverlay');
+  function openStaffModal() { renderStaffList(); staffOverlay.style.display = 'flex'; }
+  function renderStaffList() {
+    const el = document.getElementById('staffList');
+    if (breakerNames.length === 0) { el.innerHTML = '<div style="color:var(--text-muted); font-size:13px;">No employees yet. Add one below.</div>'; return; }
+    el.innerHTML = breakerNames.map(name => `<div class="staff-row"><span style="font-size:13.5px;">${escapeHtml(name)}</span>${canDelete() ? `<button data-remove-staff="${escapeAttr(name)}" style="background:none; border:none; color:var(--text-muted); font-size:15px;">&times;</button>` : ''}</div>`).join('');
+    el.querySelectorAll('[data-remove-staff]').forEach(btn => { btn.addEventListener('click', async () => { if (!canDelete()) return; breakerNames = breakerNames.filter(n => n !== btn.dataset.removeStaff); await saveBreakers(); renderStaffList(); }); });
+  }
+  document.getElementById('closeStaffBtn').addEventListener('click', () => { staffOverlay.style.display = 'none'; });
+  staffOverlay.addEventListener('click', (e) => { if (e.target === staffOverlay) staffOverlay.style.display = 'none'; });
+  document.getElementById('addStaffBtn').addEventListener('click', addStaffFromInput);
+  document.getElementById('newStaffInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') addStaffFromInput(); });
+  async function addStaffFromInput() {
+    const input = document.getElementById('newStaffInput');
+    const name = input.value.trim();
+    if (!name || breakerNames.includes(name)) { input.value = ''; return; }
+    breakerNames.push(name); await saveBreakers(); input.value = ''; renderStaffList();
+  }
+
+  // ---- Settings modal ----
+  const settingsOverlay = document.getElementById('settingsOverlay');
+  function openSettingsModal() {
+    document.getElementById('colorWhatnot').value = colors.whatnot;
+    document.getElementById('colorFanatics').value = colors.fanatics;
+    settingsOverlay.style.display = 'flex';
+  }
+  document.getElementById('settingsCancelBtn').addEventListener('click', () => { settingsOverlay.style.display = 'none'; });
+  settingsOverlay.addEventListener('click', (e) => { if (e.target === settingsOverlay) settingsOverlay.style.display = 'none'; });
+  document.getElementById('resetColorsBtn').addEventListener('click', () => {
+    document.getElementById('colorWhatnot').value = DEFAULT_COLORS.whatnot;
+    document.getElementById('colorFanatics').value = DEFAULT_COLORS.fanatics;
+  });
+  document.getElementById('settingsSaveBtn').addEventListener('click', async () => {
+    colors = { whatnot: document.getElementById('colorWhatnot').value, fanatics: document.getElementById('colorFanatics').value };
+    await saveColors(); applyColors(); renderAll();
+    settingsOverlay.style.display = 'none';
+  });
+
+  // ---- Export report modal ----
+  const reportOverlay = document.getElementById('reportOverlay');
+  function defaultReportRange() {
+    const end = new Date();
+    const start = addDays(end, -6);
+    return { start: fmtISO(start), end: fmtISO(end) };
+  }
+  function openReportModal() {
+    const range = defaultReportRange();
+    document.getElementById('reportStart').value = range.start;
+    document.getElementById('reportEnd').value = range.end;
+    document.getElementById('reportPlatform').value = 'all';
+    document.getElementById('reportPreviewArea').innerHTML = '';
+    reportOverlay.style.display = 'flex';
+  }
+  document.getElementById('reportCancelBtn').addEventListener('click', () => { reportOverlay.style.display = 'none'; });
+  reportOverlay.addEventListener('click', (e) => { if (e.target === reportOverlay) reportOverlay.style.display = 'none'; });
+
+  function computeTotals(startISO, endISO, platformFilter) {
+    const totals = {}; // normalized key -> {label, breaks, boxesNeeded, slots, notes}
+    sessions.forEach(s => {
+      if (s.date < startISO || s.date > endISO) return;
+      if (platformFilter !== 'all' && s.platform !== platformFilter) return;
+      (s.products || []).forEach(p => {
+        const label = (p.name || '').trim();
+        if (!label) return;
+        const key = label.toLowerCase().replace(/\s+/g, ' ');
+        const br = Number(p.breaks) || 0, bx = Number(p.boxes) || 0;
+        if (!totals[key]) totals[key] = { label, breaks: 0, boxesNeeded: 0, slots: 0, notes: [] };
+        totals[key].breaks += br;
+        // Boxes needed is breaks x boxes PER SESSION, then summed across sessions for
+        // this product.
+        totals[key].boxesNeeded += br * bx;
+        totals[key].slots += 1;
+        const note = (s.notes || '').trim();
+        if (note && !totals[key].notes.includes(note)) totals[key].notes.push(note);
+      });
+    });
+    return Object.values(totals).sort((a, b) => a.label.localeCompare(b.label));
+  }
+  function getIncludedSessions(startISO, endISO, platformFilter) {
+    return sessions.filter(s => s.date >= startISO && s.date <= endISO && (platformFilter === 'all' || s.platform === platformFilter));
+  }
+  function currentReportParams() {
+    return {
+      start: document.getElementById('reportStart').value,
+      end: document.getElementById('reportEnd').value,
+      platform: document.getElementById('reportPlatform').value
+    };
+  }
+  document.getElementById('reportPreviewBtn').addEventListener('click', () => {
+    const { start, end, platform } = currentReportParams();
+    if (!start || !end) return;
+    const rows = computeTotals(start, end, platform);
+    const included = getIncludedSessions(start, end, platform);
+    const area = document.getElementById('reportPreviewArea');
+
+    const totalsHtml = rows.length === 0
+      ? '<div class="report-empty">No products logged in that range.</div>'
+      : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes needed</th></tr></thead><tbody>${
+          rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td></tr>`).join('')
+        }</tbody></table>`;
+
+    const detailRows = included.map(s => {
+      const room = rooms.find(r => r.id === s.roomId);
+      const shift = SHIFTS.find(sh => sh.id === s.shift);
+      const platformLabel = (PLATFORMS.find(p => p.id === s.platform) || {}).label || s.platform;
+      const prodStr = (s.products || []).map(p => `${p.name} (${p.breaks}br/${p.boxes}bx)`).join(', ') || '\u2014';
+      return `<tr><td>${escapeHtml(s.date)}</td><td>${escapeHtml(room ? roomNameFor(room, s.platform) : '(deleted room)')}</td><td>${escapeHtml(sessionTimeLabel(shift ? shift.label : s.shift, s))}</td><td>${escapeHtml(platformLabel)}</td><td>${escapeHtml(prodStr)}</td></tr>`;
+    }).join('');
+    const detailHtml = `
+      <div style="margin-top:16px; font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:6px;">
+        ${included.length} session${included.length === 1 ? '' : 's'} counted in this range \u2014 check this list if a number looks off
+      </div>
+      ${included.length === 0
+        ? '<div class="report-empty">No sessions match this date range / platform.</div>'
+        : `<table class="report-table"><thead><tr><th>Date</th><th>Room</th><th>Shift</th><th>Platform</th><th>Products</th></tr></thead><tbody>${detailRows}</tbody></table>`}
+    `;
+
+    area.innerHTML = totalsHtml + detailHtml;
+  });
+  document.getElementById('reportDownloadBtn').addEventListener('click', () => {
+    const { start, end, platform } = currentReportParams();
+    if (!start || !end) { alert('Pick a start and end date first.'); return; }
+    const rows = computeTotals(start, end, platform);
+    let csv = 'Product,Total Breaks,Total Boxes Needed\n';
+    rows.forEach(r => { csv += `"${r.label.replace(/"/g,'""')}",${r.breaks},${r.boxesNeeded}\n`; });
+    if (rows.length === 0) csv += 'No products logged in this range,,\n';
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `wheelhouse-wax-report_${start}_to_${end}${platform !== 'all' ? '_' + platform : ''}.csv`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  // ---- Room add ----
+  async function addRoom() {
+    let target = activeView === 'schedule' ? activePlatform : (activeView === 'products' ? productsPlatformFilter : 'all');
+    if (target === 'all') {
+      const choice = prompt('Add this room to Whatnot, Fanatics, or Both?', 'Both');
+      if (!choice) return;
+      const normalized = choice.trim().toLowerCase();
+      if (normalized.startsWith('w')) target = 'whatnot';
+      else if (normalized.startsWith('f')) target = 'fanatics';
+      else if (normalized.startsWith('b')) target = 'all';
+      else { alert('Please enter Whatnot, Fanatics, or Both.'); return; }
+    }
+    const targetPlatforms = target === 'all' ? ['whatnot', 'fanatics'] : [target];
+    const suggested = `Room ${visibleRooms(targetPlatforms[0]).length + 1}`;
+    const name = prompt('Name this room or station:', suggested);
+    if (!name) return;
+    const automaticName = name.trim().toLowerCase() === suggested.toLowerCase();
+    const platformNames = {};
+    targetPlatforms.forEach(platform => {
+      platformNames[platform] = automaticName ? `Room ${visibleRooms(platform).length + 1}` : name.trim();
+    });
+    rooms.push({ id: uid(), name: name.trim(), platforms: targetPlatforms, platformNames });
+    targetPlatforms.forEach(renumberPlatformRooms);
+    await saveRooms(); renderAll();
+  }
+  document.getElementById('addRoomBtnDesktop').addEventListener('click', addRoom);
+  document.getElementById('addRoomBtnMobile').addEventListener('click', addRoom);
+  document.getElementById('emptyRoomsAddBtn').addEventListener('click', () => { if (canEdit()) addRoom(); else openLoginModal('editor'); });
+
+  // ---- Week nav ----
+  document.getElementById('prevWeek').addEventListener('click', () => { weekStart = addDays(weekStart, -7); renderAll(); });
+  document.getElementById('nextWeek').addEventListener('click', () => { weekStart = addDays(weekStart, 7); renderAll(); });
+  document.getElementById('todayBtn').addEventListener('click', () => { weekStart = startOfWeek(new Date()); activeDayIndex = todayIndexInWeek(); renderAll(); });
+
+  // ---- Reset ----
+  document.getElementById('resetBtn').addEventListener('click', async () => {
+    if (!canDelete()) return;
+    if (!confirm('Clear all rooms, sessions, staff, products, and color settings? This can\u2019t be undone.')) return;
+    rooms = JSON.parse(JSON.stringify(DEFAULT_ROOMS)); sessions = []; breakerNames = DEFAULT_BREAKERS.slice(); productNames = []; colors = { ...DEFAULT_COLORS };
+    await saveRooms(); await clearAllSessionsRemote(); await saveBreakers(); await saveProductNames(); await saveColors();
+    applyColors(); renderAll(); flashStatus('Cleared.');
+  });
+
+  // ---- Product List view (live, in-app spreadsheet, custom date range) ----
+  function renderProductsView() {
+    const start = fmtISO(productsRangeStart), end = fmtISO(productsRangeEnd);
+    const platformFilter = productsPlatformFilter;
+    const opts = { month: 'short', day: 'numeric' };
+    document.getElementById('productsWeekLabel').textContent = productsRangeStart.toLocaleDateString('en-US', opts) + ' \u2013 ' + productsRangeEnd.toLocaleDateString('en-US', opts);
+    document.getElementById('productsRangeStart').value = start;
+    document.getElementById('productsRangeEnd').value = end;
+    document.getElementById('productsPlatform').value = platformFilter;
+    document.getElementById('archiveWeekBtn').style.display = canEdit() ? 'inline-flex' : 'none';
+
+    const rows = computeTotals(start, end, platformFilter);
+    const included = getIncludedSessions(start, end, platformFilter);
+    const dayCount = Math.round((productsRangeEnd - productsRangeStart) / 86400000) + 1;
+    document.getElementById('productsSummary').textContent = `${included.length} session${included.length === 1 ? '' : 's'} across ${dayCount} day${dayCount === 1 ? '' : 's'} \u2014 updates live as the schedule changes`;
+    const area = document.getElementById('productsTableArea');
+    const allRowsHtml = rows.length === 0
+      ? '<div class="report-empty">No products logged in this date range.</div>'
+      : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes needed</th></tr></thead><tbody>${
+          rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td></tr>`).join('')
+        }</tbody></table>`;
+    let daily = '';
+    for (let d = new Date(productsRangeStart), n = 0; d <= productsRangeEnd && n < 366; d = addDays(d, 1), n++) {
+      const day = fmtISO(d), dayRows = computeTotals(day, day, platformFilter);
+      const title = d.toLocaleDateString('en-US', {weekday:'long',month:'short',day:'numeric'});
+      daily += `<h3 class="product-day">${escapeHtml(title)}</h3>` + (dayRows.length ? `<table class="report-table"><thead><tr><th>Product</th><th>Breaks</th><th>Boxes needed</th></tr></thead><tbody>${dayRows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td></tr>`).join('')}</tbody></table>` : '<div class="report-empty">No products scheduled.</div>');
+    }
+    area.innerHTML = '<h3 class="product-day">All days total</h3>' + allRowsHtml + daily + (Math.round((productsRangeEnd-productsRangeStart)/86400000) >= 366 ? '<p>Daily view shows the first 366 days. The total includes the full range.</p>' : '');
+  }
+  function shiftProductsRange(direction) {
+    const dayCount = Math.round((productsRangeEnd - productsRangeStart) / 86400000) + 1;
+    productsRangeStart = addDays(productsRangeStart, direction * dayCount);
+    productsRangeEnd = addDays(productsRangeEnd, direction * dayCount);
+    renderProductsView();
+  }
+  function updateProductsRange() {
+    const startValue = document.getElementById('productsRangeStart').value;
+    const endValue = document.getElementById('productsRangeEnd').value;
+    if (!startValue || !endValue) return;
+    if (startValue > endValue) { alert('The From date must be before the To date.'); renderProductsView(); return; }
+    productsRangeStart = parseISODate(startValue);
+    productsRangeEnd = parseISODate(endValue);
+    renderProductsView();
+  }
+  document.getElementById('productsPrevWeek').addEventListener('click', () => shiftProductsRange(-1));
+  document.getElementById('productsNextWeek').addEventListener('click', () => shiftProductsRange(1));
+  document.getElementById('productsThisWeekBtn').addEventListener('click', () => { productsRangeStart = startOfWeek(new Date()); productsRangeEnd = addDays(productsRangeStart, 6); renderProductsView(); });
+  document.getElementById('productsRangeStart').addEventListener('change', updateProductsRange);
+  document.getElementById('productsRangeEnd').addEventListener('change', updateProductsRange);
+  document.getElementById('productsPlatform').addEventListener('change', (e) => { productsPlatformFilter = e.target.value; renderProductsView(); });
+
+  // Archiving only ever happens on an explicit click -- nothing here runs
+  // automatically when a week ends, by design.
+  document.getElementById('archiveWeekBtn').addEventListener('click', async () => {
+    if (!canEdit()) return;
+    const start = fmtISO(productsRangeStart), end = fmtISO(productsRangeEnd);
+    const rows = computeTotals(start, end, productsPlatformFilter);
+    const platformLabel = productsPlatformFilter === 'all' ? 'both platforms' : ((PLATFORMS.find(p => p.id === productsPlatformFilter) || {}).label || productsPlatformFilter);
+    const includedSessions = getIncludedSessions(start, end, productsPlatformFilter);
+    const archiveMessage = rows.length === 0
+      ? `There are no products logged for ${start} through ${end}. Are you sure you still want to save this date range in History?`
+      : `Save ${start} through ${end} for ${platformLabel} in History? This saves a permanent snapshot and will NOT remove anything from the live schedule.`;
+    if (!confirm(archiveMessage)) return;
+    const existingArchive = archivedWeeks.find(a => a.weekStart === start && a.weekEnd === end && a.platform === productsPlatformFilter);
+    const entry = {
+      id: existingArchive ? existingArchive.id : uid(),
+      weekStart: start,
+      weekEnd: end,
+      platform: productsPlatformFilter,
+      rows,
+      sessionSnapshot: JSON.parse(JSON.stringify(includedSessions)),
+      roomSnapshot: JSON.parse(JSON.stringify(rooms)),
+      archivedAt: new Date().toISOString()
+    };
+    if (existingArchive) archivedWeeks = archivedWeeks.map(a => a.id === entry.id ? entry : a);
+    else archivedWeeks.push(entry);
+    await saveArchiveEntry(entry);
+    // Archiving is snapshot-only. The live sessions array is intentionally
+    // untouched so every block remains on its original week and date.
+    renderAll();
+  });
+
+  // ---- History view (archived weeks) ----
+  function renderHistoryView() {
+    const area = document.getElementById('historyListArea');
+    if (archivedWeeks.length === 0) { area.innerHTML = '<div class="report-empty">No date ranges archived yet. Use "Archive date range" from the Product List tab whenever you want to save a snapshot.</div>'; return; }
+    const sorted = [...archivedWeeks].sort((a, b) => b.weekStart.localeCompare(a.weekStart));
+    area.innerHTML = sorted.map(entry => {
+      const platformLabel = entry.platform === 'all' ? 'Both platforms' : (PLATFORMS.find(p => p.id === entry.platform) || {}).label || entry.platform;
+      const archivedDate = entry.archivedAt ? new Date(entry.archivedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+      const savedBlockCount = Array.isArray(entry.sessionSnapshot) ? entry.sessionSnapshot.length : null;
+      const rowsHtml = (entry.rows || []).length === 0
+        ? '<div class="report-empty">No products logged that week.</div>'
+        : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes needed</th></tr></thead><tbody>${
+            entry.rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td></tr>`).join('')
+          }</tbody></table>`;
+      return `
+        <div class="m-room-card" style="margin-bottom:12px;">
+          <div class="m-room-head">
+            <div>
+              <div style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:16px;">${escapeHtml(entry.weekStart)} \u2013 ${escapeHtml(entry.weekEnd)}</div>
+              <div style="font-size:11.5px; color:var(--text-muted);">${escapeHtml(platformLabel)} \u00b7 saved ${escapeHtml(archivedDate)}${savedBlockCount === null ? '' : ` \u00b7 ${savedBlockCount} schedule block${savedBlockCount === 1 ? '' : 's'} stored`}</div>
+            </div>
+          </div>
+          ${rowsHtml}
+        </div>
+      `;
+    }).join('');
+  }
+
+  document.getElementById('backupScheduleBtn').addEventListener('click', async () => {
+    try {
+      if (!usingFirestore) throw new Error('Firebase is not connected');
+      const [blocks, archiveDocs, roomsDoc] = await Promise.all([
+        firestoreDb.collection(SESSIONS_COLLECTION).get({source:'server'}),
+        firestoreDb.collection(ARCHIVES_COLLECTION).get({source:'server'}),
+        firestoreDb.collection(FIRESTORE_COLLECTION).doc('rooms').get({source:'server'})
+      ]);
+      const backup = {exportedAt:new Date().toISOString(), sessions:blocks.docs.map(d=>({documentId:d.id,data:d.data()})), archives:archiveDocs.docs.map(d=>({documentId:d.id,data:d.data()})), rooms:roomsDoc.exists?roomsDoc.data():null};
+      const link=document.createElement('a'); link.href=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],{type:'application/json'})); link.download='wheelhouse-schedule-backup-'+fmtISO(new Date())+'.json'; link.click(); setTimeout(()=>URL.revokeObjectURL(link.href),1000);
+    } catch(e) { alert('Backup failed. Check your Firebase connection and try again.'); }
+  });
+
+  // ---- Render orchestration ----
+  function renderAll() {
+    document.getElementById('publicPage').style.display = isAdmin ? 'none' : 'block';
+    document.getElementById('adminApp').style.display = isAdmin ? 'block' : 'none';
+    renderPublicSchedule();
+    renderAuthArea(); renderTabs(); renderAdminToolbar();
+    document.getElementById('backupScheduleBtn').style.display = isAdmin ? 'inline-flex' : 'none';
+
+    const isSchedule = activeView === 'schedule';
+    const isProducts = activeView === 'products';
+    const isHistory = activeView === 'history';
+
+    document.getElementById('weekNavWrap').style.display = isSchedule ? 'flex' : 'none';
+    document.getElementById('todayBtn').style.display = isSchedule ? 'inline-flex' : 'none';
+    document.getElementById('scheduleView').style.display = isSchedule ? 'block' : 'none';
+    document.getElementById('productsView').style.display = isProducts ? 'block' : 'none';
+    document.getElementById('historyView').style.display = isHistory ? 'block' : 'none';
+    const roomScope = isSchedule ? activePlatform : (isProducts ? productsPlatformFilter : 'all');
+    const relevantRoomCount = roomScope === 'all' ? rooms.length : visibleRooms(roomScope).length;
+    document.getElementById('emptyRoomsRecovery').style.display = !isSchedule && relevantRoomCount === 0 ? 'block' : 'none';
+
+    if (isSchedule) {
+      renderWeekLabel(); renderGrid(); renderDayPicker(); renderMobileList();
+    } else if (isProducts) {
+      renderProductsView();
+    } else if (isHistory) {
+      renderHistoryView();
+    }
+  }
+
+  async function init() {
+    document.getElementById('weekLabel').textContent = 'Loading\u2026';
+    await loadData();
+    applyColors();
+    renderAll();
+    attachRealtimeSync();
+    flashStatus(usingFirestore ? 'Synced live across your team' : (usingClaudeStorage ? 'Synced to your Claude account' : 'Saved to this browser on this device'));
+  }
+  init();
+})();
+</script>
+</body>
+</html>

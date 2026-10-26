@@ -189,6 +189,16 @@
   .session.flagged .shift-time, .session.flagged .product-line, .session.flagged .notes-preview { color:#fff !important; }
   .session.flagged .product-entry { border-color:rgba(255,255,255,.4); }
   .product-day { margin:20px 0 8px; }
+  .product-list-table { width:100%; table-layout:fixed; }
+  .product-list-table th:first-child, .product-list-table td:first-child { width:75%; overflow-wrap:anywhere; }
+  .product-list-table th:last-child, .product-list-table td:last-child { width:25%; text-align:right; }
+  .product-notes { margin:10px 0 18px; }
+  .product-notes label, .product-notes textarea, .product-notes .session-note { color:#e84949; }
+  .product-notes label { display:block; font-weight:700; margin-bottom:5px; }
+  .product-notes textarea { box-sizing:border-box; width:100%; min-height:62px; background:var(--surface-2); border:1px solid var(--border); border-radius:6px; padding:8px; font:inherit; resize:vertical; }
+  .product-notes .session-note { white-space:pre-wrap; margin:4px 0; }
+  .product-notes .note-status { font-size:12px; margin-left:8px; }
+  .session.flagged .notes-preview { color:#a40016 !important; background:#fff; padding:3px 6px; border-radius:4px; }
   .add-room-row { padding: 10px 0; }
   .add-room-row button { width: 100%; background: transparent; border: 1px dashed var(--border); color: var(--text-muted); border-radius: var(--radius); padding: 9px; font-size: 12.5px; }
   .add-room-row button:hover { color: var(--text); border-color: var(--text-muted); }
@@ -1519,34 +1529,78 @@
     applyColors(); renderAll(); flashStatus('Cleared.');
   });
 
+  // Product list notes use their own Firebase documents; they never replace schedule blocks.
+  const productNoteState = new Map();
+  function productNoteKey(start, end) { return start === end ? 'product-notes-day-' + start : 'product-notes-range-' + start + '-' + end; }
+  function productTable(rows, emptyMessage) {
+    if (!rows.length) return '<div class="report-empty">' + emptyMessage + '</div>';
+    return `<table class="report-table product-list-table"><thead><tr><th>Product</th><th>Boxes needed</th></tr></thead><tbody>${rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.boxesNeeded}</td></tr>`).join('')}</tbody></table>`;
+  }
+  function productNoteSection(start, end, platformFilter) {
+    const key = productNoteKey(start, end), state = productNoteState.get(key);
+    const notes = [...new Set(getIncludedSessions(start, end, platformFilter).map(s => (s.notes || '').trim()).filter(Boolean))];
+    const attached = notes.map(note => `<div class="session-note">${escapeHtml(note)}</div>`).join('');
+    return `<div class="product-notes" data-note-key="${escapeAttr(key)}"><label>Notes</label>${attached}<textarea aria-label="Notes for ${escapeAttr(start === end ? start : start + ' through ' + end)}" placeholder="${canEdit() ? 'Add a note...' : 'No additional notes'}" ${canEdit() ? '' : 'readonly'}>${escapeHtml(state ? state.draft : '')}</textarea>${canEdit() ? '<button class="btn btn-sm save-product-note" type="button">Save note</button>' : ''}<span class="note-status" role="status">${escapeHtml(state?.status || '')}</span></div>`;
+  }
+  async function loadProductNote(key) {
+    let state = productNoteState.get(key);
+    if (state && (state.loading || state.loaded)) return;
+    state = state || {draft:'', dirty:false, loaded:false, loading:false, status:''};
+    state.loading = true; productNoteState.set(key, state);
+    try {
+      let value = '';
+      if (usingFirestore) { const doc = await firestoreDb.collection(FIRESTORE_COLLECTION).doc(key).get({source:'server'}); value = doc.exists ? (doc.data().value || '') : ''; }
+      else { const stored = await storage.get(key); value = stored?.value || ''; }
+      if (!state.dirty) state.draft = typeof value === 'string' ? value : '';
+      state.loaded = true; state.status = '';
+    } catch(e) { state.status = 'Could not load note. Try reopening Product List.'; }
+    finally {
+      state.loading = false;
+      document.querySelectorAll('.product-notes').forEach(box => { if (box.dataset.noteKey !== key) return; const field = box.querySelector('textarea'); if (!state.dirty) field.value = state.draft; box.querySelector('.note-status').textContent = state.status; });
+    }
+  }
+  function bindProductNotes(area) {
+    area.querySelectorAll('.product-notes').forEach(box => {
+      const key = box.dataset.noteKey, field = box.querySelector('textarea'), button = box.querySelector('.save-product-note'), status = box.querySelector('.note-status');
+      loadProductNote(key);
+      field.addEventListener('input', () => { let state = productNoteState.get(key); if (!state) { state={draft:'',dirty:false,loaded:false}; productNoteState.set(key,state); } state.draft=field.value; state.dirty=true; state.status='Unsaved'; status.textContent='Unsaved'; });
+      if (button) button.addEventListener('click', async () => {
+        if (!canEdit()) return;
+        const state=productNoteState.get(key); if (!state || !state.loaded) { status.textContent='Wait for the saved note to load before saving.'; return; }
+        const value=field.value; button.disabled=true; status.textContent='Saving…';
+        try {
+          if (usingFirestore) await firestoreDb.collection(FIRESTORE_COLLECTION).doc(key).set({value},{merge:true});
+          else await storage.set(key,value);
+          if (state.draft===value) state.dirty=false;
+          state.status=state.dirty?'Unsaved':'Saved'; status.textContent=state.status;
+        } catch(e) { state.status='Could not save note. Check connection and permissions.'; status.textContent=state.status; }
+        finally { button.disabled=false; }
+      });
+    });
+  }
   // ---- Product List view (live, in-app spreadsheet, custom date range) ----
   function renderProductsView() {
     const start = fmtISO(productsRangeStart), end = fmtISO(productsRangeEnd);
     const platformFilter = productsPlatformFilter;
     const opts = { month: 'short', day: 'numeric' };
-    document.getElementById('productsWeekLabel').textContent = productsRangeStart.toLocaleDateString('en-US', opts) + ' \u2013 ' + productsRangeEnd.toLocaleDateString('en-US', opts);
+    document.getElementById('productsWeekLabel').textContent = productsRangeStart.toLocaleDateString('en-US', opts) + ' – ' + productsRangeEnd.toLocaleDateString('en-US', opts);
     document.getElementById('productsRangeStart').value = start;
     document.getElementById('productsRangeEnd').value = end;
     document.getElementById('productsPlatform').value = platformFilter;
     document.getElementById('archiveWeekBtn').style.display = canEdit() ? 'inline-flex' : 'none';
-
     const rows = computeTotals(start, end, platformFilter);
     const included = getIncludedSessions(start, end, platformFilter);
     const dayCount = Math.round((productsRangeEnd - productsRangeStart) / 86400000) + 1;
-    document.getElementById('productsSummary').textContent = `${included.length} session${included.length === 1 ? '' : 's'} across ${dayCount} day${dayCount === 1 ? '' : 's'} \u2014 updates live as the schedule changes`;
+    document.getElementById('productsSummary').textContent = `${included.length} sessions across ${dayCount} days — updates live as the schedule changes`;
     const area = document.getElementById('productsTableArea');
-    const allRowsHtml = rows.length === 0
-      ? '<div class="report-empty">No products logged in this date range.</div>'
-      : `<table class="report-table"><thead><tr><th>Product</th><th>Total breaks</th><th>Total boxes needed</th></tr></thead><tbody>${
-          rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td></tr>`).join('')
-        }</tbody></table>`;
-    let daily = '';
+    let result = '<h3 class="product-day">All days total</h3>' + productTable(rows, 'No products logged in this date range.') + productNoteSection(start, end, platformFilter);
     for (let d = new Date(productsRangeStart), n = 0; d <= productsRangeEnd && n < 366; d = addDays(d, 1), n++) {
       const day = fmtISO(d), dayRows = computeTotals(day, day, platformFilter);
       const title = d.toLocaleDateString('en-US', {weekday:'long',month:'short',day:'numeric'});
-      daily += `<h3 class="product-day">${escapeHtml(title)}</h3>` + (dayRows.length ? `<table class="report-table"><thead><tr><th>Product</th><th>Breaks</th><th>Boxes needed</th></tr></thead><tbody>${dayRows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.breaks}</td><td>${r.boxesNeeded}</td></tr>`).join('')}</tbody></table>` : '<div class="report-empty">No products scheduled.</div>');
+      result += `<h3 class="product-day">${escapeHtml(title)}</h3>` + productTable(dayRows, 'No products scheduled.') + productNoteSection(day, day, platformFilter);
     }
-    area.innerHTML = '<h3 class="product-day">All days total</h3>' + allRowsHtml + daily + (Math.round((productsRangeEnd-productsRangeStart)/86400000) >= 366 ? '<p>Daily view shows the first 366 days. The total includes the full range.</p>' : '');
+    area.innerHTML = result + (dayCount > 366 ? '<p>Daily view shows the first 366 days. The total includes the full range.</p>' : '');
+    bindProductNotes(area);
   }
   function shiftProductsRange(direction) {
     const dayCount = Math.round((productsRangeEnd - productsRangeStart) / 86400000) + 1;
